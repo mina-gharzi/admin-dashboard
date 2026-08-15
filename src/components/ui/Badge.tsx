@@ -115,7 +115,5 @@ function Badge({
   );
 }
 
-export {
-  Badge,
-  badgeVariants,
-};
+// eslint-disable-next-line react-refresh/only-export-components -- badgeVariants باید کنار Badge export بشه تا سایر کامپوننت‌ها (مثل Button) بتونن از همون استایل‌ها استفاده کنن
+export { Badge, badgeVariants };

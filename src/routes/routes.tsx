@@ -32,6 +32,7 @@ import OrderDetails from "../pages/OrderDetails";
   ----------------------------------------------------------
 */
 
+// eslint-disable-next-line react-refresh/only-export-components -- کامپوننت موقت، طبق کامنت بالا بعداً با pages/Analytics.tsx جایگزین میشه
 function AnalyticsPage() {
   return (
     <div>
@@ -46,6 +47,7 @@ function AnalyticsPage() {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- کامپوننت موقت، طبق کامنت بالا بعداً با pages/Settings.tsx جایگزین میشه
 function SettingsPage() {
   return (
     <div>

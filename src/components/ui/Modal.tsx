@@ -20,11 +20,7 @@
   ==========================================================
 */
 
-import {
-  useEffect,
-  type HTMLAttributes,
-  type ReactNode,
-} from "react";
+import { useEffect, type ReactNode } from "react";
 
 import { X } from "lucide-react";
 

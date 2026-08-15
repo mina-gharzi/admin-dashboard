@@ -2,7 +2,7 @@
   ==========================================================
   Orders.tsx
   ----------------------------------------------------------
-  Orders management page.
+  Orders management page — Dashboard design language
   ----------------------------------------------------------
   مسئولیت این Page:
 
@@ -13,16 +13,8 @@
   ==========================================================
 */
 
-/*
-  ==========================================================
-  Orders.tsx
-  ----------------------------------------------------------
-  Orders management page — Dashboard design language
-  ==========================================================
-*/
-
 import { useMemo, useState } from "react";
-import { ShoppingBag, Activity } from "lucide-react";
+import { Activity } from "lucide-react";
 
 import { Card } from "../components/ui/Card";
 import PageHeader from "../components/ui/PageHeader";
