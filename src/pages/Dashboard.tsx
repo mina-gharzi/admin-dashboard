@@ -156,7 +156,7 @@ function Dashboard() {
             </button>
           </div>
 
-          <div className="h-[360px] px-7 py-7">
+          <div className="h-90 px-7 py-7">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
                 data={salesData}

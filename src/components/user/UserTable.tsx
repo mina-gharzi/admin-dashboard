@@ -259,7 +259,7 @@ function UserTable({
     <>
       <div>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[700px]">
+          <table className="w-full min-w-175">
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr
