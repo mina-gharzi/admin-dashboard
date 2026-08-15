@@ -12,65 +12,32 @@
   ==========================================================
 */
 
-import { Search } from "lucide-react";
-
-import { Input } from "../ui/Input";
-
 /*
+  ==========================================================
+  OrderFilters.tsx
   ----------------------------------------------------------
-  Props
-  ----------------------------------------------------------
+  Orders filtering toolbar — Dashboard design language
+  ==========================================================
 */
+
+import { Search } from "lucide-react";
+import { Input } from "../ui/Input";
 
 interface OrderFiltersProps {
   search: string;
   status: string;
-
-  onSearchChange: (
-    value: string
-  ) => void;
-
-  onStatusChange: (
-    value: string
-  ) => void;
-
+  onSearchChange: (value: string) => void;
+  onStatusChange: (value: string) => void;
   resultCount: number;
 }
 
-/*
-  ----------------------------------------------------------
-  Status Filters
-  ----------------------------------------------------------
-*/
-
 const statuses = [
-  {
-    value: "همه",
-    label: "همه",
-  },
-  {
-    value: "pending",
-    label: "در انتظار",
-  },
-  {
-    value: "processing",
-    label: "در حال پردازش",
-  },
-  {
-    value: "completed",
-    label: "تکمیل شده",
-  },
-  {
-    value: "cancelled",
-    label: "لغو شده",
-  },
+  { value: "همه", label: "همه" },
+  { value: "pending", label: "در انتظار" },
+  { value: "processing", label: "در حال پردازش" },
+  { value: "completed", label: "تکمیل شده" },
+  { value: "cancelled", label: "لغو شده" },
 ];
-
-/*
-  ----------------------------------------------------------
-  Order Filters
-  ----------------------------------------------------------
-*/
 
 function OrderFilters({
   search,
@@ -80,63 +47,51 @@ function OrderFilters({
   resultCount,
 }: OrderFiltersProps) {
   return (
-    <div className="flex flex-col gap-4 border-b border-border p-5">
-      {/* Search */}
+    <div className="border-b border-primary-300/80 bg-surface/40 px-6 py-5">
+      <div className="flex flex-col gap-4">
+        {/* Search */}
+        <div className="relative w-full desktop:max-w-[340px]">
+          <Search
+            size={16}
+            className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-text-secondary"
+          />
+          <Input
+            value={search}
+            onChange={(event) => onSearchChange(event.target.value)}
+            placeholder="جستجوی سفارش یا مشتری..."
+            className="h-10 pr-10"
+          />
+        </div>
 
-      <div className="relative w-full desktop:max-w-sm">
-        <Search
-          size={18}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary"
-        />
+        {/* Status Pills + Count */}
+        <div className="flex flex-wrap items-center gap-2">
+          {statuses.map((item) => {
+            const isActive = status === item.value;
 
-        <Input
-          value={search}
-          onChange={(event) =>
-            onSearchChange(
-              event.target.value
-            )
-          }
-          placeholder="جستجوی سفارش یا مشتری..."
-          className="pr-10"
-        />
-      </div>
+            return (
+              <button
+                key={item.value}
+                type="button"
+                onClick={() => onStatusChange(item.value)}
+                className={[
+                  "rounded-2xl px-3.5 py-2",
+                  "font-vazirmatn text-xs font-medium",
+                  "transition-all duration-200",
+                  "active:scale-[0.97]",
+                  isActive
+                    ? "bg-primary-900 text-white shadow-sm"
+                    : "bg-background text-text-secondary hover:bg-primary-100 hover:text-primary-900",
+                ].join(" ")}
+              >
+                {item.label}
+              </button>
+            );
+          })}
 
-      {/* Status Filters */}
-
-      <div className="flex flex-wrap items-center gap-2">
-        {statuses.map((item) => {
-          const isActive =
-            status === item.value;
-
-          return (
-            <button
-              key={item.value}
-              type="button"
-              onClick={() =>
-                onStatusChange(
-                  item.value
-                )
-              }
-              className={[
-                "rounded-md px-3 py-2",
-                "font-vazirmatn text-xs font-medium",
-                "transition-colors",
-
-                isActive
-                  ? "bg-primary-900 text-white"
-                  : "bg-background text-text-secondary hover:bg-primary-100 hover:text-text-primary",
-              ].join(
-                " "
-              )}
-            >
-              {item.label}
-            </button>
-          );
-        })}
-
-        <span className="mr-auto font-vazirmatn text-xs text-text-secondary">
-          {resultCount} سفارش
-        </span>
+          <span className="mr-auto inline-flex items-center rounded-2xl bg-primary-50 px-3 py-1.5 font-vazirmatn text-xs font-medium text-primary-900">
+            {resultCount} سفارش
+          </span>
+        </div>
       </div>
     </div>
   );
