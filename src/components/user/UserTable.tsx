@@ -187,7 +187,7 @@ function UserTable({
             items={[
               {
                 label: "مشاهده",
-                onClick: () => console.log("View user:", row.original.id),
+                onClick: () => onEdit?.(row.original),
               },
               {
                 label: "ویرایش",

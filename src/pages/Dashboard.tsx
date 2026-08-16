@@ -1,3 +1,18 @@
+/*
+  ==========================================================
+  Dashboard.tsx
+  ----------------------------------------------------------
+  صفحه اصلی Admin Dashboard
+  ----------------------------------------------------------
+  نکته مهم: تمام آمار این صفحه از api.analytics.getSummary()
+  محاسبه میشه، یعنی روی داده‌ی واقعی users/products/orders
+  کار می‌کنه (نه اعداد ثابت/نمونه). با افزودن یا حذف داده،
+  این صفحه هم خودش به‌روز میشه.
+  ==========================================================
+*/
+
+import { useNavigate } from "react-router-dom";
+
 import {
   Users,
   ShoppingCart,
@@ -6,285 +21,217 @@ import {
   TrendingUp,
   ArrowUpLeft,
   CalendarDays,
-  MoreHorizontal,
-  ArrowLeft,
+  BarChart3,
 } from "lucide-react";
 
 import {
   ResponsiveContainer,
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
+  Cell,
 } from "recharts";
 
 import { Card } from "../components/ui/Card";
 import { Badge } from "../components/ui/Badge";
 
-const salesData = [
-  { month: "فروردین", sales: 42, forecast: 35 },
-  { month: "اردیبهشت", sales: 58, forecast: 48 },
-  { month: "خرداد", sales: 45, forecast: 62 },
-  { month: "تیر", sales: 72, forecast: 55 },
-  { month: "مرداد", sales: 64, forecast: 78 },
-  { month: "شهریور", sales: 86, forecast: 72 },
-];
+import { useData } from "../hooks/useData";
+import { api } from "../services/api";
+import { formatPrice } from "../utils/format";
 
-const statistics = [
-  {
-    title: "کل کاربران",
-    value: "12,540",
-    change: "+12.5%",
-    icon: Users,
-  },
-  {
-    title: "سفارش‌ها",
-    value: "1,284",
-    change: "+8.2%",
-    icon: ShoppingCart,
-  },
-  {
-    title: "درآمد",
-    value: "245.8M",
-    change: "+15.4%",
-    icon: DollarSign,
-  },
-  {
-    title: "محصولات",
-    value: "856",
-    change: "+4.6%",
-    icon: Package,
-  },
-];
+/*
+  ----------------------------------------------------------
+  Order Status → رنگ و برچسب (هم‌راستا با OrderTable)
+  ----------------------------------------------------------
+*/
 
-const recentOrders = [
-  {
-    id: "#ORD-101",
-    customer: "سفارش جدید",
-    status: "موفق",
-  },
-  {
-    id: "#ORD-102",
-    customer: "سفارش جدید",
-    status: "موفق",
-  },
-  {
-    id: "#ORD-103",
-    customer: "در حال پردازش",
-    status: "پردازش",
-  },
-  {
-    id: "#ORD-104",
-    customer: "سفارش جدید",
-    status: "موفق",
-  },
-];
+const statusMeta = {
+  pending: { label: "در انتظار", color: "#f59e0b", badge: "warning" as const },
+  processing: { label: "در حال پردازش", color: "#0284c7", badge: "info" as const },
+  completed: { label: "تکمیل شده", color: "#16a34a", badge: "success" as const },
+  cancelled: { label: "لغو شده", color: "#dc2626", badge: "danger" as const },
+};
 
-const topProducts = [
-  { name: "iPhone 15 Pro Max", sales: "324 فروش" },
-  { name: "MacBook Pro", sales: "218 فروش" },
-  { name: "AirPods Pro", sales: "184 فروش" },
-  { name: "Apple Watch", sales: "142 فروش" },
-];
+/*
+  ----------------------------------------------------------
+  Dashboard Component
+  ----------------------------------------------------------
+*/
 
 function Dashboard() {
+  const navigate = useNavigate();
+
+  const { data: summary, loading, error } = useData(
+    () => api.analytics.getSummary(),
+    [],
+  );
+
+  /*
+    Loading State
+  */
+  if (loading) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-9 w-9 animate-spin rounded-full border-[3px] border-primary-100 border-t-primary-900" />
+          <p className="font-vazirmatn text-sm text-text-secondary">
+            در حال بارگذاری داشبورد...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !summary) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <p className="font-vazirmatn text-sm text-danger">
+          خطا در دریافت اطلاعات داشبورد.
+        </p>
+      </div>
+    );
+  }
+
+  /*
+    داده‌ی نمودار وضعیت سفارش‌ها (از داده‌ی واقعی)
+  */
+  const statusChartData = (
+    Object.keys(statusMeta) as Array<keyof typeof statusMeta>
+  ).map((key) => ({
+    key,
+    label: statusMeta[key].label,
+    count: summary.ordersByStatus[key],
+    color: statusMeta[key].color,
+  }));
+
+  const completionRate =
+    summary.totalOrders > 0
+      ? Math.round(
+          (summary.ordersByStatus.completed / summary.totalOrders) * 100,
+        )
+      : 0;
+
+  const activeUserRate =
+    summary.totalUsers > 0
+      ? Math.round((summary.usersByStatus.active / summary.totalUsers) * 100)
+      : 0;
+
+  const activeProductRate =
+    summary.totalProducts > 0
+      ? Math.round(
+          (summary.productsByCategory.reduce((s, c) => s + c.count, 0) /
+            summary.totalProducts) *
+            100,
+        )
+      : 0;
+
+  const statistics = [
+    {
+      title: "کل کاربران",
+      value: summary.totalUsers.toLocaleString("fa-IR"),
+      subLabel: `${summary.usersByStatus.active.toLocaleString("fa-IR")} کاربر فعال`,
+      icon: Users,
+    },
+    {
+      title: "سفارش‌ها",
+      value: summary.totalOrders.toLocaleString("fa-IR"),
+      subLabel: `${summary.ordersByStatus.pending.toLocaleString("fa-IR")} در انتظار`,
+      icon: ShoppingCart,
+    },
+    {
+      title: "درآمد (تکمیل‌شده)",
+      value: `${formatPrice(summary.totalRevenue)} تومان`,
+      subLabel: `میانگین سفارش: ${formatPrice(summary.averageOrderValue)}`,
+      icon: DollarSign,
+    },
+    {
+      title: "محصولات",
+      value: summary.totalProducts.toLocaleString("fa-IR"),
+      subLabel: `${summary.lowStockProducts.length.toLocaleString("fa-IR")} کم‌موجود`,
+      icon: Package,
+    },
+  ];
+
   return (
     <div className="space-y-6">
-      {/* =====================================================
-          HERO
-      ====================================================== */}
+      {/* Hero Section */}
       <section
         className="
-          relative overflow-hidden rounded-[24px]
+          relative overflow-hidden rounded-[28px]
           bg-primary-900
-          px-7 py-7
-          tablet:px-9 tablet:py-8
+          px-7 py-11
+          tablet:px-9 tablet:py-14
         "
       >
-        {/* Decorative background */}
-        <div className="pointer-events-none absolute inset-0 opacity-20">
-          <svg
-            width="100%"
-            height="100%"
-            viewBox="0 0 1000 220"
-            preserveAspectRatio="none"
-            className="absolute inset-0"
-          >
+        <div className="absolute inset-0 opacity-25">
+          <svg width="100%" height="100%" className="absolute">
             <path
-              d="M0,80 Q180,35 360,80 Q540,125 720,80 Q850,45 1000,75"
+              d="M0,70 Q160,30 320,70 Q480,110 640,70 Q800,30 960,70"
               fill="none"
               stroke="#88BDA4"
-              strokeWidth="4"
+              strokeWidth="5"
+              strokeOpacity="0.45"
             />
-
             <path
-              d="M0,125 Q180,80 360,125 Q540,170 720,125 Q850,90 1000,120"
+              d="M0,110 Q160,70 320,110 Q480,150 640,110 Q800,70 960,110"
               fill="none"
-              stroke="#659287"
-              strokeWidth="3"
+              stroke="#111844"
+              strokeWidth="3.5"
+              strokeOpacity="0.4"
             />
           </svg>
-
-          <div className="absolute -left-16 -top-24 h-52 w-52 rounded-full border-8 border-primary-700" />
-
-          <div className="absolute -bottom-28 -right-20 h-64 w-64 rounded-full border-8 border-primary-700" />
+          <div className="absolute -left-12 -top-16 h-56 w-56 rounded-full border-8 border-primary-700 border-opacity-30 animate-spin-slow" />
+          <div className="absolute -right-16 -bottom-16 h-64 w-64 rounded-full border-8 border-primary-700 border-opacity-30 animate-spin-slow-reverse" />
         </div>
 
         <div className="relative z-10">
-          <div className="flex flex-col justify-between gap-6 tablet:flex-row tablet:items-center">
-            <div>
-              <p className="font-vazirmatn text-xs text-primary-100">
-                پنل مدیریت
-              </p>
-
-              <h1
-                className="
-                  mt-2
-                  font-vazirmatn
-                  text-2xl
-                  font-bold
-                  text-white
-                  tablet:text-3xl
-                "
-              >
-                خوش آمدید،
-              </h1>
-
-              <p
-                className="
-                  mt-2
-                  max-w-lg
-                  font-vazirmatn
-                  text-xs
-                  leading-6
-                  text-primary-100
-                "
-              >
-                وضعیت فروشگاه و عملکرد کلی سیستم را در یک نگاه بررسی کنید.
-              </p>
-            </div>
-
-            <div
-              className="
-                inline-flex
-                w-fit
-                items-center
-                gap-2
-                rounded-xl
-                bg-white/10
-                px-4
-                py-2.5
-                font-vazirmatn
-                text-xs
-                text-white
-                backdrop-blur-sm
-              "
-            >
-              <CalendarDays size={15} />
-              <span>گزارش شهریور ۱۴۰۵</span>
-            </div>
+          <p className="font-vazirmatn text-sm text-primary-100">پنل مدیریت</p>
+          <h1 className="mt-5 font-vazirmatn text-3xl font-bold text-white tablet:text-4xl">
+            خوش آمدید، مینا 👋
+          </h1>
+          <p className="mt-5 max-w-xl font-vazirmatn text-sm leading-7 text-primary-100">
+            اینجا می‌توانید وضعیت فروشگاه و عملکرد سیستم را در یک نگاه بررسی
+            کنید.
+          </p>
+          <div className="mt-8 inline-flex items-center gap-3 rounded-2xl bg-white/10 px-5 py-3 font-vazirmatn text-xs text-white backdrop-blur-sm">
+            <CalendarDays size={17} />{" "}
+            <span>{new Date().toLocaleDateString("fa-IR")}</span>
           </div>
         </div>
       </section>
 
-      {/* =====================================================
-          STATISTICS
-      ====================================================== */}
-      <section
-        className="
-          grid
-          gap-4
-          tablet:grid-cols-2
-          desktop:grid-cols-4
-        "
-      >
+      {/* Statistics */}
+      <section className="grid gap-4 tablet:grid-cols-2 desktop:grid-cols-4">
         {statistics.map((stat) => {
           const Icon = stat.icon;
-
           return (
             <Card
               key={stat.title}
               className="
-                group
-                relative
-                overflow-hidden
-                border-primary-200
-                p-5
-                transition-all
-                duration-200
-                hover:-translate-y-0.5
-                hover:shadow-sm
+                group relative overflow-hidden border-primary-300
+                p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-sm
               "
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="font-vazirmatn text-xs text-text-secondary">
+                  <p className="font-vazirmatn text-sm text-text-secondary">
                     {stat.title}
                   </p>
-
-                  <p
-                    className="
-                      mt-2
-                      font-inter
-                      text-2xl
-                      font-bold
-                      tracking-tight
-                      text-text-primary
-                    "
-                  >
+                  <p className="mt-3 font-inter text-2xl font-bold tracking-tight text-text-primary">
                     {stat.value}
                   </p>
                 </div>
-
-                <div
-                  className="
-                    flex
-                    h-10
-                    w-10
-                    shrink-0
-                    items-center
-                    justify-center
-                    rounded-2xl
-                    bg-primary-100
-                    text-primary-900
-                    transition-transform
-                    group-hover:scale-105
-                  "
-                >
-                  <Icon size={21} strokeWidth={1.8} />
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary-100 text-primary-900 transition-transform group-hover:scale-110">
+                  <Icon size={22} strokeWidth={1.8} />
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center gap-2">
-                <span
-                  className="
-                    inline-flex
-                    items-center
-                    gap-1
-                    rounded-md
-                    bg-primary-50
-                    px-2
-                    py-1
-                    font-inter
-                    text-[11px]
-                    font-medium
-                    text-primary-900
-                  "
-                >
-                  <TrendingUp size={11} />
-                  {stat.change}
-                </span>
-
-                <span
-                  className="
-                    font-vazirmatn
-                    text-[10px]
-                    text-text-secondary
-                  "
-                >
-                  نسبت به ماه گذشته
+              <div className="mt-5 flex items-center gap-2">
+                <span className="font-vazirmatn text-[11px] text-text-secondary">
+                  {stat.subLabel}
                 </span>
               </div>
             </Card>
@@ -292,504 +239,259 @@ function Dashboard() {
         })}
       </section>
 
-      {/* =====================================================
-          SALES + RECENT ORDERS
-      ====================================================== */}
+      {/* Main Content */}
       <section className="grid gap-6 desktop:grid-cols-3">
-        {/* Sales */}
+        {/* Orders by Status Chart (از داده‌ی واقعی) */}
         <Card className="overflow-hidden p-0 desktop:col-span-2">
-          <div
-            className="
-              flex
-              flex-col
-              gap-3
-              border-b
-              border-primary-200
-              px-6
-              py-4
-              tablet:flex-row
-              tablet:items-center
-              tablet:justify-between
-            "
-          >
+          <div className="flex items-center justify-between border-b border-primary-300 px-7 py-4">
             <div>
-              <h2
-                className="
-                  font-vazirmatn
-                  text-base
-                  font-semibold
-                  text-text-primary
-                "
-              >
-                روند فروش
+              <h2 className="font-vazirmatn text-lg font-semibold text-text-primary">
+                توزیع وضعیت سفارش‌ها
               </h2>
-
-              <p
-                className="
-                  mt-1
-                  font-vazirmatn
-                  text-[11px]
-                  text-text-secondary
-                "
-              >
-                مقایسه فروش واقعی و پیش‌بینی‌شده
+              <p className="mt-1 font-vazirmatn text-xs text-text-secondary">
+                تعداد سفارش در هر وضعیت (بر اساس داده‌ی فعلی)
               </p>
             </div>
-
             <button
               type="button"
-              className="
-                flex
-                w-fit
-                items-center
-                gap-2
-                rounded-xl
-                border
-                border-primary-300
-                bg-background
-                px-3
-                py-2
-                font-vazirmatn
-                text-xs
-                text-text-secondary
-                transition-colors
-                hover:border-primary-900
-                hover:text-primary-900
-              "
+              onClick={() => navigate("/analytics")}
+              className="flex items-center gap-2 rounded-2xl border border-primary-300 bg-background px-4 py-2 font-vazirmatn text-xs text-text-secondary transition-all hover:border-primary-900 hover:text-primary-900"
             >
-              <CalendarDays size={14} />
-              ۶ ماه اخیر
+              گزارش کامل <BarChart3 size={15} />
             </button>
           </div>
 
-          <div className="h-85 px-5 py-6 tablet:px-7">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={salesData}
-                margin={{
-                  top: 10,
-                  right: 10,
-                  left: -20,
-                  bottom: 0,
-                }}
-              >
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                  stroke="#E6F2DD"
-                />
-
-                <XAxis
-                  dataKey="month"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{
-                    fontSize: 11,
-                    fill: "#111844",
-                  }}
-                />
-
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{
-                    fontSize: 10,
-                    fill: "#111844",
-                  }}
-                />
-
-                <Tooltip
-                  contentStyle={{
-                    borderRadius: "12px",
-                    border: "1px solid #E2E8F0",
-                    fontFamily: "Vazirmatn",
-                    fontSize: "12px",
-                  }}
-                />
-
-                <Line
-                  type="monotone"
-                  dataKey="sales"
-                  name="فروش واقعی"
-                  stroke="#111844"
-                  strokeWidth={3}
-                  dot={false}
-                  activeDot={{ r: 4 }}
-                />
-
-                <Line
-                  type="monotone"
-                  dataKey="forecast"
-                  name="پیش‌بینی"
-                  stroke="#4B5694"
-                  strokeWidth={2.5}
-                  dot={false}
-                  strokeDasharray="5 5"
-                  activeDot={{ r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div
-            className="
-              flex
-              items-center
-              gap-6
-              border-t
-              border-primary-200
-              px-6
-              py-3
-            "
-          >
-            <div className="flex items-center gap-2">
-              <span className="h-2.5 w-2.5 rounded-full bg-primary-900" />
-
-              <span className="font-vazirmatn text-[11px] text-text-secondary">
-                فروش واقعی
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <span className="h-2.5 w-2.5 rounded-full bg-primary-700" />
-
-              <span className="font-vazirmatn text-[11px] text-text-secondary">
-                پیش‌بینی
-              </span>
-            </div>
-          </div>
-        </Card>
-
-        {/* Recent Orders */}
-        <Card className="overflow-hidden p-0">
-          <div
-            className="
-              flex
-              items-center
-              justify-between
-              border-b
-              border-primary-200
-              px-6
-              py-4
-            "
-          >
-            <div>
-              <h2
-                className="
-                  font-vazirmatn
-                  text-base
-                  font-semibold
-                  text-text-primary
-                "
-              >
-                سفارش‌های اخیر
-              </h2>
-
-              <p
-                className="
-                  mt-1
-                  font-vazirmatn
-                  text-[11px]
-                  text-text-secondary
-                "
-              >
-                آخرین سفارش‌های ثبت‌شده
+          {summary.totalOrders === 0 ? (
+            <div className="flex h-72 flex-col items-center justify-center gap-2 text-center">
+              <ShoppingCart size={28} className="text-text-secondary" />
+              <p className="font-vazirmatn text-sm text-text-secondary">
+                هنوز سفارشی ثبت نشده است.
               </p>
             </div>
+          ) : (
+            <div className="h-80 px-7 py-7">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={statusChartData}
+                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="#E6F2DD"
+                  />
+                  <XAxis
+                    dataKey="label"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 11, fill: "#111844" }}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    allowDecimals={false}
+                    tick={{ fontSize: 10, fill: "#111844" }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      borderRadius: "12px",
+                      border: "1px solid #E2E8F0",
+                      fontFamily: "Vazirmatn",
+                      fontSize: "12px",
+                    }}
+                  />
+                  <Bar dataKey="count" radius={[8, 8, 0, 0]}>
+                    {statusChartData.map((entry) => (
+                      <Cell key={entry.key} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </Card>
 
+        {/* Recent Orders (واقعی) */}
+        <Card className="overflow-hidden p-0">
+          <div className="flex items-center justify-between border-b border-primary-300 px-7 py-4">
+            <div>
+              <h2 className="font-vazirmatn text-lg font-semibold text-text-primary">
+                سفارش‌های اخیر
+              </h2>
+              <p className="mt-1 font-vazirmatn text-xs text-text-secondary">
+                آخرین فعالیت‌ها
+              </p>
+            </div>
             <button
               type="button"
-              className="
-                inline-flex
-                items-center
-                gap-1
-                font-vazirmatn
-                text-xs
-                font-medium
-                text-primary-900
-                transition-opacity
-                hover:opacity-70
-              "
+              onClick={() => navigate("/orders")}
+              className="font-vazirmatn text-xs font-medium text-primary-900 hover:underline"
             >
               مشاهده همه
-              <ArrowLeft size={13} />
             </button>
           </div>
 
           <div className="divide-y divide-border">
-            {recentOrders.map((order) => (
-              <div
+            {summary.recentOrders.length === 0 && (
+              <p className="px-7 py-10 text-center font-vazirmatn text-xs text-text-secondary">
+                سفارشی ثبت نشده است.
+              </p>
+            )}
+
+            {summary.recentOrders.map((order) => (
+              <button
                 key={order.id}
-                className="
-                  flex
-                  items-center
-                  justify-between
-                  gap-4
-                  px-6
-                  py-4
-                "
+                type="button"
+                onClick={() => navigate(`/orders/${order.id}`)}
+                className="flex w-full items-center justify-between px-7 py-4 text-right transition-colors hover:bg-background"
               >
                 <div>
-                  <p
-                    className="
-                      font-inter
-                      text-sm
-                      font-semibold
-                      text-text-primary
-                    "
-                  >
-                    {order.id}
+                  <p className="font-inter text-sm font-semibold text-text-primary">
+                    #{order.id}
                   </p>
-
-                  <p
-                    className="
-                      mt-1
-                      font-vazirmatn
-                      text-[11px]
-                      text-text-secondary
-                    "
-                  >
+                  <p className="mt-1.5 font-vazirmatn text-xs text-text-secondary">
                     {order.customer}
                   </p>
                 </div>
-
-                <Badge
-                  variant={
-                    order.status === "موفق" ? "success" : "primary"
-                  }
-                >
-                  {order.status}
+                <Badge variant={statusMeta[order.status].badge}>
+                  {statusMeta[order.status].label}
                 </Badge>
-              </div>
+              </button>
             ))}
           </div>
         </Card>
       </section>
 
-      {/* =====================================================
-          SECONDARY INFORMATION
-      ====================================================== */}
-      <section className="grid gap-6 desktop:grid-cols-2">
-        {/* Top Products */}
+      {/* Bottom Content */}
+      <section className="grid gap-6 tablet:grid-cols-2 desktop:grid-cols-3">
+        {/* Top Products (واقعی، از آیتم‌های سفارش‌ها) */}
         <Card className="overflow-hidden p-0">
-          <div
-            className="
-              flex
-              items-center
-              justify-between
-              border-b
-              border-primary-200
-              px-6
-              py-4
-            "
-          >
-            <div>
-              <h2
-                className="
-                  font-vazirmatn
-                  text-base
-                  font-semibold
-                  text-text-primary
-                "
-              >
-                محصولات پرفروش
-              </h2>
-
-              <p
-                className="
-                  mt-1
-                  font-vazirmatn
-                  text-[11px]
-                  text-text-secondary
-                "
-              >
-                محصولات با بیشترین فروش
-              </p>
-            </div>
-
-            <button
-              type="button"
-              aria-label="گزینه‌های بیشتر"
-              className="
-                rounded-lg
-                p-1
-                text-text-secondary
-                transition-colors
-                hover:bg-primary-50
-                hover:text-primary-900
-              "
-            >
-              <MoreHorizontal size={19} />
-            </button>
+          <div className="flex items-center justify-between border-b border-primary-300 px-7 py-4">
+            <h2 className="font-vazirmatn text-lg font-semibold text-text-primary">
+              محصولات پرفروش
+            </h2>
           </div>
-
           <div className="divide-y divide-border">
-            {topProducts.map((product, index) => (
+            {summary.topProducts.length === 0 && (
+              <p className="px-7 py-10 text-center font-vazirmatn text-xs text-text-secondary">
+                هنوز فروشی ثبت نشده است.
+              </p>
+            )}
+
+            {summary.topProducts.map((product, index) => (
               <div
                 key={product.name}
-                className="
-                  flex
-                  items-center
-                  justify-between
-                  gap-4
-                  px-6
-                  py-4
-                "
+                className="flex items-center justify-between px-7 py-4"
               >
-                <div className="flex min-w-0 items-center gap-4">
-                  <span
-                    className="
-                      flex
-                      h-9
-                      w-9
-                      shrink-0
-                      items-center
-                      justify-center
-                      rounded-xl
-                      bg-primary-100
-                      font-inter
-                      text-xs
-                      font-semibold
-                      text-primary-900
-                    "
-                  >
+                <div className="flex items-center gap-4">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary-100 font-inter text-xs font-semibold text-primary-900">
                     {index + 1}
                   </span>
-
-                  <div className="min-w-0">
-                    <p
-                      className="
-                        truncate
-                        font-vazirmatn
-                        text-sm
-                        font-medium
-                        text-text-primary
-                      "
-                    >
+                  <div>
+                    <p className="font-vazirmatn text-sm font-medium text-text-primary">
                       {product.name}
                     </p>
-
-                    <p
-                      className="
-                        mt-0.5
-                        font-vazirmatn
-                        text-[11px]
-                        text-text-secondary
-                      "
-                    >
-                      {product.sales}
+                    <p className="mt-0.5 font-vazirmatn text-[12px] text-text-secondary">
+                      {product.quantity.toLocaleString("fa-IR")} فروش
                     </p>
                   </div>
                 </div>
-
-                <ArrowUpLeft
-                  size={16}
-                  className="shrink-0 text-primary-900"
-                />
+                <ArrowUpLeft size={17} className="text-primary-900" />
               </div>
             ))}
           </div>
         </Card>
 
-        {/* Performance */}
-        <Card className="overflow-hidden p-0">
-          <div
-            className="
-              flex
-              items-center
-              justify-between
-              border-b
-              border-primary-200
-              px-6
-              py-4
-            "
-          >
+        {/* خلاصه عملکرد (نرخ‌های واقعی) */}
+        <Card className="p-0">
+          <div className="flex items-center justify-between border-b border-primary-300 px-7 py-4">
             <div>
-              <h2
-                className="
-                  font-vazirmatn
-                  text-base
-                  font-semibold
-                  text-text-primary
-                "
-              >
+              <h2 className="font-vazirmatn text-lg font-semibold text-text-primary">
                 خلاصه عملکرد
               </h2>
-
-              <p
-                className="
-                  mt-1
-                  font-vazirmatn
-                  text-[11px]
-                  text-text-secondary
-                "
-              >
-                وضعیت کلی عملکرد این ماه
+              <p className="mt-1 font-vazirmatn text-xs text-text-secondary">
+                وضعیت کلی سیستم
               </p>
             </div>
-
-            <span
-              className="
-                rounded-xl
-                bg-primary-100
-                px-3
-                py-1.5
-                font-vazirmatn
-                text-[10px]
-                text-primary-900
-              "
-            >
-              این ماه
-            </span>
           </div>
-
-          <div className="space-y-6 px-6 py-6">
+          <div className="mt-8 space-y-6 px-7 pb-7">
             <div>
-              <div className="mb-2 flex items-center justify-between">
+              <div className="mb-3 flex items-center justify-between">
                 <span className="font-vazirmatn text-xs text-text-secondary">
-                  فروش
+                  نرخ تکمیل سفارش
                 </span>
-
-                <span className="font-inter text-xs font-semibold text-text-primary">
-                  82%
+                <span className="font-inter text-xs font-semibold">
+                  {completionRate}%
                 </span>
               </div>
-
-              <div className="h-2 overflow-hidden rounded-full bg-primary-100">
-                <div className="h-full w-[82%] rounded-full bg-primary-900" />
+              <div className="h-2.5 overflow-hidden rounded-full bg-primary-100">
+                <div
+                  className="h-full rounded-full bg-primary-900"
+                  style={{ width: `${completionRate}%` }}
+                />
               </div>
             </div>
-
             <div>
-              <div className="mb-2 flex items-center justify-between">
+              <div className="mb-3 flex items-center justify-between">
                 <span className="font-vazirmatn text-xs text-text-secondary">
-                  رضایت مشتری
+                  نرخ کاربران فعال
                 </span>
-
-                <span className="font-inter text-xs font-semibold text-text-primary">
-                  94%
+                <span className="font-inter text-xs font-semibold">
+                  {activeUserRate}%
                 </span>
               </div>
-
-              <div className="h-2 overflow-hidden rounded-full bg-primary-100">
-                <div className="h-full w-[94%] rounded-full bg-primary-700" />
+              <div className="h-2.5 overflow-hidden rounded-full bg-primary-100">
+                <div
+                  className="h-full rounded-full bg-success"
+                  style={{ width: `${activeUserRate}%` }}
+                />
               </div>
             </div>
-
             <div>
-              <div className="mb-2 flex items-center justify-between">
+              <div className="mb-3 flex items-center justify-between">
                 <span className="font-vazirmatn text-xs text-text-secondary">
-                  تکمیل سفارش
+                  نرخ محصولات فعال
                 </span>
-
-                <span className="font-inter text-xs font-semibold text-text-primary">
-                  76%
+                <span className="font-inter text-xs font-semibold">
+                  {activeProductRate}%
                 </span>
               </div>
-
-              <div className="h-2 overflow-hidden rounded-full bg-primary-100">
-                <div className="h-full w-[76%] rounded-full bg-primary-900" />
+              <div className="h-2.5 overflow-hidden rounded-full bg-primary-100">
+                <div
+                  className="h-full rounded-full bg-primary-700"
+                  style={{ width: `${activeProductRate}%` }}
+                />
               </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Revenue Card */}
+        <Card
+          className="
+            relative overflow-hidden bg-primary-100 tablet:col-span-2 desktop:col-span-1
+            p-0
+          "
+        >
+          <div className="absolute -bottom-14 -left-14 h-44 w-44 rounded-full bg-primary-200 opacity-60" />
+          <div className="relative px-10 pt-10 pb-12">
+            <div className="flex items-center justify-between">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-primary-900">
+                <DollarSign size={26} />
+              </div>
+              <span className="font-vazirmatn text-xs text-primary-900">
+                درآمد کل (تکمیل‌شده)
+              </span>
+            </div>
+            <p className="mt-8 font-inter text-3xl font-bold text-primary-900">
+              {formatPrice(summary.totalRevenue)}
+            </p>
+            <div className="mt-5 flex items-center gap-3">
+              <span className="rounded-2xl bg-white/70 px-4 py-2 font-inter text-[11px] font-medium text-primary-900">
+                <TrendingUp size={11} className="ml-1 inline" />
+                {summary.ordersByStatus.completed.toLocaleString("fa-IR")}{" "}
+                سفارش موفق
+              </span>
             </div>
           </div>
         </Card>

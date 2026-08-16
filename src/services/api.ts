@@ -313,7 +313,15 @@ export const api = {
       await delay();
       const newUser: User = {
         ...user,
-        id: Math.max(...mockUsers.map((u) => u.id)) + 1,
+        /*
+          نکته: اگه mockUsers خالی باشه (همه‌ی نمونه‌ها حذف
+          شده باشن)، Math.max(...[]) مقدار -Infinity برمی‌گردونه
+          و ID خراب میشه. با یه fallback به 0 این حل شده.
+        */
+        id:
+          mockUsers.length > 0
+            ? Math.max(...mockUsers.map((u) => u.id)) + 1
+            : 1,
       };
       mockUsers.push(newUser);
       return newUser;
@@ -362,7 +370,10 @@ export const api = {
       await delay();
       const newProduct: Product = {
         ...product,
-        id: Math.max(...mockProducts.map((p) => p.id)) + 1,
+        id:
+          mockProducts.length > 0
+            ? Math.max(...mockProducts.map((p) => p.id)) + 1
+            : 1,
       };
       mockProducts.push(newProduct);
       return newProduct;
@@ -438,6 +449,156 @@ export const api = {
       if (index === -1) return false;
       mockOrders.splice(index, 1);
       return true;
+    },
+  },
+
+  /*
+    Analytics API
+    ----------------------------------------------------------
+    آمار و گزارشات با محاسبه‌ی زنده از روی داده‌های واقعی
+    users/products/orders (نه دیتای ثابت/نمونه). هر تغییری
+    که کاربر تو داده‌ها بده (افزودن/ویرایش/حذف)، این آمار هم
+    خودش به‌روز میشه چون هر بار از mockUsers/Products/Orders
+    فعلی محاسبه میشه.
+  */
+  analytics: {
+    async getSummary(): Promise<{
+      totalUsers: number;
+      totalProducts: number;
+      totalOrders: number;
+      totalRevenue: number;
+      averageOrderValue: number;
+      ordersByStatus: Record<Order["status"], number>;
+      usersByRole: Record<User["role"], number>;
+      usersByStatus: Record<User["status"], number>;
+      productsByCategory: { category: string; count: number }[];
+      lowStockProducts: Product[];
+      topProducts: { name: string; quantity: number; revenue: number }[];
+      recentOrders: Order[];
+    }> {
+      await delay();
+
+      /*
+        Revenue فقط از سفارش‌های completed حساب میشه
+        (سفارش pending/cancelled هنوز پول واقعی نیست)
+      */
+      const completedOrders = mockOrders.filter(
+        (o) => o.status === "completed"
+      );
+
+      const totalRevenue = completedOrders.reduce(
+        (sum, o) => sum + o.amount,
+        0
+      );
+
+      const averageOrderValue =
+        completedOrders.length > 0
+          ? Math.round(totalRevenue / completedOrders.length)
+          : 0;
+
+      /*
+        Orders by Status
+      */
+      const ordersByStatus: Record<Order["status"], number> = {
+        pending: 0,
+        processing: 0,
+        completed: 0,
+        cancelled: 0,
+      };
+
+      for (const order of mockOrders) {
+        ordersByStatus[order.status] += 1;
+      }
+
+      /*
+        Users by Role / Status
+      */
+      const usersByRole: Record<User["role"], number> = {
+        admin: 0,
+        manager: 0,
+        customer: 0,
+      };
+
+      const usersByStatus: Record<User["status"], number> = {
+        active: 0,
+        inactive: 0,
+      };
+
+      for (const user of mockUsers) {
+        usersByRole[user.role] += 1;
+        usersByStatus[user.status] += 1;
+      }
+
+      /*
+        Products by Category
+      */
+      const categoryMap = new Map<string, number>();
+
+      for (const product of mockProducts) {
+        categoryMap.set(
+          product.category,
+          (categoryMap.get(product.category) ?? 0) + 1
+        );
+      }
+
+      const productsByCategory = Array.from(
+        categoryMap.entries()
+      ).map(([category, count]) => ({ category, count }));
+
+      /*
+        Low Stock Products (موجودی کمتر از ۵ عدد و فعال)
+      */
+      const lowStockProducts = mockProducts.filter(
+        (p) => p.status === "active" && p.stock <= 5
+      );
+
+      /*
+        Top Products (بر اساس مجموع quantity فروخته‌شده تو
+        آیتم‌های سفارش‌ها، نه یه عدد ثابت)
+      */
+      const productSales = new Map<
+        string,
+        { quantity: number; revenue: number }
+      >();
+
+      for (const order of mockOrders) {
+        for (const item of order.items ?? []) {
+          const existing = productSales.get(item.name) ?? {
+            quantity: 0,
+            revenue: 0,
+          };
+
+          existing.quantity += item.quantity;
+          existing.revenue += item.price * item.quantity;
+
+          productSales.set(item.name, existing);
+        }
+      }
+
+      const topProducts = Array.from(productSales.entries())
+        .map(([name, stats]) => ({ name, ...stats }))
+        .sort((a, b) => b.quantity - a.quantity)
+        .slice(0, 5);
+
+      /*
+        Recent Orders (۵ سفارش آخر)
+      */
+      const recentOrders = mockOrders.slice(-5).reverse();
+
+      return {
+        totalUsers: mockUsers.length,
+        totalProducts: mockProducts.length,
+        totalOrders: mockOrders.length,
+        totalRevenue,
+        averageOrderValue,
+        ordersByStatus,
+        usersByRole,
+        usersByStatus,
+        productsByCategory,
+        lowStockProducts,
+        topProducts,
+        recentOrders,
+      };
     },
   },
 };

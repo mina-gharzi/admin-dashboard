@@ -9,12 +9,14 @@
   - Product Filters
   - Product Table
   - Product data (از services/api)
+  - افزودن / ویرایش محصول (ProductFormModal)
   ==========================================================
 */
 
 import { useMemo, useState } from "react";
 
 import { Plus } from "lucide-react";
+import { toast } from "react-toastify";
 
 import { Card } from "../components/ui/Card";
 import Button from "../components/ui/Button";
@@ -22,6 +24,7 @@ import PageHeader from "../components/ui/PageHeader";
 
 import ProductTable from "../components/product/ProductTable";
 import ProductFilters from "../components/product/ProductFilters";
+import ProductFormModal from "../components/product/ProductFormModal";
 
 import { useData } from "../hooks/useData";
 import { api, type Product } from "../services/api";
@@ -72,18 +75,49 @@ function Products() {
 
   /*
     --------------------------------------------------------
-    Actions
+    Form Modal State (Create / Edit)
+    --------------------------------------------------------
+  */
+
+  const [formModal, setFormModal] = useState<{
+    open: boolean;
+    editingProduct: Product | null;
+  }>({ open: false, editingProduct: null });
+
+  const openCreateModal = () => {
+    setFormModal({ open: true, editingProduct: null });
+  };
+
+  const openEditModal = (product: Product) => {
+    setFormModal({ open: true, editingProduct: product });
+  };
+
+  const closeFormModal = () => {
+    setFormModal({ open: false, editingProduct: null });
+  };
+
+  const handleFormSubmit = async (data: Omit<Product, "id">) => {
+    if (formModal.editingProduct) {
+      await api.products.update(formModal.editingProduct.id, data);
+      toast.success(`محصول «${data.name}» ویرایش شد.`);
+    } else {
+      await api.products.create(data);
+      toast.success(`محصول «${data.name}» با موفقیت اضافه شد.`);
+    }
+
+    await refetch();
+  };
+
+  /*
+    --------------------------------------------------------
+    Other Actions
     --------------------------------------------------------
   */
 
   const handleDelete = async (id: number) => {
     await api.products.delete(id);
+    toast.success("محصول حذف شد.");
     await refetch();
-  };
-
-  const handleEdit = (product: Product) => {
-    // TODO: باز کردن مودال ویرایش محصول
-    console.log("Edit product:", product);
   };
 
   return (
@@ -95,7 +129,7 @@ function Products() {
         description="مدیریت محصولات فروشگاه"
         breadcrumbs={[{ label: "محصولات" }]}
         actions={
-          <Button>
+          <Button onClick={openCreateModal}>
             <Plus size={18} />
             افزودن محصول
           </Button>
@@ -131,15 +165,38 @@ function Products() {
           </div>
         )}
 
+        {/* Empty State */}
+        {!loading && !error && products && products.length === 0 && (
+          <div className="flex flex-col items-center justify-center gap-3 p-12 text-center">
+            <p className="font-vazirmatn text-sm text-text-secondary">
+              هنوز هیچ محصولی ثبت نشده است.
+            </p>
+            <Button size="sm" onClick={openCreateModal}>
+              <Plus size={16} />
+              افزودن اولین محصول
+            </Button>
+          </div>
+        )}
+
         {/* Table */}
-        {!loading && !error && (
+        {!loading && !error && products && products.length > 0 && (
           <ProductTable
             products={filteredProducts}
-            onEdit={handleEdit}
+            onEdit={openEditModal}
             onDelete={handleDelete}
           />
         )}
       </Card>
+
+      {/* Form Modal */}
+
+      <ProductFormModal
+        key={`${formModal.open}-${formModal.editingProduct?.id ?? "create"}`}
+        open={formModal.open}
+        onClose={closeFormModal}
+        onSubmit={handleFormSubmit}
+        initialProduct={formModal.editingProduct}
+      />
     </div>
   );
 }

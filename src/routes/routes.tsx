@@ -23,31 +23,19 @@ import ProductDetails from "../pages/ProductDetails";
 import Orders from "../pages/Orders";
 
 import OrderDetails from "../pages/OrderDetails";
+
+import Analytics from "../pages/Analytics";
+
 /*
   ----------------------------------------------------------
   Temporary Pages
   ----------------------------------------------------------
-  فعلاً برای تست Router از کامپوننت‌های ساده استفاده می‌کنیم.
-  بعداً این‌ها را با Pageهای واقعی جایگزین می‌کنیم.
+  فعلاً فقط تنظیمات placeholder مونده؛ Analytics.tsx واقعی
+  شد و از پایین جایگزین شد.
   ----------------------------------------------------------
 */
 
-// eslint-disable-next-line react-refresh/only-export-components -- کامپوننت موقت، طبق کامنت بالا بعداً با pages/Analytics.tsx جایگزین میشه
-function AnalyticsPage() {
-  return (
-    <div>
-      <h1 className="font-vazirmatn text-2xl font-bold text-text-primary">
-        گزارش‌ها
-      </h1>
-
-      <p className="mt-2 font-vazirmatn text-sm text-text-secondary">
-        گزارش‌ها و تحلیل‌های سیستم
-      </p>
-    </div>
-  );
-}
-
-// eslint-disable-next-line react-refresh/only-export-components -- کامپوننت موقت، طبق کامنت بالا بعداً با pages/Settings.tsx جایگزین میشه
+// eslint-disable-next-line react-refresh/only-export-components -- کامپوننت موقت، بعداً با pages/Settings.tsx جایگزین میشه
 function SettingsPage() {
   return (
     <div>
@@ -104,7 +92,7 @@ const router = createBrowserRouter([
 
       {
         path: "analytics",
-        element: <AnalyticsPage />,
+        element: <Analytics />,
       },
 
       {

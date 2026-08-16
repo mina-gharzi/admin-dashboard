@@ -22,23 +22,29 @@
   ==========================================================
 */
 
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import {
   ArrowRight,
   CheckCircle2,
   Clock3,
+  Edit,
   Package,
   Truck,
   XCircle,
 } from "lucide-react";
+import { toast } from "react-toastify";
 
 import { Card } from "../components/ui/Card";
 import { Badge } from "../components/ui/Badge";
+import { Modal } from "../components/ui/Modal";
 import Button from "../components/ui/Button";
 
+import OrderFormModal from "../components/order/OrderFormModal";
+
 import { useData } from "../hooks/useData";
-import { api } from "../services/api";
+import { api, type Order } from "../services/api";
 import { formatPrice } from "../utils/format";
 
 const statusConfig = {
@@ -74,6 +80,10 @@ function OrderDetails() {
     error,
     refetch,
   } = useData(() => api.orders.getById(id ?? ""), [id]);
+
+  const [editOpen, setEditOpen] = useState(false);
+  const [cancelOpen, setCancelOpen] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
 
   if (loading) {
     return (
@@ -114,9 +124,28 @@ function OrderDetails() {
   const StatusIcon = currentStatus.icon;
   const items = order.items ?? [];
 
-  const handleCancelOrder = async () => {
-    await api.orders.update(order.id, { status: "cancelled" });
+  /*
+    Edit Modal
+  */
+  const handleEditSubmit = async (data: Partial<Order>) => {
+    await api.orders.update(order.id, data);
+    toast.success(`سفارش #${order.id} ویرایش شد.`);
     await refetch();
+  };
+
+  /*
+    Cancel Confirmation
+  */
+  const handleCancelConfirm = async () => {
+    setCancelling(true);
+    try {
+      await api.orders.update(order.id, { status: "cancelled" });
+      toast.info(`سفارش #${order.id} لغو شد.`);
+      await refetch();
+      setCancelOpen(false);
+    } finally {
+      setCancelling(false);
+    }
   };
 
   return (
@@ -308,12 +337,55 @@ function OrderDetails() {
           بازگشت به سفارش‌ها
         </Button>
 
+        <Button variant="outline" onClick={() => setEditOpen(true)}>
+          <Edit size={17} />
+          ویرایش سفارش
+        </Button>
+
         {order.status !== "completed" && order.status !== "cancelled" && (
-          <Button variant="danger" onClick={handleCancelOrder}>
+          <Button variant="danger" onClick={() => setCancelOpen(true)}>
             لغو سفارش
           </Button>
         )}
       </div>
+
+      {/* Edit Modal */}
+
+      <OrderFormModal
+        key={`${editOpen}-${order.id}`}
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        onSubmit={handleEditSubmit}
+        order={order}
+      />
+
+      {/* Cancel Confirmation Modal */}
+
+      <Modal
+        open={cancelOpen}
+        onClose={() => setCancelOpen(false)}
+        title="لغو سفارش"
+        description={`آیا می‌خواهید سفارش #${order.id} را لغو کنید؟`}
+        footer={
+          <>
+            <Button variant="outline" onClick={() => setCancelOpen(false)}>
+              انصراف
+            </Button>
+
+            <Button
+              variant="danger"
+              loading={cancelling}
+              onClick={handleCancelConfirm}
+            >
+              لغو سفارش
+            </Button>
+          </>
+        }
+      >
+        <p className="font-vazirmatn text-sm text-text-secondary">
+          این عمل قابل برگشت نیست.
+        </p>
+      </Modal>
     </div>
   );
 }

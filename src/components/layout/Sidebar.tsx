@@ -35,6 +35,7 @@ import { cn } from "../../utils/cn";
 import { useUIStore } from "../../store";
 
 import { useMobileSidebar } from "../../hooks/useMobileSidebar";
+import { useLogout } from "../../hooks/useLogout";
 
 /*
   ----------------------------------------------------------
@@ -110,6 +111,8 @@ function Sidebar() {
     closeMobileSidebar,
     toggleSidebar,
   } = useUIStore();
+
+  const { logout } = useLogout();
 
   return (
     <>
@@ -399,6 +402,7 @@ function Sidebar() {
 
           <button
             type="button"
+            onClick={logout}
             className={cn(
               "flex w-full items-center",
               "rounded-md py-2.5",

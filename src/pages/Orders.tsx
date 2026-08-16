@@ -15,12 +15,14 @@
 
 import { useMemo, useState } from "react";
 import { Activity } from "lucide-react";
+import { toast } from "react-toastify";
 
 import { Card } from "../components/ui/Card";
 import PageHeader from "../components/ui/PageHeader";
 
 import OrderTable from "../components/order/OrderTable";
 import OrderFilters from "../components/order/OrderFilters";
+import OrderFormModal from "../components/order/OrderFormModal";
 
 import { useData } from "../hooks/useData";
 import { api, type Order } from "../services/api";
@@ -53,13 +55,43 @@ function Orders() {
     });
   }, [orders, search, status]);
 
-  const handleCancel = async (id: string) => {
-    await api.orders.update(id, { status: "cancelled" });
+  /*
+    --------------------------------------------------------
+    Edit Modal State
+    --------------------------------------------------------
+  */
+
+  const [editModal, setEditModal] = useState<{
+    open: boolean;
+    order: Order | null;
+  }>({ open: false, order: null });
+
+  const openEditModal = (order: Order) => {
+    setEditModal({ open: true, order });
+  };
+
+  const closeEditModal = () => {
+    setEditModal({ open: false, order: null });
+  };
+
+  const handleEditSubmit = async (data: Partial<Order>) => {
+    if (!editModal.order) return;
+
+    await api.orders.update(editModal.order.id, data);
+    toast.success(`سفارش #${editModal.order.id} ویرایش شد.`);
     await refetch();
   };
 
-  const handleEdit = (order: Order) => {
-    console.log("Edit order:", order);
+  /*
+    --------------------------------------------------------
+    Cancel Action
+    --------------------------------------------------------
+  */
+
+  const handleCancel = async (id: string) => {
+    await api.orders.update(id, { status: "cancelled" });
+    toast.info(`سفارش #${id} لغو شد.`);
+    await refetch();
   };
 
   return (
@@ -124,14 +156,32 @@ function Orders() {
           </div>
         )}
 
-        {!loading && !error && (
+        {!loading && !error && orders && orders.length === 0 && (
+          <div className="flex min-h-72 flex-col items-center justify-center gap-3 p-12 text-center">
+            <p className="font-vazirmatn text-sm text-text-secondary">
+              هنوز هیچ سفارشی ثبت نشده است.
+            </p>
+          </div>
+        )}
+
+        {!loading && !error && orders && orders.length > 0 && (
           <OrderTable
             orders={filteredOrders}
-            onEdit={handleEdit}
+            onEdit={openEditModal}
             onCancel={handleCancel}
           />
         )}
       </Card>
+
+      {/* Edit Modal */}
+
+      <OrderFormModal
+        key={`${editModal.open}-${editModal.order?.id ?? "none"}`}
+        open={editModal.open}
+        onClose={closeEditModal}
+        onSubmit={handleEditSubmit}
+        order={editModal.order}
+      />
     </div>
   );
 }
