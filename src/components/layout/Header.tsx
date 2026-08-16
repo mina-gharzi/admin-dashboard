@@ -13,42 +13,22 @@
   ==========================================================
 */
 
-/*
-  ==========================================================
-  Header.tsx
-  ----------------------------------------------------------
-  Main header — polished Admin Dashboard design
-  ----------------------------------------------------------
-  نکته:
-  فقط UI/UX این فایل بازطراحی شده.
-  منطق Search / Notifications / Sidebar / Logout / Navigation
-  بدون تغییر باقی مانده است.
-  ==========================================================
-*/
-
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import { Menu, Search, Bell, User, X, Loader2 } from "lucide-react";
+import { Menu, Search, Bell, User, ChevronDown, X, Loader2 } from "lucide-react";
 
 import { Dropdown } from "../ui/Dropdown";
 import NotificationsPanel from "./NotificationsPanel";
 
 import { cn } from "../../utils/cn";
-import { useUIStore } from "../../store";
+import { useUIStore, useAuthStore } from "../../store";
 import { useLogout } from "../../hooks/useLogout";
-
-import {
-  api,
-  type Order,
-  type Product,
-  type User as UserType,
-} from "../../services/api";
+import { api, type Order, type Product, type User as UserType } from "../../services/api";
 
 /*
-  ==========================================================
-  Search Results
-  ==========================================================
+  ----------------------------------------------------------
+  Search Results Type
+  ----------------------------------------------------------
 */
 
 interface SearchResults {
@@ -57,16 +37,12 @@ interface SearchResults {
   orders: Order[];
 }
 
-const emptyResults: SearchResults = {
-  users: [],
-  products: [],
-  orders: [],
-};
+const emptyResults: SearchResults = { users: [], products: [], orders: [] };
 
 /*
-  ==========================================================
-  Header
-  ==========================================================
+  ----------------------------------------------------------
+  Header Component
+  ----------------------------------------------------------
 */
 
 function Header() {
@@ -74,32 +50,31 @@ function Header() {
   const { logout } = useLogout();
 
   const { isMobileSidebarOpen, toggleMobileSidebar } = useUIStore();
+  const user = useAuthStore((state) => state.user);
+
+  const roleLabels = {
+    admin: "مدیر سیستم",
+    manager: "مدیر فروش",
+    customer: "مشتری",
+  };
 
   /*
-    ========================================================
-    Search
-    ========================================================
+    --------------------------------------------------------
+    Global Search
+    --------------------------------------------------------
   */
 
   const [search, setSearch] = useState("");
   const [results, setResults] = useState<SearchResults>(emptyResults);
-
   const [searching, setSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
-
   const searchBoxRef = useRef<HTMLDivElement>(null);
-
-  /*
-    --------------------------------------------------------
-    Search Effect
-    --------------------------------------------------------
-  */
 
   useEffect(() => {
     const query = search.trim();
 
     if (query.length < 2) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- برخلاف فرم‌ها، اینجا effect داره با یه سیستم خارجی (جستجوی async debounce‌شده) sync میشه؛ دقیقاً همون caseـی که مستندات React برای استفاده از effect توصیه می‌کنه
       setResults(emptyResults);
       setSearching(false);
       return;
@@ -119,7 +94,6 @@ function Header() {
         products: products.slice(0, 3),
         orders: orders.slice(0, 3),
       });
-
       setSearching(false);
     }, 300);
 
@@ -127,11 +101,8 @@ function Header() {
   }, [search]);
 
   /*
-    --------------------------------------------------------
-    Close Search Result On Outside Click
-    --------------------------------------------------------
+    بستن نتایج جستجو با کلیک بیرون
   */
-
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -143,17 +114,8 @@ function Header() {
     }
 
     document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  /*
-    --------------------------------------------------------
-    Search Helpers
-    --------------------------------------------------------
-  */
 
   const hasResults =
     results.users.length > 0 ||
@@ -167,202 +129,141 @@ function Header() {
   };
 
   /*
-    ========================================================
-    Notifications
-    ========================================================
+    --------------------------------------------------------
+    Notifications Panel
+    --------------------------------------------------------
   */
 
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-
-  /*
-    ========================================================
-    Render
-    ========================================================
-  */
 
   return (
     <header
       className={cn(
         "sticky top-0 z-30",
-        "h-17",
-        "border-b border-border/80",
-        "bg-surface/95",
-        "backdrop-blur-xl",
+        "h-[68px]",
+        "border-b border-primary-300/70",
+        "bg-surface/90",
+        "backdrop-blur-md",
       )}
     >
       <div
         className={cn(
-          "flex h-full items-center justify-between",
-          "px-4 tablet:px-6 desktop:px-8",
+          "relative flex h-full items-center justify-between",
+          "px-4 tablet:px-6 desktop:px-7",
         )}
       >
         {/* ==================================================
-            LEFT
+            Left Section — Menu + Search
             ================================================== */}
-
-        <div className="flex items-center gap-3">
-          {/* Mobile Sidebar */}
-
+        <div className="flex items-center gap-3 desktop:mr-14">
+          {/* Mobile Menu Button */}
           <button
             type="button"
             onClick={toggleMobileSidebar}
             className={cn(
               "flex desktop:hidden",
-              "h-10 w-10 items-center justify-center",
-              "rounded-xl",
+              "h-10 w-10",
+              "items-center justify-center",
+              "rounded-2xl",
               "text-text-secondary",
-              "transition-colors duration-200",
-              "hover:bg-primary-50 hover:text-primary-900",
+              "transition-all duration-200",
+              "hover:bg-primary-100 hover:text-primary-900",
               "active:scale-95",
             )}
             aria-label={isMobileSidebarOpen ? "بستن منو" : "باز کردن منو"}
           >
-            {isMobileSidebarOpen ? <X size={20} /> : <Menu size={20} />}
+            {isMobileSidebarOpen ? <X size={21} /> : <Menu size={21} />}
           </button>
 
-          {/* =================================================
-              Search
-              ================================================= */}
+          {/* Search */}
+          <div ref={searchBoxRef} className="relative hidden w-72 tablet:block">
+            <Search
+              size={17}
+              className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-text-secondary"
+            />
 
-          <div ref={searchBoxRef} className="relative hidden tablet:block">
-            <div className="relative w-64 desktop:w-80">
-              <Search
-                size={16}
-                strokeWidth={1.8}
-                className={cn(
-                  "pointer-events-none absolute right-3.5",
-                  "top-1/2 -translate-y-1/2",
-                  "text-text-secondary",
-                )}
-              />
-
-              <input
-                value={search}
-                onChange={(event) => {
-                  setSearch(event.target.value);
-                  setShowResults(true);
-                }}
-                onFocus={() => setShowResults(true)}
-                type="search"
-                placeholder="جستجو..."
-                className={cn(
-                  "h-10 w-full",
-                  "rounded-xl",
-                  "border border-border",
-                  "bg-background",
-                  "pr-10 pl-10",
-                  "font-vazirmatn text-xs",
-                  "text-text-primary",
-                  "placeholder:text-text-secondary/70",
-                  "outline-none",
-                  "transition-all duration-200",
-                  "focus:border-primary-700",
-                  "focus:bg-surface",
-                  "focus:ring-2 focus:ring-primary-100",
-                )}
-              />
-
-              {searching && (
-                <Loader2
-                  size={15}
-                  className={cn(
-                    "absolute left-3.5 top-1/2",
-                    "-translate-y-1/2",
-                    "animate-spin",
-                    "text-text-secondary",
-                  )}
-                />
+            <input
+              value={search}
+              onChange={(event) => {
+                setSearch(event.target.value);
+                setShowResults(true);
+              }}
+              onFocus={() => setShowResults(true)}
+              type="search"
+              placeholder="جستجوی کاربر، محصول، سفارش ..."
+              className={cn(
+                "h-10 w-full",
+                "rounded-2xl",
+                "border border-primary-300/80",
+                "bg-background/80",
+                "pr-11 pl-4",
+                "font-vazirmatn text-sm text-text-primary",
+                "placeholder:text-text-secondary/80",
+                "outline-none",
+                "transition-all duration-200",
+                "focus:border-primary-900",
+                "focus:bg-surface",
+                "focus:ring-[3px] focus:ring-primary-100",
               )}
-            </div>
+            />
 
-            {/* =================================================
-                Search Results
-                ================================================= */}
+            {searching && (
+              <Loader2
+                size={15}
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 animate-spin text-text-secondary"
+              />
+            )}
 
+            {/* Search Results Dropdown */}
             {showResults && search.trim().length >= 2 && (
               <div
                 className={cn(
-                  "absolute right-0 top-full z-50 mt-2",
+                  "absolute right-0 top-full z-40 mt-2",
                   "w-80",
-                  "overflow-hidden",
-                  "rounded-2xl",
-                  "border border-border",
+                  "overflow-hidden rounded-2xl",
+                  "border border-primary-300/70",
                   "bg-surface",
-                  "shadow-xl",
+                  "shadow-lg",
                 )}
               >
-                {/* No Result */}
-
                 {!searching && !hasResults && (
-                  <div className="px-5 py-8 text-center">
-                    <Search
-                      size={20}
-                      className="mx-auto text-text-secondary/60"
-                    />
-
-                    <p className="mt-3 font-vazirmatn text-xs text-text-secondary">
-                      نتیجه‌ای پیدا نشد.
-                    </p>
-                  </div>
+                  <p className="p-4 text-center font-vazirmatn text-xs text-text-secondary">
+                    نتیجه‌ای پیدا نشد.
+                  </p>
                 )}
-
-                {/* Users */}
 
                 {results.users.length > 0 && (
                   <div className="border-b border-border p-2">
-                    <p className="px-3 py-2 font-vazirmatn text-[10px] font-semibold text-text-secondary">
+                    <p className="px-2 py-1 font-vazirmatn text-[11px] font-medium text-text-secondary">
                       کاربران
                     </p>
-
                     {results.users.map((u) => (
                       <button
                         key={u.id}
                         type="button"
                         onClick={() => goTo("/users")}
-                        className={cn(
-                          "flex w-full items-center",
-                          "rounded-xl px-3 py-2.5",
-                          "text-right",
-                          "transition-colors",
-                          "hover:bg-primary-50",
-                        )}
+                        className="block w-full rounded-lg px-2 py-1.5 text-right font-vazirmatn text-xs text-text-primary hover:bg-background"
                       >
-                        <div className="min-w-0">
-                          <p className="truncate font-vazirmatn text-xs font-medium text-text-primary">
-                            {u.name}
-                          </p>
-
-                          <span className="mt-0.5 block truncate font-vazirmatn text-[10px] text-text-secondary">
-                            {u.email}
-                          </span>
-                        </div>
+                        {u.name}
+                        <span className="mr-1.5 text-text-secondary">
+                          — {u.email}
+                        </span>
                       </button>
                     ))}
                   </div>
                 )}
 
-                {/* Products */}
-
                 {results.products.length > 0 && (
                   <div className="border-b border-border p-2">
-                    <p className="px-3 py-2 font-vazirmatn text-[10px] font-semibold text-text-secondary">
+                    <p className="px-2 py-1 font-vazirmatn text-[11px] font-medium text-text-secondary">
                       محصولات
                     </p>
-
                     {results.products.map((p) => (
                       <button
                         key={p.id}
                         type="button"
                         onClick={() => goTo(`/products/${p.id}`)}
-                        className={cn(
-                          "block w-full rounded-xl",
-                          "px-3 py-2.5",
-                          "text-right",
-                          "font-vazirmatn text-xs",
-                          "text-text-primary",
-                          "transition-colors",
-                          "hover:bg-primary-50",
-                        )}
+                        className="block w-full rounded-lg px-2 py-1.5 text-right font-vazirmatn text-xs text-text-primary hover:bg-background"
                       >
                         {p.name}
                       </button>
@@ -370,33 +271,21 @@ function Header() {
                   </div>
                 )}
 
-                {/* Orders */}
-
                 {results.orders.length > 0 && (
                   <div className="p-2">
-                    <p className="px-3 py-2 font-vazirmatn text-[10px] font-semibold text-text-secondary">
+                    <p className="px-2 py-1 font-vazirmatn text-[11px] font-medium text-text-secondary">
                       سفارش‌ها
                     </p>
-
                     {results.orders.map((o) => (
                       <button
                         key={o.id}
                         type="button"
                         onClick={() => goTo(`/orders/${o.id}`)}
-                        className={cn(
-                          "flex w-full items-center",
-                          "rounded-xl px-3 py-2.5",
-                          "text-right",
-                          "transition-colors",
-                          "hover:bg-primary-50",
-                        )}
+                        className="block w-full rounded-lg px-2 py-1.5 text-right font-vazirmatn text-xs text-text-primary hover:bg-background"
                       >
-                        <span className="font-inter text-xs font-semibold text-text-primary">
-                          #{o.id}
-                        </span>
-
-                        <span className="mr-2 truncate font-vazirmatn text-[10px] text-text-secondary">
-                          {o.customer}
+                        #{o.id}
+                        <span className="mr-1.5 text-text-secondary">
+                          — {o.customer}
                         </span>
                       </button>
                     ))}
@@ -408,38 +297,31 @@ function Header() {
         </div>
 
         {/* ==================================================
-            RIGHT
+            Right Section — Notifications + User
             ================================================== */}
-
-        <div className="flex items-center gap-1">
-          {/* =================================================
-              Notifications
-              ================================================= */}
-
+        <div className="flex items-center gap-1.5 desktop:ml-14">
+          {/* Notifications */}
           <div className="relative">
             <button
               type="button"
-              onClick={() => setNotificationsOpen((value) => !value)}
+              onClick={() => setNotificationsOpen((v) => !v)}
               className={cn(
-                "relative flex h-10 w-10",
-                "items-center justify-center",
-                "rounded-xl",
+                "relative",
+                "flex h-10 w-10 items-center justify-center",
+                "rounded-2xl",
                 "text-text-secondary",
-                "transition-colors duration-200",
-                "hover:bg-primary-50",
-                "hover:text-primary-900",
+                "transition-all duration-200",
+                "hover:bg-primary-100 hover:text-primary-900",
                 "active:scale-95",
               )}
               aria-label="اعلان‌ها"
             >
               <Bell size={19} strokeWidth={1.8} />
 
-              {/* Notification Dot */}
-
               <span
                 className={cn(
                   "absolute right-2.5 top-2.5",
-                  "h-1.5 w-1.5",
+                  "h-2 w-2",
                   "rounded-full",
                   "bg-danger",
                   "ring-2 ring-surface",
@@ -453,55 +335,46 @@ function Header() {
           </div>
 
           {/* Divider */}
+          <div className="mx-1.5 hidden h-8 w-px bg-primary-300/60 tablet:block" />
 
-          <div
-            className={cn("mx-2 hidden tablet:block", "h-7 w-px", "bg-border")}
-          />
-
-          {/* =================================================
-              User
-              ================================================= */}
-
+          {/* User Dropdown */}
           <Dropdown
             trigger={
-              <button
-                type="button"
+              <div
                 className={cn(
-                  "flex items-center gap-2",
-                  "rounded-xl",
-                  "px-2 py-1.5",
-                  "transition-colors duration-200",
+                  "flex items-center gap-2.5",
+                  "cursor-pointer",
+                  "rounded-2xl py-1.5 pl-1.5 pr-2",
+                  "transition-all duration-200",
                   "hover:bg-primary-50",
                 )}
               >
-                {/* Avatar */}
-
                 <div
                   className={cn(
-                    "flex h-9 w-9 shrink-0",
-                    "items-center justify-center",
-                    "rounded-xl",
+                    "flex h-9 w-9 items-center justify-center",
+                    "rounded-2xl",
                     "bg-primary-100",
                     "text-primary-900",
+                    "shadow-sm",
                   )}
                 >
                   <User size={17} strokeWidth={1.8} />
                 </div>
 
-                {/* User Info */}
-
                 <div className="hidden text-right tablet:block">
-                  <p className="font-vazirmatn text-[12px] font-semibold leading-tight text-text-primary">
-                    مینا
+                  <p className="font-vazirmatn text-[13px] font-semibold leading-tight text-text-primary">
+                    {user?.name ?? "کاربر"}
                   </p>
-
-                  <p className="mt-0.5 font-vazirmatn text-[10px] text-text-secondary">
-                    مدیر سیستم
+                  <p className="mt-0.5 font-vazirmatn text-[11px] text-text-secondary">
+                    {roleLabels[user?.role ?? "admin"]}
                   </p>
                 </div>
 
-                {/* فقط یک فلش */}
-              </button>
+                <ChevronDown
+                  size={15}
+                  className="hidden text-text-secondary tablet:block"
+                />
+              </div>
             }
             items={[
               {

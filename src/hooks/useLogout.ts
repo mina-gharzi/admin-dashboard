@@ -4,24 +4,25 @@
   ----------------------------------------------------------
   هوک مشترک خروج از حساب.
   ----------------------------------------------------------
-  نکته: این پروژه فعلاً سیستم احراز هویت واقعی نداره (بدون
-  صفحه Login/JWT/Session)، پس «خروج» به معنای واقعی وجود
-  نداره. این هوک رفتار قابل‌قبولی برای دمو فراهم می‌کنه:
-  یه پیام تأیید نشون میده و کاربر رو به Dashboard برمی‌گردونه.
-  وقتی احراز هویت واقعی اضافه شد، این تابع باید session/token
-  رو هم پاک کنه.
+  session رو تو authStore پاک می‌کنه (که خودش localStorage
+  رو هم پاک می‌کنه چون authStore با persist ساخته شده) و
+  کاربر رو به صفحه‌ی /login برمی‌گردونه.
   ==========================================================
 */
 
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import { useAuthStore } from "../store";
+
 export function useLogout() {
   const navigate = useNavigate();
+  const authLogout = useAuthStore((state) => state.logout);
 
   const logout = () => {
+    authLogout();
     toast.info("با موفقیت از حساب خارج شدید.");
-    navigate("/");
+    navigate("/login", { replace: true });
   };
 
   return { logout };

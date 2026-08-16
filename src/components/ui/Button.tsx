@@ -15,125 +15,134 @@
   ==========================================================
 */
 
-/*
-  ==========================================================
-  Button.tsx
-  ----------------------------------------------------------
-  Reusable Button component
-  ----------------------------------------------------------
-*/
-
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type {
+  ButtonHTMLAttributes,
+  ReactNode,
+} from "react";
 
 import { Loader2 } from "lucide-react";
 
 import { cn } from "../../utils/cn";
 
 /*
-  ==========================================================
-  Types
-  ==========================================================
+  ----------------------------------------------------------
+  Button Variants
+  ----------------------------------------------------------
 */
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger";
+type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "outline"
+  | "ghost"
+  | "danger";
 
-type ButtonSize = "sm" | "md" | "lg";
+/*
+  ----------------------------------------------------------
+  Button Sizes
+  ----------------------------------------------------------
+*/
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+type ButtonSize =
+  | "sm"
+  | "md"
+  | "lg";
+
+/*
+  ----------------------------------------------------------
+  Button Props
+  ----------------------------------------------------------
+*/
+
+interface ButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
+
   size?: ButtonSize;
+
   loading?: boolean;
+
   leftIcon?: ReactNode;
+
   rightIcon?: ReactNode;
 }
 
 /*
-  ==========================================================
+  ----------------------------------------------------------
   Variant Styles
   ----------------------------------------------------------
-  Clean / professional / dashboard style
-  ==========================================================
 */
 
-const variantStyles: Record<ButtonVariant, string> = {
+const variantStyles: Record<
+  ButtonVariant,
+  string
+> = {
   primary: cn(
     "bg-primary-900",
     "text-white",
-    "border border-primary-900",
-
     "hover:bg-primary-800",
-    "hover:border-primary-800",
-
-    "active:bg-primary-950",
-    "active:border-primary-950",
-
-    "shadow-sm",
   ),
 
   secondary: cn(
     "bg-primary-100",
     "text-primary-900",
-    "border border-primary-100",
-
     "hover:bg-primary-200",
-    "hover:border-primary-200",
-
-    "active:bg-primary-200",
   ),
 
   outline: cn(
+    "border border-border",
     "bg-surface",
     "text-text-primary",
-    "border border-border",
-
-    "hover:bg-primary-50",
-    "hover:border-primary-300",
-
-    "active:bg-primary-100",
+    "hover:bg-primary-100",
   ),
 
   ghost: cn(
     "bg-transparent",
     "text-text-secondary",
-    "border border-transparent",
-
-    "hover:bg-primary-50",
+    "hover:bg-primary-100",
     "hover:text-primary-900",
-
-    "active:bg-primary-100",
   ),
 
   danger: cn(
     "bg-danger",
     "text-white",
-    "border border-danger",
-
-    "hover:brightness-95",
-
-    "active:brightness-90",
-
-    "shadow-sm",
+    "hover:opacity-90",
   ),
 };
 
 /*
-  ==========================================================
+  ----------------------------------------------------------
   Size Styles
-  ==========================================================
+  ----------------------------------------------------------
 */
 
-const sizeStyles: Record<ButtonSize, string> = {
-  sm: cn("h-9", "px-3.5", "text-xs", "gap-1.5"),
+const sizeStyles: Record<
+  ButtonSize,
+  string
+> = {
+  sm: cn(
+    "h-8",
+    "px-3",
+    "text-xs",
+  ),
 
-  md: cn("h-10", "px-4", "text-sm", "gap-2"),
+  md: cn(
+    "h-10",
+    "px-4",
+    "text-sm",
+  ),
 
-  lg: cn("h-11", "px-5", "text-sm", "gap-2"),
+  lg: cn(
+    "h-11",
+    "px-5",
+    "text-sm",
+  ),
 };
 
 /*
-  ==========================================================
+  ----------------------------------------------------------
   Button Component
-  ==========================================================
+  ----------------------------------------------------------
 */
 
 function Button({
@@ -153,92 +162,92 @@ function Button({
       disabled={disabled || loading}
       className={cn(
         /*
-          --------------------------------------------------
-          Base
-          --------------------------------------------------
+          ------------------------------------------------
+          Base Styles
+          ------------------------------------------------
         */
 
         "inline-flex",
         "items-center",
         "justify-center",
+        "gap-2",
 
-        "rounded-lg",
+        "rounded-md",
 
         "font-vazirmatn",
         "font-medium",
+
         "whitespace-nowrap",
 
-        "transition-all",
-        "duration-150",
-
-        "select-none",
+        "transition-colors",
+        "duration-200",
 
         "outline-none",
 
-        /*
-          --------------------------------------------------
-          Interaction
-          --------------------------------------------------
-        */
-
-        "active:scale-[0.98]",
-
         "focus-visible:ring-2",
         "focus-visible:ring-primary-300",
-        "focus-visible:ring-offset-2",
-        "focus-visible:ring-offset-surface",
 
         /*
-          --------------------------------------------------
-          Disabled
-          --------------------------------------------------
-        */
-
-        "disabled:pointer-events-none",
-        "disabled:cursor-not-allowed",
-        "disabled:opacity-50",
-
-        /*
-          --------------------------------------------------
+          ------------------------------------------------
           Variant
-          --------------------------------------------------
+          ------------------------------------------------
         */
 
         variantStyles[variant],
 
         /*
-          --------------------------------------------------
+          ------------------------------------------------
           Size
-          --------------------------------------------------
+          ------------------------------------------------
         */
 
         sizeStyles[size],
 
         /*
-          --------------------------------------------------
-          Custom
-          --------------------------------------------------
+          ------------------------------------------------
+          Disabled
+          ------------------------------------------------
+        */
+
+        "disabled:cursor-not-allowed",
+        "disabled:opacity-50",
+
+        /*
+          ------------------------------------------------
+          Custom Class
+          ------------------------------------------------
         */
 
         className,
       )}
       {...props}
     >
-      {/* Loading */}
+      {/* ==================================================
+          Loading
+          ================================================== */}
 
       {loading && (
-        <Loader2 size={16} strokeWidth={2} className="animate-spin" />
+        <Loader2
+          size={16}
+          className="animate-spin"
+        />
       )}
 
-      {/* Right Icon */}
+      {/* ==================================================
+          Right Icon
+          ================================================== */}
 
       {!loading && rightIcon}
 
-      {/* Content */}
+      {/* ==================================================
+          Content
+          ================================================== */}
 
       {children}
 
-      {/* Left Icon */}
+      {/* ==================================================
+          Left Icon
+          ================================================== */}
 
       {!loading && leftIcon}
     </button>

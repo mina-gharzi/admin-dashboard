@@ -152,7 +152,7 @@ function ProductDetails() {
         {/* Product Preview */}
 
         <Card className="desktop:col-span-1">
-          <div className="flex min-h-80 items-center justify-center bg-background p-8">
+          <div className="flex min-h-[320px] items-center justify-center bg-background p-8">
             <div className="flex h-40 w-40 items-center justify-center rounded-2xl bg-primary-100 text-primary-900">
               <Package size={72} strokeWidth={1.5} />
             </div>

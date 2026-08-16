@@ -18,7 +18,10 @@
  * @example
  * formatPrice(1000000) // "۱٬۰۰۰٬۰۰۰ تومان"
  */
-export function formatPrice(price: number, includeCurrency = false): string {
+export function formatPrice(
+  price: number,
+  includeCurrency = false
+): string {
   const formatted = new Intl.NumberFormat("fa-IR").format(price);
   return includeCurrency ? `${formatted} تومان` : formatted;
 }
@@ -30,7 +33,7 @@ export function formatPrice(price: number, includeCurrency = false): string {
  */
 export function formatDate(
   dateString: string,
-  options?: Intl.DateTimeFormatOptions,
+  options?: Intl.DateTimeFormatOptions
 ): string {
   const date = new Date(dateString);
   return new Intl.DateTimeFormat("fa-IR", {
@@ -60,7 +63,7 @@ export function formatPhone(phone: string): string {
 export function truncateText(
   text: string,
   maxLength: number,
-  suffix = "...",
+  suffix = "..."
 ): string {
   if (text.length <= maxLength) return text;
   return text.slice(0, maxLength) + suffix;
@@ -107,14 +110,14 @@ export function toEnglishNumber(text: string): string {
   const englishDigits = "0123456789";
   const persianDigits = "۰۱۲۳۴۵۶۷۸۹";
   let result = text;
-
+  
   for (let i = 0; i < 10; i++) {
     result = result.replace(
       new RegExp(persianDigits[i], "g"),
-      englishDigits[i],
+      englishDigits[i]
     );
   }
-
+  
   return result;
 }
 
@@ -123,7 +126,10 @@ export function toEnglishNumber(text: string): string {
  * @example
  * calculatePercentage(50, 100) // 50
  */
-export function calculatePercentage(value: number, total: number): number {
+export function calculatePercentage(
+  value: number,
+  total: number
+): number {
   if (total === 0) return 0;
   return Math.round((value / total) * 100);
 }
@@ -133,7 +139,10 @@ export function calculatePercentage(value: number, total: number): number {
  * @example
  * formatBytes(1024) // "1 KB"
  */
-export function formatBytes(bytes: number, decimals = 2): string {
+export function formatBytes(
+  bytes: number,
+  decimals = 2
+): string {
   if (bytes === 0) return "0 Bytes";
 
   const k = 1024;

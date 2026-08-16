@@ -11,7 +11,9 @@
 import { createBrowserRouter } from "react-router-dom";
 
 import DashboardLayout from "../components/layout/DashboardLayout";
+import RequireAuth from "./RequireAuth";
 
+import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 
 import Users from "../pages/Users";
@@ -53,51 +55,66 @@ function SettingsPage() {
 /*
   ==========================================================
   Router
+  ----------------------------------------------------------
+  /login خارج از DashboardLayout و RequireAuth است (بدون
+  Sidebar/Header). بقیه‌ی مسیرها زیر RequireAuth هستن، پس
+  بدون لاگین بودن مستقیم به /login هدایت میشن.
   ==========================================================
 */
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <DashboardLayout />,
+    path: "/login",
+    element: <Login />,
+  },
+
+  {
+    element: <RequireAuth />,
 
     children: [
       {
-        index: true,
-        element: <Dashboard />,
-      },
+        path: "/",
+        element: <DashboardLayout />,
 
-      {
-        path: "users",
-        element: <Users />,
-      },
+        children: [
+          {
+            index: true,
+            element: <Dashboard />,
+          },
 
-      {
-        path: "products",
-        element: <Products />,
-      },
-      {
-        path: "products/:id",
-        element: <ProductDetails />,
-      },
+          {
+            path: "users",
+            element: <Users />,
+          },
 
-      {
-        path: "orders",
-        element: <Orders />,
-      },
-      {
-        path: "orders/:id",
-        element: <OrderDetails />,
-      },
+          {
+            path: "products",
+            element: <Products />,
+          },
+          {
+            path: "products/:id",
+            element: <ProductDetails />,
+          },
 
-      {
-        path: "analytics",
-        element: <Analytics />,
-      },
+          {
+            path: "orders",
+            element: <Orders />,
+          },
+          {
+            path: "orders/:id",
+            element: <OrderDetails />,
+          },
 
-      {
-        path: "settings",
-        element: <SettingsPage />,
+          {
+            path: "analytics",
+            element: <Analytics />,
+          },
+
+          {
+            path: "settings",
+            element: <SettingsPage />,
+          },
+        ],
       },
     ],
   },

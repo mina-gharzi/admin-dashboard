@@ -12,3 +12,8 @@
 export {
   useUIStore,
 } from "./uiStore";
+
+export {
+  useAuthStore,
+  type AuthUser,
+} from "./authStore";
