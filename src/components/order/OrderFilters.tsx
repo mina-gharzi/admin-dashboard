@@ -50,7 +50,7 @@ function OrderFilters({
     <div className="border-b border-primary-300/80 bg-surface/40 px-6 py-5">
       <div className="flex flex-col gap-4">
         {/* Search */}
-        <div className="relative w-full desktop:max-w-[340px]">
+        <div className="relative w-full desktop:max-w-85">
           <Search
             size={16}
             className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-text-secondary"

@@ -184,7 +184,7 @@ function Header() {
     <header
       className={cn(
         "sticky top-0 z-30",
-        "h-[68px]",
+        "h-17",
         "border-b border-border/80",
         "bg-surface/95",
         "backdrop-blur-xl",
