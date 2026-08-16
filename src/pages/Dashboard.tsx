@@ -193,7 +193,7 @@ function Dashboard() {
         <div className="relative z-10">
           <p className="font-vazirmatn text-sm text-primary-100">پنل مدیریت</p>
           <h1 className="mt-5 font-vazirmatn text-3xl font-bold text-white tablet:text-4xl">
-            خوش آمدید، {user?.name ?? "کاربر"} 👋
+            خوش آمدید، {user?.name ?? "کاربر"} 
           </h1>
           <p className="mt-5 max-w-xl font-vazirmatn text-sm leading-7 text-primary-100">
             اینجا می‌توانید وضعیت فروشگاه و عملکرد سیستم را در یک نگاه بررسی

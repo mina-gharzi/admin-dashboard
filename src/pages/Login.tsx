@@ -95,7 +95,7 @@ function Login() {
   return (
     <div
       dir="rtl"
-      className="flex min-h-screen items-center justify-center bg-background px-5 py-10"
+      className="flex min-h-screen items-center justify-center bg-primary-900 px-5 py-10"
     >
       <div className="w-full max-w-[400px]">
         {/* Login Card */}
