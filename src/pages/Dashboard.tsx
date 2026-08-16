@@ -50,8 +50,16 @@ import { formatPrice } from "../utils/format";
 
 const statusMeta = {
   pending: { label: "در انتظار", color: "#f59e0b", badge: "warning" as const },
-  processing: { label: "در حال پردازش", color: "#0284c7", badge: "info" as const },
-  completed: { label: "تکمیل شده", color: "#16a34a", badge: "success" as const },
+  processing: {
+    label: "در حال پردازش",
+    color: "#0284c7",
+    badge: "info" as const,
+  },
+  completed: {
+    label: "تکمیل شده",
+    color: "#16a34a",
+    badge: "success" as const,
+  },
   cancelled: { label: "لغو شده", color: "#dc2626", badge: "danger" as const },
 };
 
@@ -64,10 +72,11 @@ const statusMeta = {
 function Dashboard() {
   const navigate = useNavigate();
 
-  const { data: summary, loading, error } = useData(
-    () => api.analytics.getSummary(),
-    [],
-  );
+  const {
+    data: summary,
+    loading,
+    error,
+  } = useData(() => api.analytics.getSummary(), []);
 
   /*
     Loading State
@@ -190,7 +199,7 @@ function Dashboard() {
         <div className="relative z-10">
           <p className="font-vazirmatn text-sm text-primary-100">پنل مدیریت</p>
           <h1 className="mt-5 font-vazirmatn text-3xl font-bold text-white tablet:text-4xl">
-            خوش آمدید، مینا 👋
+            خوش آمدید
           </h1>
           <p className="mt-5 max-w-xl font-vazirmatn text-sm leading-7 text-primary-100">
             اینجا می‌توانید وضعیت فروشگاه و عملکرد سیستم را در یک نگاه بررسی
@@ -489,8 +498,8 @@ function Dashboard() {
             <div className="mt-5 flex items-center gap-3">
               <span className="rounded-2xl bg-white/70 px-4 py-2 font-inter text-[11px] font-medium text-primary-900">
                 <TrendingUp size={11} className="ml-1 inline" />
-                {summary.ordersByStatus.completed.toLocaleString("fa-IR")}{" "}
-                سفارش موفق
+                {summary.ordersByStatus.completed.toLocaleString("fa-IR")} سفارش
+                موفق
               </span>
             </div>
           </div>
