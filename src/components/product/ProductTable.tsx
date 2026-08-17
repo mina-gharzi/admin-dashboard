@@ -23,12 +23,7 @@ import {
   type SortingState,
 } from "@tanstack/react-table";
 
-import {
-  ChevronDown,
-  ChevronUp,
-  MoreHorizontal,
-  Package,
-} from "lucide-react";
+import { ChevronDown, ChevronUp, MoreHorizontal, Package } from "lucide-react";
 
 import { Badge } from "../ui/Badge";
 import { Dropdown } from "../ui/Dropdown";
@@ -64,11 +59,7 @@ const columnHelper = createColumnHelper<Product>();
   ----------------------------------------------------------
 */
 
-function ProductTable({
-  products,
-  onEdit,
-  onDelete,
-}: ProductTableProps) {
+function ProductTable({ products, onEdit, onDelete }: ProductTableProps) {
   const navigate = useNavigate();
 
   /*
@@ -109,7 +100,7 @@ function ProductTable({
             </div>
 
             <div className="text-left">
-              <p className="font-vazirmatn text-sm font-medium text-text-primary">
+              <p className="font-estedad text-sm font-medium text-text-primary">
                 {product.name}
               </p>
 
@@ -125,7 +116,7 @@ function ProductTable({
     columnHelper.accessor("category", {
       header: "دسته‌بندی",
       cell: ({ getValue }) => (
-        <span className="font-vazirmatn text-sm text-text-secondary">
+        <span className="font-estedad text-sm text-text-secondary">
           {getValue()}
         </span>
       ),
@@ -135,11 +126,11 @@ function ProductTable({
       header: "قیمت",
       cell: ({ getValue }) => (
         <div>
-          <span className="font-vazirmatn text-sm font-medium text-text-primary">
+          <span className="font-estedad text-sm font-medium text-text-primary">
             {formatPrice(getValue())}
           </span>
 
-          <span className="mr-1 font-vazirmatn text-xs text-text-secondary">
+          <span className="mr-1 font-estedad text-xs text-text-secondary">
             تومان
           </span>
         </div>
@@ -155,8 +146,8 @@ function ProductTable({
           <span
             className={
               stock === 0
-                ? "font-vazirmatn text-sm text-danger font-medium"
-                : "font-vazirmatn text-sm text-text-primary"
+                ? "font-estedad text-sm text-danger font-medium"
+                : "font-estedad text-sm text-text-primary"
             }
           >
             {stock === 0 ? "موجود نیست" : `${stock} عدد`}
@@ -171,11 +162,7 @@ function ProductTable({
         const status = getValue();
 
         return (
-          <Badge
-            variant={
-              status === "active" ? "success" : "danger"
-            }
-          >
+          <Badge variant={status === "active" ? "success" : "danger"}>
             {status === "active" ? "فعال" : "غیرفعال"}
           </Badge>
         );
@@ -242,11 +229,7 @@ function ProductTable({
   /*
     Sort Icon
   */
-  const SortIcon = ({
-    sorted,
-  }: {
-    sorted: false | "asc" | "desc";
-  }) => {
+  const SortIcon = ({ sorted }: { sorted: false | "asc" | "desc" }) => {
     if (sorted === "asc") return <ChevronUp size={14} />;
     if (sorted === "desc") return <ChevronDown size={14} />;
     return null;
@@ -285,7 +268,7 @@ function ProductTable({
                     return (
                       <th
                         key={header.id}
-                        className="px-5 py-3 font-vazirmatn text-xs font-medium text-text-secondary"
+                        className="px-5 py-3 font-estedad text-xs font-medium text-text-secondary"
                       >
                         {header.isPlaceholder ? null : (
                           <button
@@ -301,12 +284,10 @@ function ProductTable({
                           >
                             {flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
 
-                            {canSort && (
-                              <SortIcon sorted={sorted} />
-                            )}
+                            {canSort && <SortIcon sorted={sorted} />}
                           </button>
                         )}
                       </th>
@@ -324,13 +305,10 @@ function ProductTable({
                   className="border-b border-border last:border-0 hover:bg-background"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <td
-                      key={cell.id}
-                      className="px-5 py-4"
-                    >
+                    <td key={cell.id} className="px-5 py-4">
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </td>
                   ))}
@@ -343,12 +321,9 @@ function ProductTable({
         {/* Empty State */}
         {table.getRowModel().rows.length === 0 && (
           <div className="p-12 text-center">
-            <Package
-              size={32}
-              className="mx-auto text-text-secondary"
-            />
+            <Package size={32} className="mx-auto text-text-secondary" />
 
-            <p className="mt-3 font-vazirmatn text-sm text-text-secondary">
+            <p className="mt-3 font-estedad text-sm text-text-secondary">
               محصولی پیدا نشد.
             </p>
           </div>
@@ -356,7 +331,7 @@ function ProductTable({
 
         {/* Pagination */}
         <div className="flex flex-col gap-4 border-t border-border px-5 py-4 tablet:flex-row tablet:items-center tablet:justify-between">
-          <p className="font-vazirmatn text-xs text-text-secondary">
+          <p className="font-estedad text-xs text-text-secondary">
             صفحه{" "}
             <span className="font-medium text-text-primary">
               {table.getState().pagination.pageIndex + 1}
@@ -372,7 +347,7 @@ function ProductTable({
               type="button"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-              className="rounded-md border border-border px-3 py-2 font-vazirmatn text-xs text-text-secondary transition-colors hover:bg-background disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-md border border-border px-3 py-2 font-estedad text-xs text-text-secondary transition-colors hover:bg-background disabled:cursor-not-allowed disabled:opacity-40"
             >
               قبلی
             </button>
@@ -381,7 +356,7 @@ function ProductTable({
               type="button"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-              className="rounded-md border border-border px-3 py-2 font-vazirmatn text-xs text-text-secondary transition-colors hover:bg-background disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-md border border-border px-3 py-2 font-estedad text-xs text-text-secondary transition-colors hover:bg-background disabled:cursor-not-allowed disabled:opacity-40"
             >
               بعدی
             </button>
@@ -419,16 +394,13 @@ function ProductTable({
               لغو
             </Button>
 
-            <Button
-              variant="danger"
-              onClick={handleDeleteConfirm}
-            >
+            <Button variant="danger" onClick={handleDeleteConfirm}>
               حذف
             </Button>
           </>
         }
       >
-        <p className="font-vazirmatn text-sm text-text-secondary">
+        <p className="font-estedad text-sm text-text-secondary">
           این عمل قابل برگشت نیست. تمام داده‌های محصول حذف خواهد شد.
         </p>
       </Modal>

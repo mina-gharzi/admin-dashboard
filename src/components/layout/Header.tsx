@@ -1,21 +1,25 @@
 /*
   ==========================================================
-  Header.tsx
+  Header.tsx (Redesigned & UI/UX Enhanced)
   ----------------------------------------------------------
-  Main header — matched to Dashboard design language
-  ----------------------------------------------------------
-  مسئولیت‌ها:
-
-  - کنترل Sidebar در Desktop/Mobile
-  - جستجوی زنده بین کاربران/محصولات/سفارش‌ها
-  - اعلان‌ها (NotificationsPanel، از داده‌ی واقعی)
-  - منوی کاربر (پروفایل/تنظیمات/خروج)
+  Header اصلی سیستم - کاملاً هم‌راستا با دیزاین سیستم Dashboard
   ==========================================================
 */
 
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Menu, Search, Bell, User, ChevronDown, X, Loader2 } from "lucide-react";
+import {
+  Menu,
+  Search,
+  Bell,
+  User as UserIcon,
+  X,
+  Loader2,
+  Package,
+  ShoppingCart,
+  Users,
+  ArrowUpLeft,
+} from "lucide-react";
 
 import { Dropdown } from "../ui/Dropdown";
 import NotificationsPanel from "./NotificationsPanel";
@@ -23,14 +27,18 @@ import NotificationsPanel from "./NotificationsPanel";
 import { cn } from "../../utils/cn";
 import { useUIStore, useAuthStore } from "../../store";
 import { useLogout } from "../../hooks/useLogout";
-import { api, type Order, type Product, type User as UserType } from "../../services/api";
+import {
+  api,
+  type Order,
+  type Product,
+  type User as UserType,
+} from "../../services/api";
 
 /*
   ----------------------------------------------------------
   Search Results Type
   ----------------------------------------------------------
 */
-
 interface SearchResults {
   users: UserType[];
   products: Product[];
@@ -44,7 +52,6 @@ const emptyResults: SearchResults = { users: [], products: [], orders: [] };
   Header Component
   ----------------------------------------------------------
 */
-
 function Header() {
   const navigate = useNavigate();
   const { logout } = useLogout();
@@ -60,21 +67,32 @@ function Header() {
 
   /*
     --------------------------------------------------------
-    Global Search
+    Global Search & Keyboard Shortcut (Ctrl+K)
     --------------------------------------------------------
   */
-
   const [search, setSearch] = useState("");
   const [results, setResults] = useState<SearchResults>(emptyResults);
   const [searching, setSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const searchBoxRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Shortcut برای سریع فوکوس کردن روی جستجو با Ctrl+K یا Cmd+K
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   useEffect(() => {
     const query = search.trim();
 
     if (query.length < 2) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- برخلاف فرم‌ها، اینجا effect داره با یه سیستم خارجی (جستجوی async debounce‌شده) sync میشه؛ دقیقاً همون caseـی که مستندات React برای استفاده از effect توصیه می‌کنه
       setResults(emptyResults);
       setSearching(false);
       return;
@@ -133,29 +151,28 @@ function Header() {
     Notifications Panel
     --------------------------------------------------------
   */
-
   const [notificationsOpen, setNotificationsOpen] = useState(false);
 
   return (
     <header
       className={cn(
         "sticky top-0 z-30",
-        "h-[68px]",
-        "border-b border-primary-300/70",
-        "bg-surface/90",
-        "backdrop-blur-md",
+        "h-17.5",
+        "border-b border-primary-300/60",
+        "bg-surface/80",
+        "backdrop-blur-xl transition-all",
       )}
     >
       <div
         className={cn(
-          "relative flex h-full items-center justify-between",
-          "px-4 tablet:px-6 desktop:px-7",
+          "flex h-full items-center justify-between",
+          "px-4 tablet:px-6 desktop:px-8",
         )}
       >
         {/* ==================================================
-            Left Section — Menu + Search
+            Left Section — Mobile Menu + Search
             ================================================== */}
-        <div className="flex items-center gap-3 desktop:mr-14">
+        <div className="flex items-center gap-3">
           {/* Mobile Menu Button */}
           <button
             type="button"
@@ -164,25 +181,29 @@ function Header() {
               "flex desktop:hidden",
               "h-10 w-10",
               "items-center justify-center",
-              "rounded-2xl",
-              "text-text-secondary",
+              "rounded-xl border border-primary-300/60",
+              "bg-background/80 text-text-secondary",
               "transition-all duration-200",
-              "hover:bg-primary-100 hover:text-primary-900",
+              "hover:bg-primary-100 hover:text-primary-900 hover:shadow-sm",
               "active:scale-95",
             )}
             aria-label={isMobileSidebarOpen ? "بستن منو" : "باز کردن منو"}
           >
-            {isMobileSidebarOpen ? <X size={21} /> : <Menu size={21} />}
+            {isMobileSidebarOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
 
-          {/* Search */}
-          <div ref={searchBoxRef} className="relative hidden w-72 tablet:block">
+          {/* Search Box */}
+          <div
+            ref={searchBoxRef}
+            className="relative hidden tablet:block tablet:w-80 desktop:w-96"
+          >
             <Search
               size={17}
-              className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-text-secondary"
+              className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-text-secondary transition-colors group-focus-within:text-primary-900"
             />
 
             <input
+              ref={searchInputRef}
               value={search}
               onChange={(event) => {
                 setSearch(event.target.value);
@@ -190,27 +211,26 @@ function Header() {
               }}
               onFocus={() => setShowResults(true)}
               type="search"
-              placeholder="جستجوی کاربر، محصول، سفارش ..."
+              placeholder="جستجوی کاربر، محصول، سفارش..."
               className={cn(
                 "h-10 w-full",
-                "rounded-2xl",
-                "border border-primary-300/80",
-                "bg-background/80",
-                "pr-11 pl-4",
-                "font-vazirmatn text-sm text-text-primary",
-                "placeholder:text-text-secondary/80",
+                "rounded-xl",
+                "border border-primary-300/70",
+                "bg-background/60",
+                "pr-10 pl-16",
+                "font-estedad text-xs text-text-primary",
+                "placeholder:text-text-secondary/70",
                 "outline-none",
                 "transition-all duration-200",
-                "focus:border-primary-900",
-                "focus:bg-surface",
-                "focus:ring-[3px] focus:ring-primary-100",
+                "focus:border-primary-900 focus:bg-surface focus:shadow-sm",
+                "focus:ring-2 focus:ring-primary-100",
               )}
             />
 
             {searching && (
               <Loader2
-                size={15}
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 animate-spin text-text-secondary"
+                size={16}
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 animate-spin text-primary-900"
               />
             )}
 
@@ -218,74 +238,101 @@ function Header() {
             {showResults && search.trim().length >= 2 && (
               <div
                 className={cn(
-                  "absolute right-0 top-full z-40 mt-2",
-                  "w-80",
+                  "absolute right-0 top-full z-50 mt-2",
+                  "w-full",
                   "overflow-hidden rounded-2xl",
-                  "border border-primary-300/70",
-                  "bg-surface",
-                  "shadow-lg",
+                  "border border-primary-300/80",
+                  "bg-surface/95 backdrop-blur-md",
+                  "shadow-xl shadow-primary-900/5",
+                  "animate-in fade-in-50 zoom-in-95 duration-150",
                 )}
               >
                 {!searching && !hasResults && (
-                  <p className="p-4 text-center font-vazirmatn text-xs text-text-secondary">
-                    نتیجه‌ای پیدا نشد.
-                  </p>
+                  <div className="p-6 text-center font-estedad text-xs text-text-secondary">
+                    نتیجه‌ای برای{" "}
+                    <span className="font-bold text-text-primary">
+                      "{search}"
+                    </span>{" "}
+                    یافت نشد.
+                  </div>
                 )}
 
+                {/* Users Section */}
                 {results.users.length > 0 && (
-                  <div className="border-b border-border p-2">
-                    <p className="px-2 py-1 font-vazirmatn text-[11px] font-medium text-text-secondary">
-                      کاربران
-                    </p>
+                  <div className="border-b border-primary-100/80 p-2">
+                    <div className="flex items-center gap-1.5 px-2 py-1 text-primary-900">
+                      <Users size={13} />
+                      <span className="font-estedad text-[11px] font-bold">
+                        کاربران
+                      </span>
+                    </div>
                     {results.users.map((u) => (
                       <button
                         key={u.id}
                         type="button"
                         onClick={() => goTo("/users")}
-                        className="block w-full rounded-lg px-2 py-1.5 text-right font-vazirmatn text-xs text-text-primary hover:bg-background"
+                        className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-right transition-colors hover:bg-primary-100/40"
                       >
-                        {u.name}
-                        <span className="mr-1.5 text-text-secondary">
-                          — {u.email}
+                        <span className="font-estedad text-xs font-medium text-text-primary">
+                          {u.name}
+                        </span>
+                        <span className="font-inter text-[11px] text-text-secondary">
+                          {u.email}
                         </span>
                       </button>
                     ))}
                   </div>
                 )}
 
+                {/* Products Section */}
                 {results.products.length > 0 && (
-                  <div className="border-b border-border p-2">
-                    <p className="px-2 py-1 font-vazirmatn text-[11px] font-medium text-text-secondary">
-                      محصولات
-                    </p>
+                  <div className="border-b border-primary-100/80 p-2">
+                    <div className="flex items-center gap-1.5 px-2 py-1 text-primary-900">
+                      <Package size={13} />
+                      <span className="font-estedad text-[11px] font-bold">
+                        محصولات
+                      </span>
+                    </div>
                     {results.products.map((p) => (
                       <button
                         key={p.id}
                         type="button"
                         onClick={() => goTo(`/products/${p.id}`)}
-                        className="block w-full rounded-lg px-2 py-1.5 text-right font-vazirmatn text-xs text-text-primary hover:bg-background"
+                        className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-right transition-colors hover:bg-primary-100/40"
                       >
-                        {p.name}
+                        <span className="font-estedad text-xs font-medium text-text-primary">
+                          {p.name}
+                        </span>
+                        <ArrowUpLeft
+                          size={13}
+                          className="text-text-secondary"
+                        />
                       </button>
                     ))}
                   </div>
                 )}
 
+                {/* Orders Section */}
                 {results.orders.length > 0 && (
                   <div className="p-2">
-                    <p className="px-2 py-1 font-vazirmatn text-[11px] font-medium text-text-secondary">
-                      سفارش‌ها
-                    </p>
+                    <div className="flex items-center gap-1.5 px-2 py-1 text-primary-900">
+                      <ShoppingCart size={13} />
+                      <span className="font-estedad text-[11px] font-bold">
+                        سفارش‌ها
+                      </span>
+                    </div>
                     {results.orders.map((o) => (
                       <button
                         key={o.id}
                         type="button"
                         onClick={() => goTo(`/orders/${o.id}`)}
-                        className="block w-full rounded-lg px-2 py-1.5 text-right font-vazirmatn text-xs text-text-primary hover:bg-background"
+                        className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-right transition-colors hover:bg-primary-100/40"
                       >
-                        #{o.id}
-                        <span className="mr-1.5 text-text-secondary">
-                          — {o.customer}
+                        <span className="font-inter text-xs font-bold text-text-primary">
+                          #{o.id}
+                        </span>
+                        <span className="font-estedad text-xs text-text-secondary">
+                          {o.customer}
                         </span>
                       </button>
                     ))}
@@ -297,10 +344,10 @@ function Header() {
         </div>
 
         {/* ==================================================
-            Right Section — Notifications + User
+            Right Section — Notifications + User Dropdown
             ================================================== */}
-        <div className="flex items-center gap-1.5 desktop:ml-14">
-          {/* Notifications */}
+        <div className="flex items-center gap-2">
+          {/* Notifications Panel Button */}
           <div className="relative">
             <button
               type="button"
@@ -308,25 +355,23 @@ function Header() {
               className={cn(
                 "relative",
                 "flex h-10 w-10 items-center justify-center",
-                "rounded-2xl",
-                "text-text-secondary",
+                "rounded-xl border border-primary-300/60",
+                "bg-background/80 text-text-secondary",
                 "transition-all duration-200",
-                "hover:bg-primary-100 hover:text-primary-900",
+                "hover:bg-primary-100 hover:text-primary-900 hover:shadow-sm",
                 "active:scale-95",
+                notificationsOpen &&
+                  "bg-primary-100 text-primary-900 border-primary-700/40",
               )}
               aria-label="اعلان‌ها"
             >
-              <Bell size={19} strokeWidth={1.8} />
+              <Bell size={18} strokeWidth={2} />
 
-              <span
-                className={cn(
-                  "absolute right-2.5 top-2.5",
-                  "h-2 w-2",
-                  "rounded-full",
-                  "bg-danger",
-                  "ring-2 ring-surface",
-                )}
-              />
+              {/* Notification Pulse Indicator */}
+              <span className="absolute right-2.5 top-2.5 flex h-2.5 w-2.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-danger opacity-75" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-danger ring-2 ring-surface" />
+              </span>
             </button>
 
             {notificationsOpen && (
@@ -335,58 +380,58 @@ function Header() {
           </div>
 
           {/* Divider */}
-          <div className="mx-1.5 hidden h-8 w-px bg-primary-300/60 tablet:block" />
+          <div className="mx-1 hidden h-6 w-px bg-primary-300/60 tablet:block" />
 
-          {/* User Dropdown */}
+          {/* User Profile Dropdown */}
           <Dropdown
             trigger={
               <div
                 className={cn(
-                  "flex items-center gap-2.5",
+                  "flex items-center gap-3",
                   "cursor-pointer",
-                  "rounded-2xl py-1.5 pl-1.5 pr-2",
+                  "rounded-2xl py-1.5 pr-2 pl-2.5",
+                  "border border-transparent",
                   "transition-all duration-200",
-                  "hover:bg-primary-50",
+                  "hover:border-primary-300/60 hover:bg-background/80 hover:shadow-xs",
                 )}
               >
-                <div
-                  className={cn(
-                    "flex h-9 w-9 items-center justify-center",
-                    "rounded-2xl",
-                    "bg-primary-100",
-                    "text-primary-900",
-                    "shadow-sm",
-                  )}
-                >
-                  <User size={17} strokeWidth={1.8} />
+                {/* User Avatar with Online Indicator */}
+                <div className="relative">
+                  <div
+                    className={cn(
+                      "flex h-9 w-9 items-center justify-center",
+                      "rounded-xl",
+                      "bg-linear-to-tr from-primary-900 to-primary-700",
+                      "text-white shadow-sm",
+                    )}
+                  >
+                    <UserIcon size={18} strokeWidth={2} />
+                  </div>
+                  <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-success ring-2 ring-surface" />
                 </div>
 
+                {/* User Info */}
                 <div className="hidden text-right tablet:block">
-                  <p className="font-vazirmatn text-[13px] font-semibold leading-tight text-text-primary">
-                    {user?.name ?? "کاربر"}
+                  <p className="font-estedad text-xs font-bold leading-tight text-text-primary">
+                    {user?.name ?? "کاربر سیستم"}
                   </p>
-                  <p className="mt-0.5 font-vazirmatn text-[11px] text-text-secondary">
+                  <p className="mt-0.5 font-estedad text-[10px] font-medium text-text-secondary">
                     {roleLabels[user?.role ?? "admin"]}
                   </p>
                 </div>
-
-                <ChevronDown
-                  size={15}
-                  className="hidden text-text-secondary tablet:block"
-                />
               </div>
             }
             items={[
               {
-                label: "پروفایل",
+                label: "پروفایل کاربری",
                 onClick: () => navigate("/settings"),
               },
               {
-                label: "تنظیمات",
+                label: "تنظیمات پنل",
                 onClick: () => navigate("/settings"),
               },
               {
-                label: "خروج",
+                label: "خروج از حساب",
                 onClick: logout,
                 danger: true,
               },

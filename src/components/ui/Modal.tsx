@@ -114,7 +114,7 @@ function Modal({
           "border border-border",
           "bg-surface",
           "shadow-lg",
-          className
+          className,
         )}
       >
         {/* Header */}
@@ -123,13 +123,13 @@ function Modal({
           <div className="flex items-start justify-between gap-4 border-b border-border p-6">
             <div>
               {title && (
-                <h2 className="font-vazirmatn text-lg font-semibold text-text-primary">
+                <h2 className="font-estedad text-lg font-semibold text-text-primary">
                   {title}
                 </h2>
               )}
 
               {description && (
-                <p className="mt-1 font-vazirmatn text-sm text-text-secondary">
+                <p className="mt-1 font-estedad text-sm text-text-secondary">
                   {description}
                 </p>
               )}
@@ -146,7 +146,7 @@ function Modal({
                 "hover:text-primary-900",
                 "focus-visible:outline-none",
                 "focus-visible:ring-2",
-                "focus-visible:ring-primary-900"
+                "focus-visible:ring-primary-900",
               )}
               aria-label="Close"
             >
@@ -157,9 +157,7 @@ function Modal({
 
         {/* Content */}
 
-        <div className="p-6">
-          {children}
-        </div>
+        <div className="p-6">{children}</div>
 
         {/* Footer */}
 

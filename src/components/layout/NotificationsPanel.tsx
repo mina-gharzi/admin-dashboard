@@ -90,20 +90,20 @@ function NotificationsPanel({ onClose }: NotificationsPanelProps) {
       )}
     >
       <div className="border-b border-border px-4 py-3">
-        <p className="font-vazirmatn text-sm font-semibold text-text-primary">
+        <p className="font-estedad text-sm font-semibold text-text-primary">
           اعلان‌ها
         </p>
       </div>
 
       <div className="max-h-80 overflow-y-auto">
         {loading && (
-          <p className="p-4 text-center font-vazirmatn text-xs text-text-secondary">
+          <p className="p-4 text-center font-estedad text-xs text-text-secondary">
             در حال بارگذاری...
           </p>
         )}
 
         {!loading && !hasNotifications && (
-          <p className="p-4 text-center font-vazirmatn text-xs text-text-secondary">
+          <p className="p-4 text-center font-estedad text-xs text-text-secondary">
             اعلان جدیدی وجود ندارد.
           </p>
         )}
@@ -121,10 +121,10 @@ function NotificationsPanel({ onClose }: NotificationsPanelProps) {
               <Clock3 size={16} />
             </div>
             <div>
-              <p className="font-vazirmatn text-xs font-medium text-text-primary">
+              <p className="font-estedad text-xs font-medium text-text-primary">
                 {pendingCount} سفارش در انتظار بررسی
               </p>
-              <p className="mt-0.5 font-vazirmatn text-[11px] text-text-secondary">
+              <p className="mt-0.5 font-estedad text-[11px] text-text-secondary">
                 برای مشاهده کلیک کنید
               </p>
             </div>
@@ -144,10 +144,10 @@ function NotificationsPanel({ onClose }: NotificationsPanelProps) {
               <PackageX size={16} />
             </div>
             <div>
-              <p className="font-vazirmatn text-xs font-medium text-text-primary">
+              <p className="font-estedad text-xs font-medium text-text-primary">
                 {lowStockCount} محصول موجودی کم دارد
               </p>
-              <p className="mt-0.5 font-vazirmatn text-[11px] text-text-secondary">
+              <p className="mt-0.5 font-estedad text-[11px] text-text-secondary">
                 {summary?.lowStockProducts
                   .slice(0, 2)
                   .map((p) => p.name)
@@ -167,7 +167,7 @@ function NotificationsPanel({ onClose }: NotificationsPanelProps) {
               navigate("/analytics");
               onClose();
             }}
-            className="flex w-full items-center justify-center gap-1.5 font-vazirmatn text-xs font-medium text-primary-900 hover:underline"
+            className="flex w-full items-center justify-center gap-1.5 font-estedad text-xs font-medium text-primary-900 hover:underline"
           >
             <AlertTriangle size={13} />
             مشاهده گزارش کامل

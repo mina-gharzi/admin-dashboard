@@ -97,7 +97,7 @@ function Login() {
       dir="rtl"
       className="flex min-h-screen items-center justify-center bg-primary-900 px-5 py-10"
     >
-      <div className="w-full max-w-[400px]">
+      <div className="w-full max-w-100">
         {/* Login Card */}
 
         <div className="rounded-2xl border border-border bg-surface px-6 py-7 shadow-[0_12px_40px_rgba(17,24,68,0.08)] tablet:px-8 tablet:py-8">
@@ -111,7 +111,7 @@ function Login() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Name */}
             <div>
-              <label className="mb-2 block font-vazirmatn text-sm font-medium text-text-primary">
+              <label className="mb-2 block font-estedad text-sm font-medium text-text-primary">
                 نام
               </label>
 
@@ -138,7 +138,7 @@ function Login() {
               </div>
 
               {errors.name && (
-                <p className="mt-1.5 font-vazirmatn text-xs text-danger">
+                <p className="mt-1.5 font-estedad text-xs text-danger">
                   {errors.name}
                 </p>
               )}
@@ -146,7 +146,7 @@ function Login() {
 
             {/* Email */}
             <div>
-              <label className="mb-2 block font-vazirmatn text-sm font-medium text-text-primary">
+              <label className="mb-2 block font-estedad text-sm font-medium text-text-primary">
                 ایمیل
               </label>
 
@@ -174,7 +174,7 @@ function Login() {
               </div>
 
               {errors.email && (
-                <p className="mt-1.5 font-vazirmatn text-xs text-danger">
+                <p className="mt-1.5 font-estedad text-xs text-danger">
                   {errors.email}
                 </p>
               )}
@@ -182,7 +182,7 @@ function Login() {
 
             {/* Password */}
             <div>
-              <label className="mb-2 block font-vazirmatn text-sm font-medium text-text-primary">
+              <label className="mb-2 block font-estedad text-sm font-medium text-text-primary">
                 رمز عبور
               </label>
 
@@ -210,7 +210,7 @@ function Login() {
               </div>
 
               {errors.password && (
-                <p className="mt-1.5 font-vazirmatn text-xs text-danger">
+                <p className="mt-1.5 font-estedad text-xs text-danger">
                   {errors.password}
                 </p>
               )}
@@ -220,7 +220,7 @@ function Login() {
             <Button
               type="submit"
               loading={submitting}
-              className="mt-2 h-11 w-full bg-primary-700 font-vazirmatn text-sm hover:bg-primary-900"
+              className="mt-2 h-11 w-full bg-primary-700 font-estedad text-sm hover:bg-primary-900"
             >
               ورود
             </Button>
@@ -228,7 +228,7 @@ function Login() {
         </div>
 
         {/* Demo */}
-        <p className="mt-5 text-center font-vazirmatn text-xs text-text-secondary">
+        <p className="mt-5 text-center font-estedad text-xs text-text-secondary">
           نسخه نمایشی پنل مدیریت
         </p>
       </div>

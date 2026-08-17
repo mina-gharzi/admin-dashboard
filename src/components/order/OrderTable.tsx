@@ -115,7 +115,7 @@ function OrderTable({ orders, onEdit, onCancel }: OrderTableProps) {
               <ShoppingBag size={17} strokeWidth={1.8} />
             </div>
             <div className="min-w-0">
-              <p className="truncate font-vazirmatn text-sm font-semibold text-text-primary">
+              <p className="truncate font-estedad text-sm font-semibold text-text-primary">
                 {order.customer}
               </p>
               <p className="mt-0.5 truncate font-inter text-xs text-text-secondary">
@@ -131,10 +131,10 @@ function OrderTable({ orders, onEdit, onCancel }: OrderTableProps) {
       header: "مبلغ",
       cell: ({ getValue }) => (
         <div className="whitespace-nowrap">
-          <span className="font-vazirmatn text-sm font-semibold text-text-primary">
+          <span className="font-estedad text-sm font-semibold text-text-primary">
             {formatPrice(getValue())}
           </span>
-          <span className="mr-1 font-vazirmatn text-xs text-text-secondary">
+          <span className="mr-1 font-estedad text-xs text-text-secondary">
             تومان
           </span>
         </div>
@@ -146,9 +146,7 @@ function OrderTable({ orders, onEdit, onCancel }: OrderTableProps) {
       cell: ({ getValue }) => {
         const status = getValue();
         return (
-          <Badge variant={statusVariants[status]}>
-            {statusLabels[status]}
-          </Badge>
+          <Badge variant={statusVariants[status]}>{statusLabels[status]}</Badge>
         );
       },
     }),
@@ -156,7 +154,7 @@ function OrderTable({ orders, onEdit, onCancel }: OrderTableProps) {
     columnHelper.accessor("date", {
       header: "تاریخ",
       cell: ({ getValue }) => (
-        <span className="whitespace-nowrap font-vazirmatn text-xs text-text-secondary">
+        <span className="whitespace-nowrap font-estedad text-xs text-text-secondary">
           {getValue()}
         </span>
       ),
@@ -234,7 +232,7 @@ function OrderTable({ orders, onEdit, onCancel }: OrderTableProps) {
     <>
       <div>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[700px]">
+          <table className="w-full min-w-175">
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr
@@ -254,7 +252,7 @@ function OrderTable({ orders, onEdit, onCancel }: OrderTableProps) {
                             onClick={header.column.getToggleSortingHandler()}
                             className={[
                               "inline-flex items-center gap-1.5",
-                              "font-vazirmatn text-xs font-medium text-text-secondary",
+                              "font-estedad text-xs font-medium text-text-secondary",
                               "transition-colors",
                               canSort
                                 ? "cursor-pointer hover:text-primary-900"
@@ -263,7 +261,7 @@ function OrderTable({ orders, onEdit, onCancel }: OrderTableProps) {
                           >
                             {flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                             {canSort && <SortIcon sorted={sorted} />}
                           </button>
@@ -285,7 +283,7 @@ function OrderTable({ orders, onEdit, onCancel }: OrderTableProps) {
                     <td key={cell.id} className="px-6 py-4">
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </td>
                   ))}
@@ -301,10 +299,10 @@ function OrderTable({ orders, onEdit, onCancel }: OrderTableProps) {
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-100 text-primary-900">
               <ShoppingBag size={24} />
             </div>
-            <p className="mt-5 font-vazirmatn text-sm font-semibold text-text-primary">
+            <p className="mt-5 font-estedad text-sm font-semibold text-text-primary">
               سفارشی پیدا نشد
             </p>
-            <p className="mt-2 font-vazirmatn text-xs text-text-secondary">
+            <p className="mt-2 font-estedad text-xs text-text-secondary">
               جستجو یا فیلتر وضعیت را تغییر دهید.
             </p>
           </div>
@@ -313,7 +311,7 @@ function OrderTable({ orders, onEdit, onCancel }: OrderTableProps) {
         {/* Pagination */}
         {orders.length > 0 && (
           <div className="flex flex-col gap-3 border-t border-primary-300 px-6 py-4 tablet:flex-row tablet:items-center tablet:justify-between">
-            <p className="font-vazirmatn text-xs text-text-secondary">
+            <p className="font-estedad text-xs text-text-secondary">
               صفحه{" "}
               <span className="font-semibold text-primary-900">
                 {currentPage}
@@ -332,7 +330,7 @@ function OrderTable({ orders, onEdit, onCancel }: OrderTableProps) {
                 className="
                   inline-flex h-9 items-center gap-1.5 rounded-xl
                   border border-primary-300 bg-surface px-3.5
-                  font-vazirmatn text-xs text-text-secondary
+                  font-estedad text-xs text-text-secondary
                   transition-all
                   hover:border-primary-900 hover:text-primary-900
                   disabled:cursor-not-allowed disabled:opacity-40
@@ -349,7 +347,7 @@ function OrderTable({ orders, onEdit, onCancel }: OrderTableProps) {
                 className="
                   inline-flex h-9 items-center gap-1.5 rounded-xl
                   border border-primary-300 bg-surface px-3.5
-                  font-vazirmatn text-xs text-text-secondary
+                  font-estedad text-xs text-text-secondary
                   transition-all
                   hover:border-primary-900 hover:text-primary-900
                   disabled:cursor-not-allowed disabled:opacity-40
@@ -383,7 +381,7 @@ function OrderTable({ orders, onEdit, onCancel }: OrderTableProps) {
           </>
         }
       >
-        <p className="font-vazirmatn text-sm leading-6 text-text-secondary">
+        <p className="font-estedad text-sm leading-6 text-text-secondary">
           این عمل قابل برگشت نیست.
         </p>
       </Modal>

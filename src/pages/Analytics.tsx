@@ -78,17 +78,18 @@ const statusBadgeVariant = {
 function Analytics() {
   const navigate = useNavigate();
 
-  const { data: summary, loading, error } = useData(
-    () => api.analytics.getSummary(),
-    [],
-  );
+  const {
+    data: summary,
+    loading,
+    error,
+  } = useData(() => api.analytics.getSummary(), []);
 
   if (loading) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="h-9 w-9 animate-spin rounded-full border-[3px] border-primary-100 border-t-primary-900" />
-          <p className="font-vazirmatn text-sm text-text-secondary">
+          <p className="font-estedad text-sm text-text-secondary">
             در حال محاسبه گزارشات...
           </p>
         </div>
@@ -99,7 +100,7 @@ function Analytics() {
   if (error || !summary) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
-        <p className="font-vazirmatn text-sm text-danger">
+        <p className="font-estedad text-sm text-danger">
           خطا در دریافت گزارشات.
         </p>
       </div>
@@ -117,9 +118,7 @@ function Analytics() {
     }))
     .filter((d) => d.value > 0);
 
-  const usersPieData = (
-    Object.keys(roleMeta) as Array<keyof typeof roleMeta>
-  )
+  const usersPieData = (Object.keys(roleMeta) as Array<keyof typeof roleMeta>)
     .map((key) => ({
       key,
       name: roleMeta[key].label,
@@ -179,7 +178,7 @@ function Analytics() {
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="font-vazirmatn text-sm text-text-secondary">
+                  <p className="font-estedad text-sm text-text-secondary">
                     {card.title}
                   </p>
                   <p className="mt-3 font-inter text-xl font-bold tracking-tight text-text-primary">
@@ -200,17 +199,17 @@ function Analytics() {
         {/* Orders by Status */}
         <Card className="overflow-hidden border-primary-300 p-0">
           <div className="border-b border-primary-300 px-6 py-4">
-            <h2 className="font-vazirmatn text-base font-semibold text-text-primary">
+            <h2 className="font-estedad text-base font-semibold text-text-primary">
               توزیع وضعیت سفارش‌ها
             </h2>
-            <p className="mt-1 font-vazirmatn text-xs text-text-secondary">
+            <p className="mt-1 font-estedad text-xs text-text-secondary">
               {summary.totalOrders.toLocaleString("fa-IR")} سفارش ثبت‌شده
             </p>
           </div>
 
           {ordersPieData.length === 0 ? (
             <div className="flex h-64 items-center justify-center">
-              <p className="font-vazirmatn text-sm text-text-secondary">
+              <p className="font-estedad text-sm text-text-secondary">
                 هنوز سفارشی ثبت نشده است.
               </p>
             </div>
@@ -240,7 +239,7 @@ function Analytics() {
                   />
                   <Legend
                     formatter={(value) => (
-                      <span className="font-vazirmatn text-xs">{value}</span>
+                      <span className="font-estedad text-xs">{value}</span>
                     )}
                   />
                 </PieChart>
@@ -252,17 +251,17 @@ function Analytics() {
         {/* Users by Role */}
         <Card className="overflow-hidden border-primary-300 p-0">
           <div className="border-b border-primary-300 px-6 py-4">
-            <h2 className="font-vazirmatn text-base font-semibold text-text-primary">
+            <h2 className="font-estedad text-base font-semibold text-text-primary">
               توزیع نقش کاربران
             </h2>
-            <p className="mt-1 font-vazirmatn text-xs text-text-secondary">
+            <p className="mt-1 font-estedad text-xs text-text-secondary">
               {summary.totalUsers.toLocaleString("fa-IR")} کاربر ثبت‌شده
             </p>
           </div>
 
           {usersPieData.length === 0 ? (
             <div className="flex h-64 items-center justify-center">
-              <p className="font-vazirmatn text-sm text-text-secondary">
+              <p className="font-estedad text-sm text-text-secondary">
                 هنوز کاربری ثبت نشده است.
               </p>
             </div>
@@ -292,7 +291,7 @@ function Analytics() {
                   />
                   <Legend
                     formatter={(value) => (
-                      <span className="font-vazirmatn text-xs">{value}</span>
+                      <span className="font-estedad text-xs">{value}</span>
                     )}
                   />
                 </PieChart>
@@ -305,17 +304,17 @@ function Analytics() {
       {/* Products by Category */}
       <Card className="overflow-hidden border-primary-300 p-0">
         <div className="border-b border-primary-300 px-6 py-4">
-          <h2 className="font-vazirmatn text-base font-semibold text-text-primary">
+          <h2 className="font-estedad text-base font-semibold text-text-primary">
             محصولات به تفکیک دسته‌بندی
           </h2>
-          <p className="mt-1 font-vazirmatn text-xs text-text-secondary">
+          <p className="mt-1 font-estedad text-xs text-text-secondary">
             {summary.totalProducts.toLocaleString("fa-IR")} محصول ثبت‌شده
           </p>
         </div>
 
         {categoryBarData.length === 0 ? (
           <div className="flex h-56 items-center justify-center">
-            <p className="font-vazirmatn text-sm text-text-secondary">
+            <p className="font-estedad text-sm text-text-secondary">
               هنوز محصولی ثبت نشده است.
             </p>
           </div>
@@ -363,16 +362,16 @@ function Analytics() {
         {/* Top Products Table */}
         <Card className="overflow-hidden border-primary-300 p-0">
           <div className="border-b border-primary-300 px-6 py-4">
-            <h2 className="font-vazirmatn text-base font-semibold text-text-primary">
+            <h2 className="font-estedad text-base font-semibold text-text-primary">
               پرفروش‌ترین محصولات
             </h2>
-            <p className="mt-1 font-vazirmatn text-xs text-text-secondary">
+            <p className="mt-1 font-estedad text-xs text-text-secondary">
               بر اساس تعداد فروخته‌شده در سفارش‌ها
             </p>
           </div>
 
           {summary.topProducts.length === 0 ? (
-            <p className="p-6 text-center font-vazirmatn text-sm text-text-secondary">
+            <p className="p-6 text-center font-estedad text-sm text-text-secondary">
               هنوز فروشی ثبت نشده است.
             </p>
           ) : (
@@ -386,15 +385,15 @@ function Analytics() {
                     <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary-100 font-inter text-xs font-semibold text-primary-900">
                       {index + 1}
                     </span>
-                    <p className="font-vazirmatn text-sm font-medium text-text-primary">
+                    <p className="font-estedad text-sm font-medium text-text-primary">
                       {product.name}
                     </p>
                   </div>
                   <div className="text-left">
-                    <p className="font-vazirmatn text-xs font-medium text-text-primary">
+                    <p className="font-estedad text-xs font-medium text-text-primary">
                       {product.quantity.toLocaleString("fa-IR")} عدد
                     </p>
-                    <p className="font-vazirmatn text-[11px] text-text-secondary">
+                    <p className="font-estedad text-[11px] text-text-secondary">
                       {formatPrice(product.revenue)} تومان
                     </p>
                   </div>
@@ -407,10 +406,10 @@ function Analytics() {
         {/* Low Stock Products */}
         <Card className="overflow-hidden border-primary-300 p-0">
           <div className="border-b border-primary-300 px-6 py-4">
-            <h2 className="font-vazirmatn text-base font-semibold text-text-primary">
+            <h2 className="font-estedad text-base font-semibold text-text-primary">
               محصولات کم‌موجود
             </h2>
-            <p className="mt-1 font-vazirmatn text-xs text-text-secondary">
+            <p className="mt-1 font-estedad text-xs text-text-secondary">
               موجودی ۵ یا کمتر — نیاز به سفارش مجدد
             </p>
           </div>
@@ -418,7 +417,7 @@ function Analytics() {
           {summary.lowStockProducts.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-2 p-8 text-center">
               <Package size={24} className="text-text-secondary" />
-              <p className="font-vazirmatn text-sm text-text-secondary">
+              <p className="font-estedad text-sm text-text-secondary">
                 همه محصولات موجودی کافی دارند.
               </p>
             </div>
@@ -431,7 +430,7 @@ function Analytics() {
                   onClick={() => navigate(`/products/${product.id}`)}
                   className="flex w-full items-center justify-between px-6 py-3.5 text-right transition-colors hover:bg-background"
                 >
-                  <p className="font-vazirmatn text-sm font-medium text-text-primary">
+                  <p className="font-estedad text-sm font-medium text-text-primary">
                     {product.name}
                   </p>
                   <Badge variant={product.stock === 0 ? "danger" : "warning"}>
@@ -450,10 +449,10 @@ function Analytics() {
       <Card className="overflow-hidden border-primary-300 p-0">
         <div className="flex items-center justify-between border-b border-primary-300 px-6 py-4">
           <div>
-            <h2 className="font-vazirmatn text-base font-semibold text-text-primary">
+            <h2 className="font-estedad text-base font-semibold text-text-primary">
               آخرین سفارش‌ها
             </h2>
-            <p className="mt-1 font-vazirmatn text-xs text-text-secondary">
+            <p className="mt-1 font-estedad text-xs text-text-secondary">
               ۵ سفارش آخر ثبت‌شده
             </p>
           </div>
@@ -461,14 +460,14 @@ function Analytics() {
           <button
             type="button"
             onClick={() => navigate("/orders")}
-            className="font-vazirmatn text-xs font-medium text-primary-900 hover:underline"
+            className="font-estedad text-xs font-medium text-primary-900 hover:underline"
           >
             مشاهده همه
           </button>
         </div>
 
         {summary.recentOrders.length === 0 ? (
-          <p className="p-6 text-center font-vazirmatn text-sm text-text-secondary">
+          <p className="p-6 text-center font-estedad text-sm text-text-secondary">
             سفارشی ثبت نشده است.
           </p>
         ) : (
@@ -484,13 +483,13 @@ function Analytics() {
                   <p className="font-inter text-sm font-medium text-text-primary">
                     #{order.id}
                   </p>
-                  <p className="mt-0.5 font-vazirmatn text-xs text-text-secondary">
+                  <p className="mt-0.5 font-estedad text-xs text-text-secondary">
                     {order.customer}
                   </p>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="font-vazirmatn text-xs text-text-secondary">
+                  <span className="font-estedad text-xs text-text-secondary">
                     {formatPrice(order.amount)} تومان
                   </span>
                   <Badge variant={statusBadgeVariant[order.status]}>

@@ -35,11 +35,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   ----------------------------------------------------------
 */
 
-function Input({
-  className,
-  error = false,
-  ...props
-}: InputProps) {
+function Input({ className, error = false, ...props }: InputProps) {
   return (
     <input
       className={cn(
@@ -47,7 +43,7 @@ function Input({
         "flex h-10 w-full",
 
         // Typography
-        "font-vazirmatn text-sm",
+        "font-estedad text-sm",
         "text-text-primary",
 
         // Spacing
@@ -76,13 +72,9 @@ function Input({
         "disabled:opacity-60",
 
         // Error
-        error && [
-          "border-danger",
-          "focus:border-danger",
-          "focus:ring-red-100",
-        ],
+        error && ["border-danger", "focus:border-danger", "focus:ring-red-100"],
 
-        className
+        className,
       )}
       {...props}
     />

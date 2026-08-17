@@ -35,7 +35,7 @@ function Select({ className, error = false, children, ...props }: SelectProps) {
       <select
         className={cn(
           "flex h-10 w-full appearance-none",
-          "font-vazirmatn text-sm",
+          "font-estedad text-sm",
           "text-text-primary",
           "px-3 pl-9",
           "rounded-md",

@@ -110,16 +110,16 @@ function Orders() {
               <Activity size={19} strokeWidth={1.8} />
             </div>
             <div>
-              <h2 className="font-vazirmatn text-lg font-semibold text-text-primary">
+              <h2 className="font-estedad text-lg font-semibold text-text-primary">
                 لیست سفارش‌ها
               </h2>
-              <p className="mt-1 font-vazirmatn text-xs text-text-secondary">
+              <p className="mt-1 font-estedad text-xs text-text-secondary">
                 جستجو، فیلتر و مدیریت سفارش‌های فروشگاه
               </p>
             </div>
           </div>
 
-          <span className="inline-flex items-center rounded-2xl bg-primary-50 px-3 py-1.5 font-vazirmatn text-xs font-medium text-primary-900">
+          <span className="inline-flex items-center rounded-2xl bg-primary-50 px-3 py-1.5 font-estedad text-xs font-medium text-primary-900">
             {filteredOrders.length} سفارش
           </span>
         </div>
@@ -136,7 +136,7 @@ function Orders() {
           <div className="flex min-h-72 items-center justify-center p-12">
             <div className="flex flex-col items-center gap-4">
               <div className="h-9 w-9 animate-spin rounded-full border-[3px] border-primary-100 border-t-primary-900" />
-              <p className="font-vazirmatn text-sm text-text-secondary">
+              <p className="font-estedad text-sm text-text-secondary">
                 در حال بارگذاری سفارش‌ها...
               </p>
             </div>
@@ -146,10 +146,10 @@ function Orders() {
         {!loading && error && (
           <div className="flex min-h-72 items-center justify-center p-12">
             <div className="text-center">
-              <p className="font-vazirmatn text-sm font-medium text-danger">
+              <p className="font-estedad text-sm font-medium text-danger">
                 خطا در دریافت اطلاعات
               </p>
-              <p className="mt-2 font-vazirmatn text-xs text-text-secondary">
+              <p className="mt-2 font-estedad text-xs text-text-secondary">
                 {error.message}
               </p>
             </div>
@@ -158,7 +158,7 @@ function Orders() {
 
         {!loading && !error && orders && orders.length === 0 && (
           <div className="flex min-h-72 flex-col items-center justify-center gap-3 p-12 text-center">
-            <p className="font-vazirmatn text-sm text-text-secondary">
+            <p className="font-estedad text-sm text-text-secondary">
               هنوز هیچ سفارشی ثبت نشده است.
             </p>
           </div>

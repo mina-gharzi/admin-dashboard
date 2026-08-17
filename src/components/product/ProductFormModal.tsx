@@ -98,7 +98,9 @@ function ProductFormModal({
   const [form, setForm] = useState<FormState>(() =>
     toFormState(initialProduct),
   );
-  const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof FormState, string>>
+  >({});
   const [submitting, setSubmitting] = useState(false);
 
   const validate = (): boolean => {
@@ -159,7 +161,7 @@ function ProductFormModal({
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Name */}
         <div>
-          <label className="mb-1.5 block font-vazirmatn text-xs font-medium text-text-secondary">
+          <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
             نام محصول
           </label>
 
@@ -172,7 +174,7 @@ function ProductFormModal({
           />
 
           {errors.name && (
-            <p className="mt-1 font-vazirmatn text-xs text-danger">
+            <p className="mt-1 font-estedad text-xs text-danger">
               {errors.name}
             </p>
           )}
@@ -181,7 +183,7 @@ function ProductFormModal({
         {/* Category + Status */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="mb-1.5 block font-vazirmatn text-xs font-medium text-text-secondary">
+            <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
               دسته‌بندی
             </label>
 
@@ -200,7 +202,7 @@ function ProductFormModal({
           </div>
 
           <div>
-            <label className="mb-1.5 block font-vazirmatn text-xs font-medium text-text-secondary">
+            <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
               وضعیت
             </label>
 
@@ -222,7 +224,7 @@ function ProductFormModal({
         {/* Price + Stock */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="mb-1.5 block font-vazirmatn text-xs font-medium text-text-secondary">
+            <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
               قیمت (تومان)
             </label>
 
@@ -239,14 +241,14 @@ function ProductFormModal({
             />
 
             {errors.price && (
-              <p className="mt-1 font-vazirmatn text-xs text-danger">
+              <p className="mt-1 font-estedad text-xs text-danger">
                 {errors.price}
               </p>
             )}
           </div>
 
           <div>
-            <label className="mb-1.5 block font-vazirmatn text-xs font-medium text-text-secondary">
+            <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
               موجودی
             </label>
 
@@ -263,7 +265,7 @@ function ProductFormModal({
             />
 
             {errors.stock && (
-              <p className="mt-1 font-vazirmatn text-xs text-danger">
+              <p className="mt-1 font-estedad text-xs text-danger">
                 {errors.stock}
               </p>
             )}
@@ -272,7 +274,7 @@ function ProductFormModal({
 
         {/* Description */}
         <div>
-          <label className="mb-1.5 block font-vazirmatn text-xs font-medium text-text-secondary">
+          <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
             توضیحات (اختیاری)
           </label>
 

@@ -90,7 +90,7 @@ function OrderDetails() {
       <div className="flex min-h-[50vh] items-center justify-center p-16">
         <div className="flex flex-col items-center gap-4">
           <div className="h-9 w-9 animate-spin rounded-full border-[3px] border-primary-100 border-t-primary-900" />
-          <p className="font-vazirmatn text-sm text-text-secondary">
+          <p className="font-estedad text-sm text-text-secondary">
             در حال بارگذاری سفارش...
           </p>
         </div>
@@ -105,10 +105,10 @@ function OrderDetails() {
           <Package size={28} />
         </div>
         <div>
-          <p className="font-vazirmatn text-sm font-semibold text-text-primary">
+          <p className="font-estedad text-sm font-semibold text-text-primary">
             سفارش مورد نظر پیدا نشد
           </p>
-          <p className="mt-1.5 font-vazirmatn text-xs text-text-secondary">
+          <p className="mt-1.5 font-estedad text-xs text-text-secondary">
             ممکن است سفارش حذف شده یا شناسه اشتباه باشد.
           </p>
         </div>
@@ -171,7 +171,7 @@ function OrderDetails() {
           <p className="font-inter text-xs text-text-secondary">
             Order #{order.id}
           </p>
-          <h1 className="mt-1 font-vazirmatn text-2xl font-bold tracking-tight text-text-primary">
+          <h1 className="mt-1 font-estedad text-2xl font-bold tracking-tight text-text-primary">
             جزئیات سفارش
           </h1>
         </div>
@@ -185,10 +185,10 @@ function OrderDetails() {
               <StatusIcon size={22} strokeWidth={1.8} />
             </div>
             <div>
-              <p className="font-vazirmatn text-xs text-text-secondary">
+              <p className="font-estedad text-xs text-text-secondary">
                 وضعیت سفارش
               </p>
-              <p className="mt-1 font-vazirmatn text-sm font-semibold text-text-primary">
+              <p className="mt-1 font-estedad text-sm font-semibold text-text-primary">
                 {currentStatus.label}
               </p>
             </div>
@@ -203,26 +203,26 @@ function OrderDetails() {
         {/* Customer Info */}
         <Card className="overflow-hidden border-primary-300 p-0">
           <div className="border-b border-primary-300 px-6 py-4">
-            <h2 className="font-vazirmatn text-base font-semibold text-text-primary">
+            <h2 className="font-estedad text-base font-semibold text-text-primary">
               اطلاعات مشتری
             </h2>
           </div>
 
           <div className="space-y-5 px-6 py-5">
             <div>
-              <p className="font-vazirmatn text-xs text-text-secondary">نام</p>
-              <p className="mt-1.5 font-vazirmatn text-sm font-medium text-text-primary">
+              <p className="font-estedad text-xs text-text-secondary">نام</p>
+              <p className="mt-1.5 font-estedad text-sm font-medium text-text-primary">
                 {order.customer}
               </p>
             </div>
             <div>
-              <p className="font-vazirmatn text-xs text-text-secondary">ایمیل</p>
+              <p className="font-estedad text-xs text-text-secondary">ایمیل</p>
               <p className="mt-1.5 font-inter text-sm text-text-primary">
                 {order.email}
               </p>
             </div>
             <div>
-              <p className="font-vazirmatn text-xs text-text-secondary">
+              <p className="font-estedad text-xs text-text-secondary">
                 شماره تماس
               </p>
               <p className="mt-1.5 font-inter text-sm text-text-primary">
@@ -230,8 +230,8 @@ function OrderDetails() {
               </p>
             </div>
             <div>
-              <p className="font-vazirmatn text-xs text-text-secondary">آدرس</p>
-              <p className="mt-1.5 font-vazirmatn text-sm leading-6 text-text-secondary">
+              <p className="font-estedad text-xs text-text-secondary">آدرس</p>
+              <p className="mt-1.5 font-estedad text-sm leading-6 text-text-secondary">
                 {order.address || "ثبت نشده"}
               </p>
             </div>
@@ -241,14 +241,14 @@ function OrderDetails() {
         {/* Order Items */}
         <Card className="overflow-hidden border-primary-300 p-0 desktop:col-span-2">
           <div className="border-b border-primary-300 px-6 py-4">
-            <h2 className="font-vazirmatn text-base font-semibold text-text-primary">
+            <h2 className="font-estedad text-base font-semibold text-text-primary">
               محصولات سفارش
             </h2>
           </div>
 
           <div>
             {items.length === 0 && (
-              <p className="px-6 py-8 font-vazirmatn text-sm text-text-secondary">
+              <p className="px-6 py-8 font-estedad text-sm text-text-secondary">
                 محصولی برای این سفارش ثبت نشده است.
               </p>
             )}
@@ -267,16 +267,16 @@ function OrderDetails() {
                     <Package size={19} strokeWidth={1.8} />
                   </div>
                   <div>
-                    <p className="font-vazirmatn text-sm font-semibold text-text-primary">
+                    <p className="font-estedad text-sm font-semibold text-text-primary">
                       {item.name}
                     </p>
-                    <p className="mt-1 font-vazirmatn text-xs text-text-secondary">
+                    <p className="mt-1 font-estedad text-xs text-text-secondary">
                       تعداد: {item.quantity}
                     </p>
                   </div>
                 </div>
 
-                <p className="font-vazirmatn text-sm font-semibold text-text-primary">
+                <p className="font-estedad text-sm font-semibold text-text-primary">
                   {formatPrice(item.price)}{" "}
                   <span className="text-xs font-normal text-text-secondary">
                     تومان
@@ -291,36 +291,36 @@ function OrderDetails() {
       {/* Summary */}
       <Card className="overflow-hidden border-primary-300 p-0">
         <div className="border-b border-primary-300 px-6 py-4">
-          <h2 className="font-vazirmatn text-base font-semibold text-text-primary">
+          <h2 className="font-estedad text-base font-semibold text-text-primary">
             خلاصه سفارش
           </h2>
         </div>
 
         <div className="space-y-4 px-6 py-5">
           <div className="flex items-center justify-between">
-            <span className="font-vazirmatn text-sm text-text-secondary">
+            <span className="font-estedad text-sm text-text-secondary">
               تاریخ سفارش
             </span>
-            <span className="font-vazirmatn text-sm text-text-primary">
+            <span className="font-estedad text-sm text-text-primary">
               {order.date}
             </span>
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="font-vazirmatn text-sm text-text-secondary">
+            <span className="font-estedad text-sm text-text-secondary">
               تعداد محصولات
             </span>
-            <span className="font-vazirmatn text-sm text-text-primary">
+            <span className="font-estedad text-sm text-text-primary">
               {items.length} محصول
             </span>
           </div>
 
           <div className="border-t border-primary-300 pt-4">
             <div className="flex items-center justify-between">
-              <span className="font-vazirmatn text-sm font-medium text-text-primary">
+              <span className="font-estedad text-sm font-medium text-text-primary">
                 مبلغ نهایی
               </span>
-              <span className="font-vazirmatn text-xl font-bold text-primary-900">
+              <span className="font-estedad text-xl font-bold text-primary-900">
                 {formatPrice(order.amount)}{" "}
                 <span className="text-xs font-normal text-text-secondary">
                   تومان
@@ -382,7 +382,7 @@ function OrderDetails() {
           </>
         }
       >
-        <p className="font-vazirmatn text-sm text-text-secondary">
+        <p className="font-estedad text-sm text-text-secondary">
           این عمل قابل برگشت نیست.
         </p>
       </Modal>

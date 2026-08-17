@@ -19,10 +19,7 @@ import { cn } from "../../utils/cn";
   ==========================================================
 */
 
-function Card({
-  className,
-  ...props
-}: HTMLAttributes<HTMLDivElement>) {
+function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
@@ -31,7 +28,7 @@ function Card({
         "bg-surface",
         "text-text-primary",
         "shadow-sm",
-        className
+        className,
       )}
       {...props}
     />
@@ -44,18 +41,10 @@ function Card({
   ==========================================================
 */
 
-function CardHeader({
-  className,
-  ...props
-}: HTMLAttributes<HTMLDivElement>) {
+function CardHeader({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn(
-        "flex flex-col",
-        "gap-1.5",
-        "p-6",
-        className
-      )}
+      className={cn("flex flex-col", "gap-1.5", "p-6", className)}
       {...props}
     />
   );
@@ -74,12 +63,12 @@ function CardTitle({
   return (
     <h3
       className={cn(
-        "font-vazirmatn",
+        "font-estedad",
         "text-lg",
         "font-semibold",
         "leading-7",
         "text-text-primary",
-        className
+        className,
       )}
       {...props}
     />
@@ -99,11 +88,11 @@ function CardDescription({
   return (
     <p
       className={cn(
-        "font-vazirmatn",
+        "font-estedad",
         "text-sm",
         "leading-5",
         "text-text-secondary",
-        className
+        className,
       )}
       {...props}
     />
@@ -116,20 +105,8 @@ function CardDescription({
   ==========================================================
 */
 
-function CardContent({
-  className,
-  ...props
-}: HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn(
-        "px-6",
-        "pb-6",
-        className
-      )}
-      {...props}
-    />
-  );
+function CardContent({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn("px-6", "pb-6", className)} {...props} />;
 }
 
 /*
@@ -138,10 +115,4 @@ function CardContent({
   ==========================================================
 */
 
-export {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-};
+export { Card, CardHeader, CardTitle, CardDescription, CardContent };

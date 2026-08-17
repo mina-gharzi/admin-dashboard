@@ -15,10 +15,7 @@
   ==========================================================
 */
 
-import type {
-  ButtonHTMLAttributes,
-  ReactNode,
-} from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 import { Loader2 } from "lucide-react";
 
@@ -30,12 +27,7 @@ import { cn } from "../../utils/cn";
   ----------------------------------------------------------
 */
 
-type ButtonVariant =
-  | "primary"
-  | "secondary"
-  | "outline"
-  | "ghost"
-  | "danger";
+type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger";
 
 /*
   ----------------------------------------------------------
@@ -43,10 +35,7 @@ type ButtonVariant =
   ----------------------------------------------------------
 */
 
-type ButtonSize =
-  | "sm"
-  | "md"
-  | "lg";
+type ButtonSize = "sm" | "md" | "lg";
 
 /*
   ----------------------------------------------------------
@@ -54,8 +43,7 @@ type ButtonSize =
   ----------------------------------------------------------
 */
 
-interface ButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
 
   size?: ButtonSize;
@@ -73,21 +61,10 @@ interface ButtonProps
   ----------------------------------------------------------
 */
 
-const variantStyles: Record<
-  ButtonVariant,
-  string
-> = {
-  primary: cn(
-    "bg-primary-900",
-    "text-white",
-    "hover:bg-primary-800",
-  ),
+const variantStyles: Record<ButtonVariant, string> = {
+  primary: cn("bg-primary-900", "text-white", "hover:bg-primary-800"),
 
-  secondary: cn(
-    "bg-primary-100",
-    "text-primary-900",
-    "hover:bg-primary-200",
-  ),
+  secondary: cn("bg-primary-100", "text-primary-900", "hover:bg-primary-200"),
 
   outline: cn(
     "border border-border",
@@ -103,11 +80,7 @@ const variantStyles: Record<
     "hover:text-primary-900",
   ),
 
-  danger: cn(
-    "bg-danger",
-    "text-white",
-    "hover:opacity-90",
-  ),
+  danger: cn("bg-danger", "text-white", "hover:opacity-90"),
 };
 
 /*
@@ -116,27 +89,12 @@ const variantStyles: Record<
   ----------------------------------------------------------
 */
 
-const sizeStyles: Record<
-  ButtonSize,
-  string
-> = {
-  sm: cn(
-    "h-8",
-    "px-3",
-    "text-xs",
-  ),
+const sizeStyles: Record<ButtonSize, string> = {
+  sm: cn("h-8", "px-3", "text-xs"),
 
-  md: cn(
-    "h-10",
-    "px-4",
-    "text-sm",
-  ),
+  md: cn("h-10", "px-4", "text-sm"),
 
-  lg: cn(
-    "h-11",
-    "px-5",
-    "text-sm",
-  ),
+  lg: cn("h-11", "px-5", "text-sm"),
 };
 
 /*
@@ -174,7 +132,7 @@ function Button({
 
         "rounded-md",
 
-        "font-vazirmatn",
+        "font-estedad",
         "font-medium",
 
         "whitespace-nowrap",
@@ -226,12 +184,7 @@ function Button({
           Loading
           ================================================== */}
 
-      {loading && (
-        <Loader2
-          size={16}
-          className="animate-spin"
-        />
-      )}
+      {loading && <Loader2 size={16} className="animate-spin" />}
 
       {/* ==================================================
           Right Icon

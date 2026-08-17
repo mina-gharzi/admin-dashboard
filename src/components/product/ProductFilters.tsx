@@ -12,9 +12,7 @@
   ==========================================================
 */
 
-import {
-  Search,
-} from "lucide-react";
+import { Search } from "lucide-react";
 
 import { Input } from "../ui/Input";
 
@@ -28,13 +26,9 @@ interface ProductFiltersProps {
   search: string;
   category: string;
 
-  onSearchChange: (
-    value: string
-  ) => void;
+  onSearchChange: (value: string) => void;
 
-  onCategoryChange: (
-    value: string
-  ) => void;
+  onCategoryChange: (value: string) => void;
 
   resultCount: number;
 }
@@ -45,13 +39,7 @@ interface ProductFiltersProps {
   ----------------------------------------------------------
 */
 
-const categories = [
-  "همه",
-  "موبایل",
-  "لپ‌تاپ",
-  "هدفون",
-  "ساعت هوشمند",
-];
+const categories = ["همه", "موبایل", "لپ‌تاپ", "هدفون", "ساعت هوشمند"];
 
 /*
   ----------------------------------------------------------
@@ -78,11 +66,7 @@ function ProductFilters({
 
         <Input
           value={search}
-          onChange={(event) =>
-            onSearchChange(
-              event.target.value
-            )
-          }
+          onChange={(event) => onSearchChange(event.target.value)}
           placeholder="جستجوی محصول..."
           className="pr-10"
         />
@@ -92,19 +76,16 @@ function ProductFilters({
 
       <div className="flex flex-wrap gap-2">
         {categories.map((item) => {
-          const isActive =
-            category === item;
+          const isActive = category === item;
 
           return (
             <button
               key={item}
               type="button"
-              onClick={() =>
-                onCategoryChange(item)
-              }
+              onClick={() => onCategoryChange(item)}
               className={[
                 "rounded-md px-3 py-2",
-                "font-vazirmatn text-xs font-medium",
+                "font-estedad text-xs font-medium",
                 "transition-colors",
 
                 isActive
@@ -120,7 +101,7 @@ function ProductFilters({
 
       {/* Result Count */}
 
-      <p className="shrink-0 font-vazirmatn text-xs text-text-secondary">
+      <p className="shrink-0 font-estedad text-xs text-text-secondary">
         {resultCount} محصول
       </p>
     </div>

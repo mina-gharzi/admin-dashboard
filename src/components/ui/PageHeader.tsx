@@ -62,21 +62,14 @@ function PageHeader({
   className,
 }: PageHeaderProps) {
   return (
-    <div
-      className={cn(
-        "mb-6",
-        className,
-      )}
-    >
+    <div className={cn("mb-6", className)}>
       {/* ==================================================
           Breadcrumb
           ================================================== */}
 
       {breadcrumbs.length > 0 && (
         <div className="mb-3">
-          <Breadcrumb
-            items={breadcrumbs}
-          />
+          <Breadcrumb items={breadcrumbs} />
         </div>
       )}
 
@@ -99,7 +92,7 @@ function PageHeader({
         <div>
           <h1
             className={cn(
-              "font-vazirmatn",
+              "font-estedad",
               "text-2xl font-bold",
               "text-text-primary",
               "tablet:text-3xl",
@@ -112,7 +105,7 @@ function PageHeader({
             <p
               className={cn(
                 "mt-1.5",
-                "font-vazirmatn",
+                "font-estedad",
                 "text-sm",
                 "text-text-secondary",
               )}
@@ -126,11 +119,7 @@ function PageHeader({
             Actions
             ================================================== */}
 
-        {actions && (
-          <div className="flex items-center gap-2">
-            {actions}
-          </div>
-        )}
+        {actions && <div className="flex items-center gap-2">{actions}</div>}
       </div>
     </div>
   );

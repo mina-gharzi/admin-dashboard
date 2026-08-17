@@ -36,7 +36,7 @@ createRoot(rootElement).render(
       rtl
       autoClose={3000}
       theme="light"
-      toastClassName="font-vazirmatn text-sm"
+      toastClassName="font-estedad text-sm"
     />
-  </StrictMode>
+  </StrictMode>,
 );

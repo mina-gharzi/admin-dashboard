@@ -38,49 +38,31 @@ const badgeVariants = cva(
     "px-2",
     "py-1",
 
-    "font-vazirmatn",
+    "font-estedad",
     "text-xs",
     "font-medium",
   ],
   {
     variants: {
       variant: {
-        success: [
-          "bg-green-100",
-          "text-success",
-        ],
+        success: ["bg-green-100", "text-success"],
 
-        warning: [
-          "bg-amber-100",
-          "text-amber-700",
-        ],
+        warning: ["bg-amber-100", "text-amber-700"],
 
-        danger: [
-          "bg-red-100",
-          "text-danger",
-        ],
+        danger: ["bg-red-100", "text-danger"],
 
-        info: [
-          "bg-sky-100",
-          "text-info",
-        ],
+        info: ["bg-sky-100", "text-info"],
 
-        primary: [
-          "bg-primary-100",
-          "text-primary-900",
-        ],
+        primary: ["bg-primary-100", "text-primary-900"],
 
-        neutral: [
-          "bg-slate-100",
-          "text-text-secondary",
-        ],
+        neutral: ["bg-slate-100", "text-text-secondary"],
       },
     },
 
     defaultVariants: {
       variant: "neutral",
     },
-  }
+  },
 );
 
 /*
@@ -90,8 +72,7 @@ const badgeVariants = cva(
 */
 
 interface BadgeProps
-  extends HTMLAttributes<HTMLSpanElement>,
-    VariantProps<typeof badgeVariants> {}
+  extends HTMLAttributes<HTMLSpanElement>, VariantProps<typeof badgeVariants> {}
 
 /*
   ----------------------------------------------------------
@@ -99,19 +80,9 @@ interface BadgeProps
   ----------------------------------------------------------
 */
 
-function Badge({
-  className,
-  variant,
-  ...props
-}: BadgeProps) {
+function Badge({ className, variant, ...props }: BadgeProps) {
   return (
-    <span
-      className={cn(
-        badgeVariants({ variant }),
-        className
-      )}
-      {...props}
-    />
+    <span className={cn(badgeVariants({ variant }), className)} {...props} />
   );
 }
 

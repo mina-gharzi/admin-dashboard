@@ -10,8 +10,11 @@
   - Mock data ساخت‌شده درست
   - آماده برای real API integration
   - Retry logic
+  - Persist در localStorage (رفرش صفحه دیگه داده رو پاک نمی‌کنه)
   ==========================================================
 */
+
+import { loadFromStorage, saveToStorage } from "./storage";
 
 /*
   ----------------------------------------------------------
@@ -59,11 +62,13 @@ export interface OrderItem {
 
 /*
   ----------------------------------------------------------
-  Mock Data
+  Seed Data (فقط برای اولین باری که کاربر برنامه رو باز
+  می‌کنه استفاده میشه؛ بعدش هرچی خودش تغییر بده تو
+  localStorage ذخیره میشه و همون جایگزین این seed میشه)
   ----------------------------------------------------------
 */
 
-const mockUsers: User[] = [
+const seedUsers: User[] = [
   {
     id: 1,
     name: "مینا احمدی",
@@ -122,7 +127,7 @@ const mockUsers: User[] = [
   },
 ];
 
-const mockProducts: Product[] = [
+const seedProducts: Product[] = [
   {
     id: 1,
     name: "iPhone 15 Pro Max",
@@ -170,7 +175,7 @@ const mockProducts: Product[] = [
   },
 ];
 
-const mockOrders: Order[] = [
+const seedOrders: Order[] = [
   {
     id: "ORD-1001",
     customer: "علی رضایی",
@@ -245,6 +250,36 @@ const mockOrders: Order[] = [
     ],
   },
 ];
+
+/*
+  ----------------------------------------------------------
+  Live Data (این‌ها واقعاً استفاده میشن)
+  ----------------------------------------------------------
+  بار اول از localStorage می‌خونیم؛ اگه چیزی ذخیره نشده
+  باشه (اولین بازدید)، از seed دیتای نمونه شروع می‌کنیم.
+  ----------------------------------------------------------
+*/
+
+const mockUsers: User[] = loadFromStorage("users", seedUsers);
+const mockProducts: Product[] = loadFromStorage("products", seedProducts);
+const mockOrders: Order[] = loadFromStorage("orders", seedOrders);
+
+/*
+  بعد از هر تغییر (افزودن/ویرایش/حذف) این توابع صدا زده
+  میشن تا وضعیت فعلی تو localStorage ذخیره بشه.
+*/
+
+function persistUsers() {
+  saveToStorage("users", mockUsers);
+}
+
+function persistProducts() {
+  saveToStorage("products", mockProducts);
+}
+
+function persistOrders() {
+  saveToStorage("orders", mockOrders);
+}
 
 /*
   ----------------------------------------------------------
@@ -324,6 +359,7 @@ export const api = {
             : 1,
       };
       mockUsers.push(newUser);
+      persistUsers();
       return newUser;
     },
 
@@ -332,6 +368,7 @@ export const api = {
       const index = mockUsers.findIndex((u) => u.id === id);
       if (index === -1) return null;
       mockUsers[index] = { ...mockUsers[index], ...user };
+      persistUsers();
       return mockUsers[index];
     },
 
@@ -340,6 +377,7 @@ export const api = {
       const index = mockUsers.findIndex((u) => u.id === id);
       if (index === -1) return false;
       mockUsers.splice(index, 1);
+      persistUsers();
       return true;
     },
   },
@@ -376,6 +414,7 @@ export const api = {
             : 1,
       };
       mockProducts.push(newProduct);
+      persistProducts();
       return newProduct;
     },
 
@@ -387,6 +426,7 @@ export const api = {
       const index = mockProducts.findIndex((p) => p.id === id);
       if (index === -1) return null;
       mockProducts[index] = { ...mockProducts[index], ...product };
+      persistProducts();
       return mockProducts[index];
     },
 
@@ -395,6 +435,7 @@ export const api = {
       const index = mockProducts.findIndex((p) => p.id === id);
       if (index === -1) return false;
       mockProducts.splice(index, 1);
+      persistProducts();
       return true;
     },
   },
@@ -432,6 +473,7 @@ export const api = {
         date: new Date().toLocaleDateString("fa-IR"),
       };
       mockOrders.push(newOrder);
+      persistOrders();
       return newOrder;
     },
 
@@ -440,6 +482,7 @@ export const api = {
       const index = mockOrders.findIndex((o) => o.id === id);
       if (index === -1) return null;
       mockOrders[index] = { ...mockOrders[index], ...order };
+      persistOrders();
       return mockOrders[index];
     },
 
@@ -448,6 +491,7 @@ export const api = {
       const index = mockOrders.findIndex((o) => o.id === id);
       if (index === -1) return false;
       mockOrders.splice(index, 1);
+      persistOrders();
       return true;
     },
   },
@@ -599,6 +643,34 @@ export const api = {
         topProducts,
         recentOrders,
       };
+    },
+  },
+  /*
+    System API
+    ----------------------------------------------------------
+    چون داده الان persist میشه، یه راه برای برگشت به دیتای
+    نمونه (یا شروع کاملاً خالی) لازمه — مثلاً برای دمو دوباره
+    یا وقتی localStorage خراب/ناسازگار شده.
+  */
+  system: {
+    async resetToSampleData(): Promise<void> {
+      await delay(200);
+      mockUsers.splice(0, mockUsers.length, ...seedUsers);
+      mockProducts.splice(0, mockProducts.length, ...seedProducts);
+      mockOrders.splice(0, mockOrders.length, ...seedOrders);
+      persistUsers();
+      persistProducts();
+      persistOrders();
+    },
+
+    async clearAllData(): Promise<void> {
+      await delay(200);
+      mockUsers.splice(0, mockUsers.length);
+      mockProducts.splice(0, mockProducts.length);
+      mockOrders.splice(0, mockOrders.length);
+      persistUsers();
+      persistProducts();
+      persistOrders();
     },
   },
 };

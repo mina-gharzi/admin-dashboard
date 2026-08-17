@@ -150,7 +150,7 @@ function Products() {
         {/* Loading State */}
         {loading && (
           <div className="flex items-center justify-center p-12">
-            <p className="font-vazirmatn text-sm text-text-secondary">
+            <p className="font-estedad text-sm text-text-secondary">
               در حال بارگذاری محصولات...
             </p>
           </div>
@@ -159,7 +159,7 @@ function Products() {
         {/* Error State */}
         {!loading && error && (
           <div className="flex items-center justify-center p-12">
-            <p className="font-vazirmatn text-sm text-danger">
+            <p className="font-estedad text-sm text-danger">
               خطا در دریافت اطلاعات: {error.message}
             </p>
           </div>
@@ -168,7 +168,7 @@ function Products() {
         {/* Empty State */}
         {!loading && !error && products && products.length === 0 && (
           <div className="flex flex-col items-center justify-center gap-3 p-12 text-center">
-            <p className="font-vazirmatn text-sm text-text-secondary">
+            <p className="font-estedad text-sm text-text-secondary">
               هنوز هیچ محصولی ثبت نشده است.
             </p>
             <Button size="sm" onClick={openCreateModal}>

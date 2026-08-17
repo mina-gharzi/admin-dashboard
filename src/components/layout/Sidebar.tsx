@@ -279,7 +279,7 @@ function Sidebar() {
                 <span className="text-text-primary">Panel</span>
               </h1>
 
-              <p className="mt-0.5 font-vazirmatn text-[10px] text-text-secondary">
+              <p className="mt-0.5 font-estedad text-[10px] text-text-secondary">
                 مدیریت سیستم
               </p>
             </div>
@@ -294,7 +294,7 @@ function Sidebar() {
           {/* Navigation Title */}
 
           {!isSidebarCollapsed && (
-            <p className="mb-3 px-3 font-vazirmatn text-xs font-medium text-text-secondary">
+            <p className="mb-3 px-3 font-estedad text-xs font-medium text-text-secondary">
               منوی اصلی
             </p>
           )}
@@ -320,7 +320,7 @@ function Sidebar() {
                       */
 
                       "flex items-center rounded-md py-2.5",
-                      "font-vazirmatn text-sm",
+                      "font-estedad text-sm",
                       "transition-colors",
 
                       /*
@@ -376,7 +376,7 @@ function Sidebar() {
               cn(
                 "mb-1 flex items-center",
                 "rounded-md py-2.5",
-                "font-vazirmatn text-sm",
+                "font-estedad text-sm",
                 "transition-colors",
 
                 isSidebarCollapsed ? "justify-center" : "gap-3 px-3",
@@ -406,7 +406,7 @@ function Sidebar() {
             className={cn(
               "flex w-full items-center",
               "rounded-md py-2.5",
-              "font-vazirmatn text-sm",
+              "font-estedad text-sm",
               "text-danger",
               "transition-colors",
               "hover:bg-red-50",

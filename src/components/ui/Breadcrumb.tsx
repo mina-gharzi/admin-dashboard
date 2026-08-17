@@ -44,20 +44,10 @@ interface BreadcrumbProps {
   ----------------------------------------------------------
 */
 
-function Breadcrumb({
-  items,
-}: BreadcrumbProps) {
+function Breadcrumb({ items }: BreadcrumbProps) {
   return (
-    <nav
-      aria-label="Breadcrumb"
-      className="font-vazirmatn"
-    >
-      <ol
-        className={cn(
-          "flex items-center gap-1.5",
-          "text-xs tablet:text-sm",
-        )}
-      >
+    <nav aria-label="Breadcrumb" className="font-estedad">
+      <ol className={cn("flex items-center gap-1.5", "text-xs tablet:text-sm")}>
         {/* ==================================================
             Home
             ================================================== */}
@@ -74,9 +64,7 @@ function Breadcrumb({
           >
             <Home size={15} />
 
-            <span className="hidden tablet:inline">
-              داشبورد
-            </span>
+            <span className="hidden tablet:inline">داشبورد</span>
           </Link>
         </li>
 
@@ -85,8 +73,7 @@ function Breadcrumb({
             ================================================== */}
 
         {items.map((item, index) => {
-          const isLast =
-            index === items.length - 1;
+          const isLast = index === items.length - 1;
 
           return (
             <li
@@ -95,10 +82,7 @@ function Breadcrumb({
             >
               {/* Separator */}
 
-              <ChevronLeft
-                size={14}
-                className="text-text-secondary"
-              />
+              <ChevronLeft size={14} className="text-text-secondary" />
 
               {/* Item */}
 
@@ -114,12 +98,7 @@ function Breadcrumb({
                   {item.label}
                 </Link>
               ) : (
-                <span
-                  className={cn(
-                    "font-medium",
-                    "text-text-primary",
-                  )}
-                >
+                <span className={cn("font-medium", "text-text-primary")}>
                   {item.label}
                 </span>
               )}

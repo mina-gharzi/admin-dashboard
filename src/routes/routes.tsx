@@ -41,11 +41,11 @@ import Analytics from "../pages/Analytics";
 function SettingsPage() {
   return (
     <div>
-      <h1 className="font-vazirmatn text-2xl font-bold text-text-primary">
+      <h1 className="font-estedad text-2xl font-bold text-text-primary">
         تنظیمات
       </h1>
 
-      <p className="mt-2 font-vazirmatn text-sm text-text-secondary">
+      <p className="mt-2 font-estedad text-sm text-text-secondary">
         تنظیمات سیستم
       </p>
     </div>

@@ -35,7 +35,7 @@ function Textarea({ className, error = false, ...props }: TextareaProps) {
       className={cn(
         "flex w-full",
         "min-h-24",
-        "font-vazirmatn text-sm",
+        "font-estedad text-sm",
         "text-text-primary",
         "px-3 py-2",
         "rounded-md",
@@ -52,11 +52,7 @@ function Textarea({ className, error = false, ...props }: TextareaProps) {
         "disabled:opacity-60",
         "resize-none",
 
-        error && [
-          "border-danger",
-          "focus:border-danger",
-          "focus:ring-red-100",
-        ],
+        error && ["border-danger", "focus:border-danger", "focus:ring-red-100"],
 
         className,
       )}

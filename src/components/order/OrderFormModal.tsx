@@ -100,7 +100,7 @@ function OrderFormModal({
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Customer */}
         <div>
-          <label className="mb-1.5 block font-vazirmatn text-xs font-medium text-text-secondary">
+          <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
             نام مشتری
           </label>
 
@@ -116,7 +116,7 @@ function OrderFormModal({
         {/* Email + Phone */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="mb-1.5 block font-vazirmatn text-xs font-medium text-text-secondary">
+            <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
               ایمیل
             </label>
 
@@ -131,7 +131,7 @@ function OrderFormModal({
           </div>
 
           <div>
-            <label className="mb-1.5 block font-vazirmatn text-xs font-medium text-text-secondary">
+            <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
               شماره تماس
             </label>
 
@@ -148,7 +148,7 @@ function OrderFormModal({
 
         {/* Address */}
         <div>
-          <label className="mb-1.5 block font-vazirmatn text-xs font-medium text-text-secondary">
+          <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
             آدرس
           </label>
 
@@ -162,7 +162,7 @@ function OrderFormModal({
 
         {/* Status */}
         <div>
-          <label className="mb-1.5 block font-vazirmatn text-xs font-medium text-text-secondary">
+          <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
             وضعیت سفارش
           </label>
 

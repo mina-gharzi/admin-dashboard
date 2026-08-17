@@ -12,11 +12,11 @@ function App() {
     <main className="min-h-screen bg-background p-8">
       <div className="mx-auto max-w-7xl">
         {/* Persian Typography */}
-        <h1 className="font-vazirmatn text-3xl font-bold text-text-primary">
+        <h1 className="font-estedad text-3xl font-bold text-text-primary">
           داشبورد مدیریت
         </h1>
 
-        <p className="mt-3 font-vazirmatn text-text-secondary">
+        <p className="mt-3 font-estedad text-text-secondary">
           این متن با فونت وزیرمتن نمایش داده می‌شود.
         </p>
 
