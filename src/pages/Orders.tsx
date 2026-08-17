@@ -14,7 +14,6 @@
 */
 
 import { useMemo, useState } from "react";
-import { Activity } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { Card } from "../components/ui/Card";
@@ -103,27 +102,6 @@ function Orders() {
       />
 
       <Card className="overflow-hidden border-primary-300 p-0">
-        {/* Section Header */}
-        <div className="flex flex-col gap-3 border-b border-primary-300 px-7 py-5 tablet:flex-row tablet:items-center tablet:justify-between">
-          <div className="flex items-start gap-3">
-            <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-2xl bg-primary-100 text-primary-900">
-              <Activity size={19} strokeWidth={1.8} />
-            </div>
-            <div>
-              <h2 className="font-estedad text-lg font-semibold text-text-primary">
-                لیست سفارش‌ها
-              </h2>
-              <p className="mt-1 font-estedad text-xs text-text-secondary">
-                جستجو، فیلتر و مدیریت سفارش‌های فروشگاه
-              </p>
-            </div>
-          </div>
-
-          <span className="inline-flex items-center rounded-2xl bg-primary-50 px-3 py-1.5 font-estedad text-xs font-medium text-primary-900">
-            {filteredOrders.length} سفارش
-          </span>
-        </div>
-
         <OrderFilters
           search={search}
           status={status}

@@ -1,13 +1,9 @@
 /*
   ==========================================================
-  ProductTable.tsx (FIXED)
+  ProductTable.tsx
   ----------------------------------------------------------
-  اصلاحات:
-  - Navigate to product details ✓
-  - Functional actions ✓
-  - Modal support ✓
-  - Delete confirmation ✓
-  ==========================================================
+  Product management table — Dashboard design language
+  ----------------------------------------------------------
 */
 
 import { useState } from "react";
@@ -23,9 +19,19 @@ import {
   type SortingState,
 } from "@tanstack/react-table";
 
-import { ChevronDown, ChevronUp, MoreHorizontal, Package } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  Eye,
+  MoreHorizontal,
+  Package,
+  PackageOpen,
+  Pencil,
+  ShieldAlert,
+} from "lucide-react";
 
-import { Badge } from "../ui/Badge";
 import { Dropdown } from "../ui/Dropdown";
 import { Modal } from "../ui/Modal";
 import Button from "../ui/Button";
@@ -47,11 +53,77 @@ interface ProductTableProps {
 
 /*
   ----------------------------------------------------------
-  Column Helper
+  Constants
   ----------------------------------------------------------
 */
 
+const PAGE_SIZE = 8;
+
 const columnHelper = createColumnHelper<Product>();
+
+/*
+  ----------------------------------------------------------
+  Sort Icon
+  ----------------------------------------------------------
+*/
+
+function SortIcon({ sorted }: { sorted: false | "asc" | "desc" }) {
+  if (sorted === "asc") {
+    return (
+      <span className="flex h-4 w-4 items-center justify-center rounded bg-primary-900/10 text-primary-900">
+        <ChevronUp size={12} />
+      </span>
+    );
+  }
+
+  if (sorted === "desc") {
+    return (
+      <span className="flex h-4 w-4 items-center justify-center rounded bg-primary-900/10 text-primary-900">
+        <ChevronDown size={12} />
+      </span>
+    );
+  }
+
+  return (
+    <span className="flex h-4 w-4 items-center justify-center rounded opacity-0 transition-opacity group-hover/th:opacity-40">
+      <ChevronUp size={12} />
+    </span>
+  );
+}
+
+/*
+  ----------------------------------------------------------
+  Pagination Button
+  ----------------------------------------------------------
+*/
+
+function PageBtn({
+  onClick,
+  disabled,
+  children,
+}: {
+  onClick: () => void;
+  disabled: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className="
+        inline-flex h-8 items-center gap-1.5 rounded-lg
+        border border-primary-300/70 bg-surface px-2.5
+        font-estedad text-[11px] font-medium text-text-secondary
+        transition-all active:scale-95
+        hover:border-primary-900 hover:text-primary-900
+        disabled:cursor-not-allowed disabled:opacity-35
+      "
+    >
+      {children}
+    </button>
+  );
+}
 
 /*
   ----------------------------------------------------------
@@ -62,14 +134,14 @@ const columnHelper = createColumnHelper<Product>();
 function ProductTable({ products, onEdit, onDelete }: ProductTableProps) {
   const navigate = useNavigate();
 
-  /*
-    Sorting State
-  */
   const [sorting, setSorting] = useState<SortingState>([]);
 
   /*
-    Delete Confirmation Modal
+    --------------------------------------------------------
+    Delete Modal
+    --------------------------------------------------------
   */
+
   const [deleteModal, setDeleteModal] = useState<{
     open: boolean;
     productId: number | null;
@@ -81,11 +153,19 @@ function ProductTable({ products, onEdit, onDelete }: ProductTableProps) {
   });
 
   /*
+    --------------------------------------------------------
     Columns
+    --------------------------------------------------------
   */
+
   const columns = [
+    /*
+      Product
+    */
+
     columnHelper.accessor("name", {
       header: "محصول",
+
       cell: ({ row }) => {
         const product = row.original;
 
@@ -93,18 +173,35 @@ function ProductTable({ products, onEdit, onDelete }: ProductTableProps) {
           <button
             type="button"
             onClick={() => navigate(`/products/${product.id}`)}
-            className="flex items-center gap-3 cursor-pointer hover:opacity-75 transition-opacity"
+            className="
+              flex items-center gap-3
+              text-right
+              transition-opacity
+              hover:opacity-75
+            "
           >
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-100 text-primary-900">
-              <Package size={19} />
+            <div
+              className="
+                flex h-10 w-10 shrink-0
+                items-center justify-center
+                rounded-xl
+                bg-linear-to-tr
+                from-primary-900
+                to-primary-700
+                text-white
+                shadow-sm
+                ring-2 ring-primary-100/60
+              "
+            >
+              <Package size={18} strokeWidth={1.8} />
             </div>
 
-            <div className="text-left">
-              <p className="font-estedad text-sm font-medium text-text-primary">
+            <div className="min-w-0">
+              <p className="truncate font-estedad text-sm font-bold text-text-primary">
                 {product.name}
               </p>
 
-              <p className="mt-0.5 font-inter text-xs text-text-secondary">
+              <p className="mt-0.5 font-inter text-[11px] text-text-secondary">
                 #{product.id}
               </p>
             </div>
@@ -113,32 +210,47 @@ function ProductTable({ products, onEdit, onDelete }: ProductTableProps) {
       },
     }),
 
+    /*
+      Category
+    */
+
     columnHelper.accessor("category", {
       header: "دسته‌بندی",
+
       cell: ({ getValue }) => (
-        <span className="font-estedad text-sm text-text-secondary">
+        <span className="font-estedad text-xs text-text-secondary">
           {getValue()}
         </span>
       ),
     }),
 
+    /*
+      Price
+    */
+
     columnHelper.accessor("price", {
       header: "قیمت",
+
       cell: ({ getValue }) => (
-        <div>
-          <span className="font-estedad text-sm font-medium text-text-primary">
+        <div className="whitespace-nowrap">
+          <span className="font-estedad text-sm font-bold text-text-primary">
             {formatPrice(getValue())}
           </span>
 
-          <span className="mr-1 font-estedad text-xs text-text-secondary">
+          <span className="mr-1 font-estedad text-[11px] text-text-secondary">
             تومان
           </span>
         </div>
       ),
     }),
 
+    /*
+      Stock
+    */
+
     columnHelper.accessor("stock", {
       header: "موجودی",
+
       cell: ({ getValue }) => {
         const stock = getValue();
 
@@ -146,65 +258,131 @@ function ProductTable({ products, onEdit, onDelete }: ProductTableProps) {
           <span
             className={
               stock === 0
-                ? "font-estedad text-sm text-danger font-medium"
-                : "font-estedad text-sm text-text-primary"
+                ? "font-estedad text-xs font-medium text-danger"
+                : "font-estedad text-xs text-text-primary"
             }
           >
-            {stock === 0 ? "موجود نیست" : `${stock} عدد`}
+            {stock === 0
+              ? "موجود نیست"
+              : `${stock.toLocaleString("fa-IR")} عدد`}
           </span>
         );
       },
     }),
 
+    /*
+      Status
+    */
+
     columnHelper.accessor("status", {
       header: "وضعیت",
+
       cell: ({ getValue }) => {
         const status = getValue();
 
         return (
-          <Badge variant={status === "active" ? "success" : "danger"}>
-            {status === "active" ? "فعال" : "غیرفعال"}
-          </Badge>
+          <span
+            className={`
+              inline-flex items-center gap-2
+              rounded-lg border
+              px-2.5 py-1.5
+              ${
+                status === "active"
+                  ? "border-success/25 bg-success/5"
+                  : "border-danger/25 bg-danger/5"
+              }
+            `}
+          >
+            <span
+              className={`
+                h-1.5 w-1.5 rounded-full
+                ${status === "active" ? "bg-success" : "bg-danger"}
+              `}
+            />
+
+            <span
+              className={`
+                font-estedad text-[11px] font-medium
+                ${status === "active" ? "text-success" : "text-danger"}
+              `}
+            >
+              {status === "active" ? "فعال" : "غیرفعال"}
+            </span>
+          </span>
         );
       },
     }),
 
+    /*
+      Actions
+    */
+
     columnHelper.display({
       id: "actions",
-      header: "عملیات",
+      header: "",
       enableSorting: false,
-      cell: ({ row }) => (
-        <Dropdown
-          trigger={<MoreHorizontal size={18} />}
-          items={[
-            {
-              label: "مشاهده",
-              onClick: () => navigate(`/products/${row.original.id}`),
-            },
-            {
-              label: "ویرایش",
-              onClick: () => onEdit?.(row.original),
-            },
-            {
-              label: "حذف",
-              onClick: () => {
-                setDeleteModal({
-                  open: true,
-                  productId: row.original.id,
-                  productName: row.original.name,
-                });
-              },
-              danger: true,
-            },
-          ]}
-        />
-      ),
+
+      cell: ({ row }) => {
+        const product = row.original;
+
+        return (
+          <div className="flex justify-end">
+            <Dropdown
+              trigger={
+                <button
+                  type="button"
+                  className="
+                    flex h-8 w-8
+                    items-center justify-center
+                    rounded-lg
+                    text-text-secondary
+                    transition-all
+                    hover:bg-primary-100
+                    hover:text-primary-900
+                  "
+                >
+                  <MoreHorizontal size={18} />
+                </button>
+              }
+              items={[
+                {
+                  label: "مشاهده",
+                  icon: <Eye size={14} />,
+                  onClick: () => navigate(`/products/${product.id}`),
+                },
+
+                {
+                  label: "ویرایش",
+                  icon: <Pencil size={14} />,
+                  onClick: () => onEdit?.(product),
+                },
+
+                {
+                  label: "حذف",
+                  icon: <ShieldAlert size={14} />,
+                  danger: true,
+
+                  onClick: () =>
+                    setDeleteModal({
+                      open: true,
+                      productId: product.id,
+                      productName: product.name,
+                    }),
+                },
+              ]}
+            />
+          </div>
+        );
+      },
     }),
   ];
 
   /*
-    Table Instance
+    --------------------------------------------------------
+    React Table
+    --------------------------------------------------------
   */
+
   const table = useReactTable({
     data: products,
     columns,
@@ -221,29 +399,58 @@ function ProductTable({ products, onEdit, onDelete }: ProductTableProps) {
 
     initialState: {
       pagination: {
-        pageSize: 5,
+        pageSize: PAGE_SIZE,
       },
     },
   });
 
   /*
-    Sort Icon
+    --------------------------------------------------------
+    Delete Confirm
+    --------------------------------------------------------
   */
-  const SortIcon = ({ sorted }: { sorted: false | "asc" | "desc" }) => {
-    if (sorted === "asc") return <ChevronUp size={14} />;
-    if (sorted === "desc") return <ChevronDown size={14} />;
-    return null;
-  };
 
-  /*
-    Handle Delete
-  */
   const handleDeleteConfirm = () => {
     if (deleteModal.productId !== null) {
       onDelete?.(deleteModal.productId);
-      setDeleteModal({ open: false, productId: null, productName: "" });
+
+      setDeleteModal({
+        open: false,
+        productId: null,
+        productName: "",
+      });
     }
   };
+
+  /*
+    --------------------------------------------------------
+    Pagination
+    --------------------------------------------------------
+  */
+
+  const currentPage = table.getState().pagination.pageIndex + 1;
+
+  const pageCount = table.getPageCount();
+
+  const rows = table.getRowModel().rows;
+
+  const pageNumbers = Array.from({ length: Math.min(pageCount, 5) }, (_, i) => {
+    if (pageCount <= 5) return i;
+
+    if (currentPage <= 3) return i;
+
+    if (currentPage >= pageCount - 2) {
+      return pageCount - 5 + i;
+    }
+
+    return currentPage - 3 + i;
+  });
+
+  /*
+    --------------------------------------------------------
+    Render
+    --------------------------------------------------------
+  */
 
   return (
     <>
@@ -251,118 +458,304 @@ function ProductTable({ products, onEdit, onDelete }: ProductTableProps) {
           Table
           ================================================== */}
 
-      <div>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            {/* Header */}
-            <thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr
-                  key={headerGroup.id}
-                  className="border-b border-border bg-background text-right"
-                >
-                  {headerGroup.headers.map((header) => {
-                    const canSort = header.column.getCanSort();
-                    const sorted = header.column.getIsSorted();
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-187.5">
+          {/* ------------------------------------------------
+              Header
+          ------------------------------------------------ */}
 
-                    return (
-                      <th
-                        key={header.id}
-                        className="px-5 py-3 font-estedad text-xs font-medium text-text-secondary"
-                      >
-                        {header.isPlaceholder ? null : (
-                          <button
-                            type="button"
-                            disabled={!canSort}
-                            onClick={header.column.getToggleSortingHandler()}
-                            className={[
-                              "inline-flex items-center gap-1",
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr
+                key={headerGroup.id}
+                className="
+                  border-b
+                  border-primary-300/60
+                  bg-primary-100/25
+                "
+              >
+                {headerGroup.headers.map((header) => {
+                  const canSort = header.column.getCanSort();
+
+                  const sorted = header.column.getIsSorted();
+
+                  return (
+                    <th
+                      key={header.id}
+                      className="
+                        px-6 py-3
+                        text-right
+                        first:pr-6
+                        last:pl-6
+                      "
+                    >
+                      {header.isPlaceholder ? null : (
+                        <button
+                          type="button"
+                          disabled={!canSort}
+                          onClick={header.column.getToggleSortingHandler()}
+                          className={`
+                            group/th
+                            inline-flex
+                            items-center
+                            gap-1.5
+                            font-estedad
+                            text-[11px]
+                            font-bold
+                            uppercase
+                            tracking-wider
+
+                            ${
                               canSort
-                                ? "cursor-pointer hover:text-text-primary"
-                                : "cursor-default",
-                            ].join(" ")}
-                          >
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
+                                ? "cursor-pointer select-none text-text-secondary transition hover:text-primary-900"
+                                : "cursor-default text-text-secondary"
+                            }
+                          `}
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
 
-                            {canSort && <SortIcon sorted={sorted} />}
-                          </button>
-                        )}
-                      </th>
-                    );
-                  })}
-                </tr>
-              ))}
-            </thead>
-
-            {/* Body */}
-            <tbody>
-              {table.getRowModel().rows.map((row) => (
-                <tr
-                  key={row.id}
-                  className="border-b border-border last:border-0 hover:bg-background"
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-5 py-4">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
+                          {canSort && <SortIcon sorted={sorted} />}
+                        </button>
                       )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                    </th>
+                  );
+                })}
+              </tr>
+            ))}
+          </thead>
 
-        {/* Empty State */}
-        {table.getRowModel().rows.length === 0 && (
-          <div className="p-12 text-center">
-            <Package size={32} className="mx-auto text-text-secondary" />
+          {/* ------------------------------------------------
+              Body
+          ------------------------------------------------ */}
 
-            <p className="mt-3 font-estedad text-sm text-text-secondary">
-              محصولی پیدا نشد.
-            </p>
+          <tbody>
+            {rows.map((row) => (
+              <tr
+                key={row.id}
+                className="
+                  group
+                  border-b
+                  border-primary-100/60
+                  transition-colors
+                  last:border-0
+                  hover:bg-primary-100/20
+                "
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <td
+                    key={cell.id}
+                    className="
+                      px-6 py-3
+                      first:pr-6
+                      last:pl-6
+                    "
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* ==================================================
+          Empty State
+          ================================================== */}
+
+      {rows.length === 0 && (
+        <div
+          className="
+          flex
+          flex-col
+          items-center
+          justify-center
+          px-6
+          py-16
+          text-center
+        "
+        >
+          <div
+            className="
+            flex
+            h-14
+            w-14
+            items-center
+            justify-center
+            rounded-2xl
+            bg-primary-100
+            text-primary-900
+          "
+          >
+            <PackageOpen size={24} strokeWidth={1.5} />
           </div>
-        )}
 
-        {/* Pagination */}
-        <div className="flex flex-col gap-4 border-t border-border px-5 py-4 tablet:flex-row tablet:items-center tablet:justify-between">
-          <p className="font-estedad text-xs text-text-secondary">
+          <p
+            className="
+            mt-4
+            font-estedad
+            text-sm
+            font-bold
+            text-text-primary
+          "
+          >
+            محصولی یافت نشد
+          </p>
+
+          <p
+            className="
+            mt-1
+            max-w-xs
+            font-estedad
+            text-xs
+            leading-6
+            text-text-secondary
+          "
+          >
+            جستجو یا فیلترهای خود را تغییر دهید تا محصولات نمایش داده شوند.
+          </p>
+        </div>
+      )}
+
+      {/* ==================================================
+          Pagination
+          ================================================== */}
+
+      {rows.length > 0 && pageCount > 1 && (
+        <div
+          className="
+          flex
+          flex-col
+          gap-3
+          border-t
+          border-primary-300/60
+          px-6
+          py-3.5
+          tablet:flex-row
+          tablet:items-center
+          tablet:justify-between
+        "
+        >
+          {/* Page Info */}
+
+          <p
+            className="
+            font-estedad
+            text-[11px]
+            text-text-secondary
+          "
+          >
             صفحه{" "}
-            <span className="font-medium text-text-primary">
-              {table.getState().pagination.pageIndex + 1}
+            <span
+              className="
+              font-bold
+              text-primary-900
+            "
+            >
+              {currentPage.toLocaleString("fa-IR")}
             </span>{" "}
             از{" "}
-            <span className="font-medium text-text-primary">
-              {table.getPageCount() || 1}
+            <span
+              className="
+              font-bold
+              text-primary-900
+            "
+            >
+              {pageCount.toLocaleString("fa-IR")}
             </span>
           </p>
 
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
+          {/* Pagination Controls */}
+
+          <div className="flex items-center gap-1.5">
+            {/* Previous */}
+
+            <PageBtn
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-              className="rounded-md border border-border px-3 py-2 font-estedad text-xs text-text-secondary transition-colors hover:bg-background disabled:cursor-not-allowed disabled:opacity-40"
             >
+              <ChevronRight size={14} />
               قبلی
-            </button>
+            </PageBtn>
 
-            <button
-              type="button"
+            {/* Left Ellipsis */}
+
+            {pageNumbers[0] > 0 && (
+              <span
+                className="
+                px-1
+                font-estedad
+                text-xs
+                text-text-secondary
+              "
+              >
+                ...
+              </span>
+            )}
+
+            {/* Page Numbers */}
+
+            {pageNumbers.map((page) => {
+              const isActive = currentPage === page + 1;
+
+              return (
+                <button
+                  key={page}
+                  type="button"
+                  onClick={() => table.setPageIndex(page)}
+                  className={`
+                    h-8
+                    min-w-8
+                    rounded-lg
+                    px-2
+                    font-inter
+                    text-xs
+                    font-bold
+                    transition-all
+                    active:scale-95
+
+                    ${
+                      isActive
+                        ? "bg-primary-900 text-white shadow-sm shadow-primary-900/20"
+                        : "text-text-secondary hover:bg-primary-100 hover:text-primary-900"
+                    }
+                  `}
+                >
+                  {(page + 1).toLocaleString("fa-IR")}
+                </button>
+              );
+            })}
+
+            {/* Right Ellipsis */}
+
+            {pageNumbers[pageNumbers.length - 1] < pageCount - 1 && (
+              <span
+                className="
+                px-1
+                font-estedad
+                text-xs
+                text-text-secondary
+              "
+              >
+                ...
+              </span>
+            )}
+
+            {/* Next */}
+
+            <PageBtn
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-              className="rounded-md border border-border px-3 py-2 font-estedad text-xs text-text-secondary transition-colors hover:bg-background disabled:cursor-not-allowed disabled:opacity-40"
             >
               بعدی
-            </button>
+              <ChevronLeft size={14} />
+            </PageBtn>
           </div>
         </div>
-      </div>
+      )}
 
       {/* ==================================================
           Delete Confirmation Modal
@@ -378,9 +771,9 @@ function ProductTable({ products, onEdit, onDelete }: ProductTableProps) {
           })
         }
         title="حذف محصول"
-        description={`آیا می‌خواهید محصول "${deleteModal.productName}" را حذف کنید؟`}
+        description={`آیا از حذف «${deleteModal.productName}» اطمینان دارید؟`}
         footer={
-          <>
+          <div className="flex items-center gap-3">
             <Button
               variant="outline"
               onClick={() =>
@@ -391,18 +784,55 @@ function ProductTable({ products, onEdit, onDelete }: ProductTableProps) {
                 })
               }
             >
-              لغو
+              انصراف
             </Button>
 
             <Button variant="danger" onClick={handleDeleteConfirm}>
-              حذف
+              بله، حذف شود
             </Button>
-          </>
+          </div>
         }
       >
-        <p className="font-estedad text-sm text-text-secondary">
-          این عمل قابل برگشت نیست. تمام داده‌های محصول حذف خواهد شد.
-        </p>
+        <div
+          className="
+          flex
+          items-start
+          gap-3
+          rounded-xl
+          border
+          border-danger/20
+          bg-danger/5
+          p-4
+        "
+        >
+          <div
+            className="
+            flex
+            h-9
+            w-9
+            shrink-0
+            items-center
+            justify-center
+            rounded-lg
+            bg-danger/10
+            text-danger
+          "
+          >
+            <ShieldAlert size={18} />
+          </div>
+
+          <p
+            className="
+            font-estedad
+            text-xs
+            leading-6
+            text-text-secondary
+          "
+          >
+            این عمل غیرقابل بازگشت است. تمام اطلاعات این محصول به‌صورت دائمی حذف
+            خواهد شد.
+          </p>
+        </div>
       </Modal>
     </>
   );
