@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-
+import { useEffect } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
@@ -7,7 +7,11 @@ import { cn } from "../../utils/cn";
 import { useUIStore } from "../../store";
 
 function DashboardLayout() {
-  const { isSidebarCollapsed } = useUIStore();
+  const { isSidebarCollapsed, isDarkMode } = useUIStore();
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", isDarkMode);
+  }, [isDarkMode]);
 
   return (
     <div
@@ -40,9 +44,7 @@ function DashboardLayout() {
             "min-h-screen",
             "transition-all duration-300",
 
-            isSidebarCollapsed
-              ? "desktop:mr-20"
-              : "desktop:mr-64",
+            isSidebarCollapsed ? "desktop:mr-20" : "desktop:mr-64",
 
             "mr-0",
           )}

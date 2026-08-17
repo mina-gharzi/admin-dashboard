@@ -135,7 +135,8 @@ const seedProducts: Product[] = [
     price: 79900000,
     stock: 24,
     status: "active",
-    description: "پرچمدار اپل با تراشه قدرتمند، دوربین حرفه‌ای و بدنه تیتانیومی.",
+    description:
+      "پرچمدار اپل با تراشه قدرتمند، دوربین حرفه‌ای و بدنه تیتانیومی.",
   },
   {
     id: 2,
@@ -185,9 +186,7 @@ const seedOrders: Order[] = [
     amount: 79900000,
     status: "completed",
     date: "۱۴۰۴/۰۹/۱۲",
-    items: [
-      { id: 1, name: "iPhone 15 Pro Max", quantity: 1, price: 79900000 },
-    ],
+    items: [{ id: 1, name: "iPhone 15 Pro Max", quantity: 1, price: 79900000 }],
   },
   {
     id: "ORD-1002",
@@ -227,7 +226,9 @@ const seedOrders: Order[] = [
     amount: 68900000,
     status: "cancelled",
     date: "۱۴۰۴/۰۹/۱۵",
-    items: [{ id: 5, name: "Samsung Galaxy S25", quantity: 1, price: 68900000 }],
+    items: [
+      { id: 5, name: "Samsung Galaxy S25", quantity: 1, price: 68900000 },
+    ],
   },
   {
     id: "ORD-1006",
@@ -242,12 +243,10 @@ const seedOrders: Order[] = [
     id: "ORD-1007",
     customer: "مریم احمدی",
     email: "maryam@example.com",
-    amount: 48900000,
+    amount: 79900000,
     status: "pending",
     date: "۱۴۰۴/۰۹/۱۶",
-    items: [
-      { id: 1, name: "iPhone 15 Pro Max", quantity: 0, price: 79900000 },
-    ],
+    items: [{ id: 1, name: "iPhone 15 Pro Max", quantity: 1, price: 79900000 }],
   },
 ];
 
@@ -260,9 +259,32 @@ const seedOrders: Order[] = [
   ----------------------------------------------------------
 */
 
+const VALID_ORDER_STATUSES = [
+  "pending",
+  "processing",
+  "completed",
+  "cancelled",
+] as const;
+
+function sanitizeOrders(raw: unknown, fallback: Order[]): Order[] {
+  if (!Array.isArray(raw)) return fallback;
+
+  return raw.filter(
+    (o): o is Order =>
+      !!o &&
+      typeof o === "object" &&
+      typeof (o as Order).id === "string" &&
+      typeof (o as Order).amount === "number" &&
+      VALID_ORDER_STATUSES.includes((o as Order).status),
+  );
+}
 const mockUsers: User[] = loadFromStorage("users", seedUsers);
 const mockProducts: Product[] = loadFromStorage("products", seedProducts);
-const mockOrders: Order[] = loadFromStorage("orders", seedOrders);
+
+const mockOrders: Order[] = sanitizeOrders(
+  loadFromStorage<unknown>("orders", seedOrders),
+  seedOrders,
+);
 
 /*
   بعد از هر تغییر (افزودن/ویرایش/حذف) این توابع صدا زده
@@ -288,20 +310,15 @@ function persistOrders() {
 */
 
 export class APIError extends Error {
-  public code: string;      
+  public code: string;
   public status: number;
 
-  constructor(
-    message: string,
-    code: string,
-    status: number
-  ) {
+  constructor(message: string, code: string, status: number) {
     super(message);
     this.name = "APIError";
     this.code = code;
     this.status = status;
   }
-
 }
 /*
   ----------------------------------------------------------
@@ -339,8 +356,7 @@ export const api = {
       const q = query.toLowerCase();
       return mockUsers.filter(
         (u) =>
-          u.name.toLowerCase().includes(q) ||
-          u.email.toLowerCase().includes(q)
+          u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q),
       );
     },
 
@@ -399,9 +415,7 @@ export const api = {
     async search(query: string): Promise<Product[]> {
       await delay();
       const q = query.toLowerCase();
-      return mockProducts.filter((p) =>
-        p.name.toLowerCase().includes(q)
-      );
+      return mockProducts.filter((p) => p.name.toLowerCase().includes(q));
     },
 
     async create(product: Omit<Product, "id">): Promise<Product> {
@@ -420,7 +434,7 @@ export const api = {
 
     async update(
       id: number,
-      product: Partial<Product>
+      product: Partial<Product>,
     ): Promise<Product | null> {
       await delay();
       const index = mockProducts.findIndex((p) => p.id === id);
@@ -461,7 +475,7 @@ export const api = {
         (o) =>
           o.id.toLowerCase().includes(q) ||
           o.customer.toLowerCase().includes(q) ||
-          o.email.toLowerCase().includes(q)
+          o.email.toLowerCase().includes(q),
       );
     },
 
@@ -527,12 +541,12 @@ export const api = {
         (سفارش pending/cancelled هنوز پول واقعی نیست)
       */
       const completedOrders = mockOrders.filter(
-        (o) => o.status === "completed"
+        (o) => o.status === "completed",
       );
 
       const totalRevenue = completedOrders.reduce(
         (sum, o) => sum + o.amount,
-        0
+        0,
       );
 
       const averageOrderValue =
@@ -551,7 +565,7 @@ export const api = {
       };
 
       for (const order of mockOrders) {
-        ordersByStatus[order.status] += 1;
+        ordersByStatus[order.status] = (ordersByStatus[order.status] ?? 0) + 1;
       }
 
       /*
@@ -569,8 +583,8 @@ export const api = {
       };
 
       for (const user of mockUsers) {
-        usersByRole[user.role] += 1;
-        usersByStatus[user.status] += 1;
+        usersByRole[user.role] = (usersByRole[user.role] ?? 0) + 1;
+        usersByStatus[user.status] = (usersByStatus[user.status] ?? 0) + 1;
       }
 
       /*
@@ -581,19 +595,19 @@ export const api = {
       for (const product of mockProducts) {
         categoryMap.set(
           product.category,
-          (categoryMap.get(product.category) ?? 0) + 1
+          (categoryMap.get(product.category) ?? 0) + 1,
         );
       }
 
-      const productsByCategory = Array.from(
-        categoryMap.entries()
-      ).map(([category, count]) => ({ category, count }));
+      const productsByCategory = Array.from(categoryMap.entries()).map(
+        ([category, count]) => ({ category, count }),
+      );
 
       /*
         Low Stock Products (موجودی کمتر از ۵ عدد و فعال)
       */
       const lowStockProducts = mockProducts.filter(
-        (p) => p.status === "active" && p.stock <= 5
+        (p) => p.status === "active" && p.stock <= 5,
       );
 
       /*

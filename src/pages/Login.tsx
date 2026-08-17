@@ -12,7 +12,7 @@
 */
 
 import { useState, type FormEvent } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { Lock, Mail, User } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -34,6 +34,12 @@ const emptyForm: FormState = {
 
 function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const from =
+    (location.state as { from?: { pathname: string } } | null)?.from
+      ?.pathname ?? "/";
+
   const { isAuthenticated, login } = useAuthStore();
 
   const [form, setForm] = useState<FormState>(emptyForm);
@@ -45,9 +51,8 @@ function Login() {
   const [submitting, setSubmitting] = useState(false);
 
   if (isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={from} replace />;
   }
-
   const validate = (): boolean => {
     const nextErrors: Partial<Record<keyof FormState, string>> = {};
 
@@ -89,7 +94,7 @@ function Login() {
 
     setSubmitting(false);
 
-    navigate("/", { replace: true });
+    navigate(from, { replace: true });
   };
 
   return (

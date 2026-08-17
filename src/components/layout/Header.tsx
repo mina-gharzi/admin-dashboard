@@ -19,6 +19,8 @@ import {
   ShoppingCart,
   Users,
   ArrowUpLeft,
+  Moon,
+  Sun,
 } from "lucide-react";
 
 import { Dropdown } from "../ui/Dropdown";
@@ -56,7 +58,12 @@ function Header() {
   const navigate = useNavigate();
   const { logout } = useLogout();
 
-  const { isMobileSidebarOpen, toggleMobileSidebar } = useUIStore();
+  const {
+    isMobileSidebarOpen,
+    toggleMobileSidebar,
+    isDarkMode,
+    toggleDarkMode,
+  } = useUIStore();
   const user = useAuthStore((state) => state.user);
 
   const roleLabels = {
@@ -347,6 +354,22 @@ function Header() {
             Right Section — Notifications + User Dropdown
             ================================================== */}
         <div className="flex items-center gap-2">
+          {/* Dark Mode Toggle */}
+          <button
+            type="button"
+            onClick={toggleDarkMode}
+            className={cn(
+              "flex h-10 w-10 items-center justify-center",
+              "rounded-xl border border-primary-300/60",
+              "bg-background/80 text-text-secondary",
+              "transition-all duration-200",
+              "hover:bg-primary-100 hover:text-primary-900 hover:shadow-sm",
+              "active:scale-95",
+            )}
+            aria-label="تغییر حالت روشن/تاریک"
+          >
+            {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
           {/* Notifications Panel Button */}
           <div className="relative">
             <button
