@@ -70,6 +70,34 @@ const statusConfig = {
 
 const columnHelper = createColumnHelper<User>();
 
+/*
+  ----------------------------------------------------------
+  Sort Icon
+  ----------------------------------------------------------
+*/
+
+function SortIcon({ sorted }: { sorted: false | "asc" | "desc" }) {
+  if (sorted === "asc") {
+    return (
+      <span className="flex h-4 w-4 items-center justify-center rounded bg-primary-900/10 text-primary-900">
+        <ChevronUp size={12} />
+      </span>
+    );
+  }
+  if (sorted === "desc") {
+    return (
+      <span className="flex h-4 w-4 items-center justify-center rounded bg-primary-900/10 text-primary-900">
+        <ChevronDown size={12} />
+      </span>
+    );
+  }
+  return (
+    <span className="flex h-4 w-4 items-center justify-center rounded opacity-0 transition-opacity group-hover/th:opacity-40">
+      <ChevronUp size={12} />
+    </span>
+  );
+}
+
 function UserTable({
   users,
   onEdit,
@@ -227,17 +255,6 @@ function UserTable({
     getPaginationRowModel: getPaginationRowModel(),
     initialState: { pagination: { pageSize: PAGE_SIZE } },
   });
-
-  const SortIcon = ({ sorted }: { sorted: false | "asc" | "desc" }) => {
-    if (sorted === "asc") return <ChevronUp size={13} />;
-    if (sorted === "desc") return <ChevronDown size={13} />;
-    return (
-      <ChevronUp
-        size={13}
-        className="opacity-0 transition-opacity group-hover/th:opacity-40"
-      />
-    );
-  };
 
   const handleDeleteConfirm = () => {
     if (deleteModal.userId !== null) {

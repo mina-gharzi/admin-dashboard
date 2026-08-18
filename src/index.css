@@ -19,14 +19,6 @@
 
 @font-face {
   font-family: "Estedad";
-  src: url("./assets/font/Estedad-Bold.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Estedad";
   src: url("./assets/font/Estedad-Medium.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
@@ -43,8 +35,16 @@
 
 @font-face {
   font-family: "Estedad";
+  src: url("./assets/font/Estedad-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Estedad";
   src: url("./assets/font/Estedad-Black.ttf") format("truetype");
-  font-weight: 400;
+  font-weight: 900;
   font-style: normal;
   font-display: swap;
 }

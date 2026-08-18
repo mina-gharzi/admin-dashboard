@@ -28,30 +28,8 @@ import Orders from "../pages/Orders";
 import OrderDetails from "../pages/OrderDetails";
 
 import Analytics from "../pages/Analytics";
-
-/*
-  ----------------------------------------------------------
-  Temporary Pages
-  ----------------------------------------------------------
-  فعلاً فقط تنظیمات placeholder مونده؛ Analytics.tsx واقعی
-  شد و از پایین جایگزین شد.
-  ----------------------------------------------------------
-*/
-
-// eslint-disable-next-line react-refresh/only-export-components -- کامپوننت موقت، بعداً با pages/Settings.tsx جایگزین میشه
-function SettingsPage() {
-  return (
-    <div>
-      <h1 className="font-estedad text-2xl font-bold text-text-primary">
-        تنظیمات
-      </h1>
-
-      <p className="mt-2 font-estedad text-sm text-text-secondary">
-        تنظیمات سیستم
-      </p>
-    </div>
-  );
-}
+import Settings from "../pages/Settings";
+import NotFound from "../pages/NotFound";
 
 /*
   ==========================================================
@@ -121,11 +99,16 @@ const router = createBrowserRouter([
 
           {
             path: "settings",
-            element: <SettingsPage />,
+            element: <Settings />,
           },
         ],
       },
     ],
+  },
+
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 
