@@ -105,6 +105,7 @@ function Header() {
       return;
     }
 
+    let cancelled = false;
     setSearching(true);
 
     const timeoutId = setTimeout(async () => {
@@ -114,6 +115,8 @@ function Header() {
         api.orders.search(query),
       ]);
 
+      if (cancelled) return;
+
       setResults({
         users: users.slice(0, 3),
         products: products.slice(0, 3),
@@ -122,9 +125,11 @@ function Header() {
       setSearching(false);
     }, 300);
 
-    return () => clearTimeout(timeoutId);
+    return () => {
+      cancelled = true;
+      clearTimeout(timeoutId);
+    };
   }, [search]);
-
   /*
     بستن نتایج جستجو با کلیک بیرون
   */

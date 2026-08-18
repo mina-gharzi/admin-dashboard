@@ -3,7 +3,7 @@
   services/api.ts
   ----------------------------------------------------------
   API Service Layer
-  
+
   مزایا:
   - Centralized API calls
   - Error handling
@@ -62,202 +62,51 @@ export interface OrderItem {
 
 /*
   ----------------------------------------------------------
-  Seed Data (فقط برای اولین باری که کاربر برنامه رو باز
-  می‌کنه استفاده میشه؛ بعدش هرچی خودش تغییر بده تو
-  localStorage ذخیره میشه و همون جایگزین این seed میشه)
+  Seed Data
   ----------------------------------------------------------
 */
 
 const seedUsers: User[] = [
-  {
-    id: 1,
-    name: "مینا احمدی",
-    email: "mina@example.com",
-    role: "admin",
-    status: "active",
-    joinedAt: "۱۴۰۴/۰۵/۱۲",
-  },
-  {
-    id: 2,
-    name: "علی رضایی",
-    email: "ali@example.com",
-    role: "manager",
-    status: "active",
-    joinedAt: "۱۴۰۴/۰۶/۲۱",
-  },
-  {
-    id: 3,
-    name: "سارا محمدی",
-    email: "sara@example.com",
-    role: "customer",
-    status: "active",
-    joinedAt: "۱۴۰۴/۰۷/۰۳",
-  },
-  {
-    id: 4,
-    name: "امیر حسینی",
-    email: "amir@example.com",
-    role: "customer",
-    status: "inactive",
-    joinedAt: "۱۴۰۴/۰۷/۱۸",
-  },
-  {
-    id: 5,
-    name: "نگار کریمی",
-    email: "negar@example.com",
-    role: "manager",
-    status: "active",
-    joinedAt: "۱۴۰۴/۰۸/۰۲",
-  },
-  {
-    id: 6,
-    name: "محمد اکبری",
-    email: "mohammad@example.com",
-    role: "customer",
-    status: "active",
-    joinedAt: "۱۴۰۴/۰۸/۱۵",
-  },
-  {
-    id: 7,
-    name: "رضا کاظمی",
-    email: "reza@example.com",
-    role: "customer",
-    status: "active",
-    joinedAt: "۱۴۰۴/۰۹/۰۱",
-  },
+  { id: 1, name: "مینا احمدی", email: "mina@example.com", role: "admin", status: "active", joinedAt: "۱۴۰۴/۰۵/۱۲" },
+  { id: 2, name: "علی رضایی", email: "ali@example.com", role: "manager", status: "active", joinedAt: "۱۴۰۴/۰۶/۲۱" },
+  { id: 3, name: "سارا محمدی", email: "sara@example.com", role: "customer", status: "active", joinedAt: "۱۴۰۴/۰۷/۰۳" },
+  { id: 4, name: "امیر حسینی", email: "amir@example.com", role: "customer", status: "inactive", joinedAt: "۱۴۰۴/۰۷/۱۸" },
+  { id: 5, name: "نگار کریمی", email: "negar@example.com", role: "manager", status: "active", joinedAt: "۱۴۰۴/۰۸/۰۲" },
+  { id: 6, name: "محمد اکبری", email: "mohammad@example.com", role: "customer", status: "active", joinedAt: "۱۴۰۴/۰۸/۱۵" },
+  { id: 7, name: "رضا کاظمی", email: "reza@example.com", role: "customer", status: "active", joinedAt: "۱۴۰۴/۰۹/۰۱" },
 ];
 
 const seedProducts: Product[] = [
-  {
-    id: 1,
-    name: "iPhone 15 Pro Max",
-    category: "موبایل",
-    price: 79900000,
-    stock: 24,
-    status: "active",
-    description:
-      "پرچمدار اپل با تراشه قدرتمند، دوربین حرفه‌ای و بدنه تیتانیومی.",
-  },
-  {
-    id: 2,
-    name: "MacBook Pro M3",
-    category: "لپ‌تاپ",
-    price: 145000000,
-    stock: 8,
-    status: "active",
-    description: "لپ‌تاپ حرفه‌ای اپل با پردازنده M3 قدرتمند.",
-  },
-  {
-    id: 3,
-    name: "AirPods Pro 2",
-    category: "هدفون",
-    price: 12900000,
-    stock: 42,
-    status: "active",
-    description: "هدفون بی‌سیم با کیفیت صدای بالا و نویز‌کنسلینگ فعال.",
-  },
-  {
-    id: 4,
-    name: "Apple Watch Series 10",
-    category: "ساعت هوشمند",
-    price: 32900000,
-    stock: 0,
-    status: "inactive",
-    description: "ساعت هوشمند اپل با نمایشگر بزرگ‌تر و باتری بهتر.",
-  },
-  {
-    id: 5,
-    name: "Samsung Galaxy S25",
-    category: "موبایل",
-    price: 68900000,
-    stock: 15,
-    status: "active",
-    description: "گوشی فلاگشیپ سامسونگ با دوربین 200 مگاپیکسلی.",
-  },
+  { id: 1, name: "iPhone 15 Pro Max", category: "موبایل", price: 79900000, stock: 24, status: "active", description: "پرچمدار اپل با تراشه قدرتمند، دوربین حرفه‌ای و بدنه تیتانیومی." },
+  { id: 2, name: "MacBook Pro M3", category: "لپ‌تاپ", price: 145000000, stock: 8, status: "active", description: "لپ‌تاپ حرفه‌ای اپل با پردازنده M3 قدرتمند." },
+  { id: 3, name: "AirPods Pro 2", category: "هدفون", price: 12900000, stock: 42, status: "active", description: "هدفون بی‌سیم با کیفیت صدای بالا و نویز‌کنسلینگ فعال." },
+  { id: 4, name: "Apple Watch Series 10", category: "ساعت هوشمند", price: 32900000, stock: 0, status: "inactive", description: "ساعت هوشمند اپل با نمایشگر بزرگ‌تر و باتری بهتر." },
+  { id: 5, name: "Samsung Galaxy S25", category: "موبایل", price: 68900000, stock: 15, status: "active", description: "گوشی فلاگشیپ سامسونگ با دوربین ۲۰۰ مگاپیکسلی." },
 ];
 
 const seedOrders: Order[] = [
-  {
-    id: "ORD-1001",
-    customer: "علی رضایی",
-    email: "ali@example.com",
-    phone: "09121234567",
-    address: "تهران، خیابان ولیعصر",
-    amount: 79900000,
-    status: "completed",
-    date: "۱۴۰۴/۰۹/۱۲",
-    items: [{ id: 1, name: "iPhone 15 Pro Max", quantity: 1, price: 79900000 }],
-  },
-  {
-    id: "ORD-1002",
-    customer: "سارا محمدی",
-    email: "sara@example.com",
-    phone: "09129876543",
-    address: "تهران، خیابان فردوسی",
-    amount: 12900000,
-    status: "processing",
-    date: "۱۴۰۴/۰۹/۱۳",
-    items: [{ id: 3, name: "AirPods Pro 2", quantity: 1, price: 12900000 }],
-  },
-  {
-    id: "ORD-1003",
-    customer: "امیر حسینی",
-    email: "amir@example.com",
-    amount: 145000000,
-    status: "pending",
-    date: "۱۴۰۴/۰۹/۱۳",
-    items: [{ id: 2, name: "MacBook Pro M3", quantity: 1, price: 145000000 }],
-  },
-  {
-    id: "ORD-1004",
-    customer: "نگار کریمی",
-    email: "negar@example.com",
-    amount: 32900000,
-    status: "completed",
-    date: "۱۴۰۴/۰۹/۱۴",
-    items: [
-      { id: 4, name: "Apple Watch Series 10", quantity: 1, price: 32900000 },
-    ],
-  },
-  {
-    id: "ORD-1005",
-    customer: "محمد اکبری",
-    email: "mohammad@example.com",
-    amount: 68900000,
-    status: "cancelled",
-    date: "۱۴۰۴/۰۹/۱۵",
-    items: [
-      { id: 5, name: "Samsung Galaxy S25", quantity: 1, price: 68900000 },
-    ],
-  },
-  {
-    id: "ORD-1006",
-    customer: "رضا کاظمی",
-    email: "reza@example.com",
-    amount: 23900000,
-    status: "processing",
-    date: "۱۴۰۴/۰۹/۱۵",
-    items: [{ id: 3, name: "AirPods Pro 2", quantity: 2, price: 12900000 }],
-  },
-  {
-    id: "ORD-1007",
-    customer: "مریم احمدی",
-    email: "maryam@example.com",
-    amount: 79900000,
-    status: "pending",
-    date: "۱۴۰۴/۰۹/۱۶",
-    items: [{ id: 1, name: "iPhone 15 Pro Max", quantity: 1, price: 79900000 }],
-  },
+  { id: "ORD-1001", customer: "علی رضایی", email: "ali@example.com", phone: "09121234567", address: "تهران، خیابان ولیعصر", amount: 79900000, status: "completed", date: "۱۴۰۴/۰۹/۱۲", items: [{ id: 1, name: "iPhone 15 Pro Max", quantity: 1, price: 79900000 }] },
+  { id: "ORD-1002", customer: "سارا محمدی", email: "sara@example.com", phone: "09129876543", address: "تهران، خیابان فردوسی", amount: 12900000, status: "processing", date: "۱۴۰۴/۰۹/۱۳", items: [{ id: 3, name: "AirPods Pro 2", quantity: 1, price: 12900000 }] },
+  { id: "ORD-1003", customer: "امیر حسینی", email: "amir@example.com", amount: 145000000, status: "pending", date: "۱۴۰۴/۰۹/۱۳", items: [{ id: 2, name: "MacBook Pro M3", quantity: 1, price: 145000000 }] },
+  { id: "ORD-1004", customer: "نگار کریمی", email: "negar@example.com", amount: 32900000, status: "completed", date: "۱۴۰۴/۰۹/۱۴", items: [{ id: 4, name: "Apple Watch Series 10", quantity: 1, price: 32900000 }] },
+  { id: "ORD-1005", customer: "محمد اکبری", email: "mohammad@example.com", amount: 68900000, status: "cancelled", date: "۱۴۰۴/۰۹/۱۵", items: [{ id: 5, name: "Samsung Galaxy S25", quantity: 1, price: 68900000 }] },
+  { id: "ORD-1006", customer: "رضا کاظمی", email: "reza@example.com", amount: 23900000, status: "processing", date: "۱۴۰۴/۰۹/۱۵", items: [{ id: 3, name: "AirPods Pro 2", quantity: 2, price: 12900000 }] },
+  { id: "ORD-1007", customer: "مریم احمدی", email: "maryam@example.com", amount: 79900000, status: "pending", date: "۱۴۰۴/۰۹/۱۶", items: [{ id: 1, name: "iPhone 15 Pro Max", quantity: 1, price: 79900000 }] },
 ];
 
 /*
   ----------------------------------------------------------
-  Live Data (این‌ها واقعاً استفاده میشن)
-  ----------------------------------------------------------
-  بار اول از localStorage می‌خونیم؛ اگه چیزی ذخیره نشده
-  باشه (اولین بازدید)، از seed دیتای نمونه شروع می‌کنیم.
+  Sanitizers (برای جلوگیری از کرش و داده‌های خراب)
   ----------------------------------------------------------
 */
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+const VALID_USER_ROLES = ["admin", "manager", "customer"] as const;
+const VALID_USER_STATUSES = ["active", "inactive"] as const;
+const VALID_PRODUCT_STATUSES = ["active", "inactive"] as const;
 
 const VALID_ORDER_STATUSES = [
   "pending",
@@ -266,39 +115,93 @@ const VALID_ORDER_STATUSES = [
   "cancelled",
 ] as const;
 
-function sanitizeOrders(raw: unknown, fallback: Order[]): Order[] {
+function sanitizeUsers(raw: unknown, fallback: User[]): User[] {
   if (!Array.isArray(raw)) return fallback;
+  return raw.filter((u): u is User => {
+    if (!isRecord(u)) return false;
+    return (
+      typeof u.id === "number" &&
+      typeof u.name === "string" &&
+      typeof u.email === "string" &&
+      (VALID_USER_ROLES as readonly unknown[]).includes(u.role) &&
+      (VALID_USER_STATUSES as readonly unknown[]).includes(u.status) &&
+      typeof u.joinedAt === "string"
+    );
+  });
+}
 
-  return raw.filter(
-    (o): o is Order =>
-      !!o &&
-      typeof o === "object" &&
-      typeof (o as Order).id === "string" &&
-      typeof (o as Order).amount === "number" &&
-      VALID_ORDER_STATUSES.includes((o as Order).status),
+function sanitizeProducts(raw: unknown, fallback: Product[]): Product[] {
+  if (!Array.isArray(raw)) return fallback;
+  return raw.filter((p): p is Product => {
+    if (!isRecord(p)) return false;
+    return (
+      typeof p.id === "number" &&
+      typeof p.name === "string" &&
+      typeof p.category === "string" &&
+      typeof p.price === "number" &&
+      typeof p.stock === "number" &&
+      (VALID_PRODUCT_STATUSES as readonly unknown[]).includes(p.status) &&
+      (p.description === undefined || typeof p.description === "string")
+    );
+  });
+}
+
+function isOrderItem(value: unknown): value is OrderItem {
+  return (
+    isRecord(value) &&
+    typeof value.id === "number" &&
+    typeof value.name === "string" &&
+    typeof value.quantity === "number" &&
+    typeof value.price === "number"
   );
 }
-const mockUsers: User[] = loadFromStorage("users", seedUsers);
-const mockProducts: Product[] = loadFromStorage("products", seedProducts);
 
-const mockOrders: Order[] = sanitizeOrders(
-  loadFromStorage<unknown>("orders", seedOrders),
-  seedOrders,
-);
+function sanitizeOrders(raw: unknown, fallback: Order[]): Order[] {
+  if (!Array.isArray(raw)) return fallback;
+  return raw.filter((o): o is Order => {
+    if (!isRecord(o)) return false;
+    return (
+      typeof o.id === "string" &&
+      typeof o.customer === "string" &&
+      typeof o.email === "string" &&
+      (o.phone === undefined || typeof o.phone === "string") &&
+      (o.address === undefined || typeof o.address === "string") &&
+      typeof o.amount === "number" &&
+      (VALID_ORDER_STATUSES as readonly unknown[]).includes(o.status) &&
+      typeof o.date === "string" &&
+      (o.items === undefined ||
+        (Array.isArray(o.items) && o.items.every(isOrderItem)))
+    );
+  });
+}
 
 /*
-  بعد از هر تغییر (افزودن/ویرایش/حذف) این توابع صدا زده
-  میشن تا وضعیت فعلی تو localStorage ذخیره بشه.
+  ----------------------------------------------------------
+  Live Data (بار اول از localStorage، در غیر این صورت seed)
+  ----------------------------------------------------------
 */
+
+const mockUsers: User[] = sanitizeUsers(
+  loadFromStorage("users", seedUsers),
+  seedUsers,
+);
+
+const mockProducts: Product[] = sanitizeProducts(
+  loadFromStorage("products", seedProducts),
+  seedProducts,
+);
+
+const mockOrders: Order[] = sanitizeOrders(
+  loadFromStorage("orders", seedOrders),
+  seedOrders,
+);
 
 function persistUsers() {
   saveToStorage("users", mockUsers);
 }
-
 function persistProducts() {
   saveToStorage("products", mockProducts);
 }
-
 function persistOrders() {
   saveToStorage("orders", mockOrders);
 }
@@ -312,7 +215,6 @@ function persistOrders() {
 export class APIError extends Error {
   public code: string;
   public status: number;
-
   constructor(message: string, code: string, status: number) {
     super(message);
     this.name = "APIError";
@@ -320,6 +222,7 @@ export class APIError extends Error {
     this.status = status;
   }
 }
+
 /*
   ----------------------------------------------------------
   Simulate API Delay
@@ -337,9 +240,6 @@ function delay(ms: number = 500): Promise<void> {
 */
 
 export const api = {
-  /*
-    Users API
-  */
   users: {
     async getAll(): Promise<User[]> {
       await delay();
@@ -356,7 +256,9 @@ export const api = {
       const q = query.toLowerCase();
       return mockUsers.filter(
         (u) =>
-          u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q),
+          u.name.toLowerCase().includes(q) ||
+          u.email.toLowerCase().includes(q) ||
+          String(u.id).includes(q),
       );
     },
 
@@ -364,11 +266,6 @@ export const api = {
       await delay();
       const newUser: User = {
         ...user,
-        /*
-          نکته: اگه mockUsers خالی باشه (همه‌ی نمونه‌ها حذف
-          شده باشن)، Math.max(...[]) مقدار -Infinity برمی‌گردونه
-          و ID خراب میشه. با یه fallback به 0 این حل شده.
-        */
         id:
           mockUsers.length > 0
             ? Math.max(...mockUsers.map((u) => u.id)) + 1
@@ -398,9 +295,6 @@ export const api = {
     },
   },
 
-  /*
-    Products API
-  */
   products: {
     async getAll(): Promise<Product[]> {
       await delay();
@@ -454,9 +348,6 @@ export const api = {
     },
   },
 
-  /*
-    Orders API
-  */
   orders: {
     async getAll(): Promise<Order[]> {
       await delay();
@@ -510,19 +401,11 @@ export const api = {
     },
   },
 
-  /*
-    Analytics API
-    ----------------------------------------------------------
-    آمار و گزارشات با محاسبه‌ی زنده از روی داده‌های واقعی
-    users/products/orders (نه دیتای ثابت/نمونه). هر تغییری
-    که کاربر تو داده‌ها بده (افزودن/ویرایش/حذف)، این آمار هم
-    خودش به‌روز میشه چون هر بار از mockUsers/Products/Orders
-    فعلی محاسبه میشه.
-  */
   analytics: {
     async getSummary(): Promise<{
       totalUsers: number;
       totalProducts: number;
+      activeProducts: number;
       totalOrders: number;
       totalRevenue: number;
       averageOrderValue: number;
@@ -536,10 +419,6 @@ export const api = {
     }> {
       await delay();
 
-      /*
-        Revenue فقط از سفارش‌های completed حساب میشه
-        (سفارش pending/cancelled هنوز پول واقعی نیست)
-      */
       const completedOrders = mockOrders.filter(
         (o) => o.status === "completed",
       );
@@ -554,9 +433,6 @@ export const api = {
           ? Math.round(totalRevenue / completedOrders.length)
           : 0;
 
-      /*
-        Orders by Status
-      */
       const ordersByStatus: Record<Order["status"], number> = {
         pending: 0,
         processing: 0,
@@ -568,9 +444,6 @@ export const api = {
         ordersByStatus[order.status] = (ordersByStatus[order.status] ?? 0) + 1;
       }
 
-      /*
-        Users by Role / Status
-      */
       const usersByRole: Record<User["role"], number> = {
         admin: 0,
         manager: 0,
@@ -587,11 +460,7 @@ export const api = {
         usersByStatus[user.status] = (usersByStatus[user.status] ?? 0) + 1;
       }
 
-      /*
-        Products by Category
-      */
       const categoryMap = new Map<string, number>();
-
       for (const product of mockProducts) {
         categoryMap.set(
           product.category,
@@ -603,23 +472,16 @@ export const api = {
         ([category, count]) => ({ category, count }),
       );
 
-      /*
-        Low Stock Products (موجودی کمتر از ۵ عدد و فعال)
-      */
       const lowStockProducts = mockProducts.filter(
         (p) => p.status === "active" && p.stock <= 5,
       );
 
-      /*
-        Top Products (بر اساس مجموع quantity فروخته‌شده تو
-        آیتم‌های سفارش‌ها، نه یه عدد ثابت)
-      */
       const productSales = new Map<
         string,
         { quantity: number; revenue: number }
       >();
 
-      for (const order of mockOrders) {
+      for (const order of completedOrders) {
         for (const item of order.items ?? []) {
           const existing = productSales.get(item.name) ?? {
             quantity: 0,
@@ -638,14 +500,13 @@ export const api = {
         .sort((a, b) => b.quantity - a.quantity)
         .slice(0, 5);
 
-      /*
-        Recent Orders (۵ سفارش آخر)
-      */
       const recentOrders = mockOrders.slice(-5).reverse();
 
       return {
         totalUsers: mockUsers.length,
         totalProducts: mockProducts.length,
+        activeProducts: mockProducts.filter((p) => p.status === "active")
+          .length,
         totalOrders: mockOrders.length,
         totalRevenue,
         averageOrderValue,
@@ -659,13 +520,7 @@ export const api = {
       };
     },
   },
-  /*
-    System API
-    ----------------------------------------------------------
-    چون داده الان persist میشه، یه راه برای برگشت به دیتای
-    نمونه (یا شروع کاملاً خالی) لازمه — مثلاً برای دمو دوباره
-    یا وقتی localStorage خراب/ناسازگار شده.
-  */
+
   system: {
     async resetToSampleData(): Promise<void> {
       await delay(200);
