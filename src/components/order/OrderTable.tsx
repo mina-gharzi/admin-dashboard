@@ -26,6 +26,8 @@ import { Modal } from "../ui/Modal";
 import Button from "../ui/Button";
 import type { Order } from "../../services/api";
 import { formatPrice } from "../../utils/format";
+import { useAuthStore } from "../../store";
+import { permissions } from "../../utils/permissions";
 
 interface OrderTableProps {
   orders: Order[];
@@ -58,6 +60,8 @@ function OrderTable({ orders, onEdit, onCancel }: OrderTableProps) {
   const navigate = useNavigate();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [cancelModal, setCancelModal] = useState({ open: false, orderId: null as string | null });
+  const role = useAuthStore((state) => state.user?.role);
+  const canManage = permissions.canManageOrders(role);
 
   const columns = [
     columnHelper.accessor("id", { header: "سفارش", cell: ({ getValue, row }) => <button type="button" onClick={() => navigate(`/dashboard/orders/${row.original.id}`)} className="font-inter text-sm font-bold text-text-primary hover:text-primary-900">#{getValue()}</button> }),
@@ -79,7 +83,7 @@ function OrderTable({ orders, onEdit, onCancel }: OrderTableProps) {
       cell: ({ row }) => {
         const order = row.original;
         const final = order.status === "completed" || order.status === "cancelled";
-        return <div className="flex justify-end"><Dropdown trigger={<button type="button" aria-label="عملیات سفارش" className="flex h-8 w-8 items-center justify-center rounded-lg text-text-secondary hover:bg-primary-50 hover:text-primary-900"><MoreHorizontal size={18} /></button>} items={[{ label: "مشاهده", icon: <Eye size={14} />, onClick: () => navigate(`/dashboard/orders/${order.id}`) }, { label: "ویرایش", icon: <Pencil size={14} />, onClick: () => onEdit?.(order) }, ...(final ? [] : [{ label: "لغو سفارش", icon: <ShieldAlert size={14} />, danger: true, onClick: () => setCancelModal({ open: true, orderId: order.id }) }])]} /></div>;
+        return <div className="flex justify-end"><Dropdown trigger={<button type="button" aria-label="عملیات سفارش" className="flex h-8 w-8 items-center justify-center rounded-lg text-text-secondary hover:bg-primary-50 hover:text-primary-900"><MoreHorizontal size={18} /></button>} items={[{ label: "مشاهده", icon: <Eye size={14} />, onClick: () => navigate(`/dashboard/orders/${order.id}`) }, ...(canManage ? [{ label: "ویرایش", icon: <Pencil size={14} />, onClick: () => onEdit?.(order) }, ...(final ? [] : [{ label: "لغو سفارش", icon: <ShieldAlert size={14} />, danger: true, onClick: () => setCancelModal({ open: true, orderId: order.id }) }])] : [])]} /></div>;
       },
     }),
   ];

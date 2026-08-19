@@ -64,9 +64,11 @@ const statusMeta = {
 };
 
 const roleMeta = {
-  admin: { label: "مدیر سیستم", color: "#111844" },
-  manager: { label: "مدیر فروش", color: "#0284c7" },
-  customer: { label: "مشتری", color: "#16a34a" },
+  system_admin: { label: "مدیر کل سیستم", color: "#111844" },
+  admin: { label: "ادمین", color: "#0284c7" },
+  sales_manager: { label: "مدیر فروش", color: "#16a34a" },
+  salesperson: { label: "فروشنده", color: "#d97706" },
+  analyst: { label: "تحلیل‌گر", color: "#64748b" },
 };
 
 /*

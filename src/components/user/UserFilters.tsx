@@ -6,6 +6,7 @@
 
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { Input } from "../ui/Input";
+import { roleLabels } from "../../utils/permissions";
 
 interface UserFiltersProps {
   search: string;
@@ -17,9 +18,11 @@ interface UserFiltersProps {
 
 const roles = [
   { value: "همه", label: "همه نقش‌ها" },
-  { value: "admin", label: "مدیر" },
-  { value: "manager", label: "مدیر فروش" },
-  { value: "customer", label: "مشتری" },
+  { value: "system_admin", label: roleLabels.system_admin },
+  { value: "admin", label: roleLabels.admin },
+  { value: "sales_manager", label: roleLabels.sales_manager },
+  { value: "salesperson", label: roleLabels.salesperson },
+  { value: "analyst", label: roleLabels.analyst },
 ];
 
 function UserFilters({

@@ -6,7 +6,7 @@
 
 import { useMemo, useState } from "react";
 
-import { Plus, Users as UsersIcon, AlertCircle } from "lucide-react";
+import { Download, Plus, Users as UsersIcon, AlertCircle } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { Card } from "../components/ui/Card";
@@ -20,7 +20,8 @@ import UserFormModal from "../components/user/UserFormModal";
 import { useData } from "../hooks/useData";
 import { api, type User } from "../services/api";
 import { useAuthStore } from "../store";
-import { permissions } from "../utils/permissions";
+import { permissions, roleLabels } from "../utils/permissions";
+import { exportToCsv, getFileDateStamp } from "../utils/exportToCsv";
 
 function Users() {
   // ----------------------------------------------------------
@@ -141,6 +142,33 @@ function Users() {
   };
 
   // ----------------------------------------------------------
+  // Export (خروجی CSV از کاربران فیلترشده)
+  // ----------------------------------------------------------
+  const handleExport = () => {
+    if (filteredUsers.length === 0) {
+      toast.info("موردی برای خروجی گرفتن وجود ندارد.");
+      return;
+    }
+
+    exportToCsv(
+      filteredUsers,
+      [
+        { header: "نام", accessor: (user) => user.name },
+        { header: "ایمیل", accessor: (user) => user.email },
+        { header: "نقش", accessor: (user) => roleLabels[user.role] },
+        {
+          header: "وضعیت",
+          accessor: (user) => (user.status === "active" ? "فعال" : "غیرفعال"),
+        },
+        { header: "تاریخ عضویت", accessor: (user) => user.joinedAt },
+      ],
+      `کاربران-${getFileDateStamp()}`,
+    );
+
+    toast.success(`خروجی ${filteredUsers.length} کاربر با موفقیت دانلود شد.`);
+  };
+
+  // ----------------------------------------------------------
   // Render
   // ----------------------------------------------------------
   return (
@@ -151,12 +179,23 @@ function Users() {
         description="مدیریت کاربران سیستم و مشاهده اطلاعات آن‌ها"
         breadcrumbs={[{ label: "کاربران" }]}
         actions={
-          canCreate ? (
-            <Button onClick={openCreateModal}>
-              <Plus size={18} />
-              افزودن کاربر
+          <div className="flex items-center gap-2.5">
+            <Button
+              variant="outline"
+              onClick={handleExport}
+              disabled={filteredUsers.length === 0}
+            >
+              <Download size={17} />
+              خروجی CSV
             </Button>
-          ) : undefined
+
+            {canCreate && (
+              <Button onClick={openCreateModal}>
+                <Plus size={18} />
+                افزودن کاربر
+              </Button>
+            )}
+          </div>
         }
       />
 

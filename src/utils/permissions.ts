@@ -4,15 +4,28 @@
   ----------------------------------------------------------
   تعریف مرکزی دسترسی‌ها بر اساس نقش (RBAC)
   ----------------------------------------------------------
-  قبلاً فیلد role تو authStore تعریف شده بود ولی هیچ‌جا واقعاً
-  استفاده نمی‌شد — یعنی هر کاربر لاگین‌شده‌ای (حتی customer)
-  می‌تونست به صفحات مدیریتی و اکشن‌های حساس دسترسی داشته باشه.
+  این پنل فقط مخصوص کارکنانه — «مشتری» اصلاً یکی از نقش‌ها
+  نیست و امکان ورود به پنل رو نداره (مشتری‌ها همون کسایی‌ان
+  که تو صفحه‌ی سفارش‌ها به‌عنوان customer سفارش ثبت می‌کنن،
+  نه کاربر این پنل).
+
+  نقش‌های پنل (از بالا به پایین، تقریباً بر اساس سطح دسترسی):
+  - system_admin  → مدیر کل سیستم: دسترسی کامل، تنها نقشی که
+    می‌تونه داده‌های سیستم رو پاک‌سازی/بازنشانی کنه.
+  - admin         → ادمین: مدیریت کاربران/محصولات/سفارش‌ها،
+    بدون دسترسی به پاک‌سازی کامل داده‌ها.
+  - sales_manager → مدیر فروش: مدیریت محصولات و سفارش‌ها،
+    مشاهده‌ی کاربران و گزارش‌ها.
+  - salesperson   → فروشنده: مدیریت محصولات و سفارش‌ها،
+    بدون دسترسی به مدیریت کاربران یا گزارش‌های تحلیلی.
+  - analyst       → تحلیل‌گر: فقط مشاهده (Read-only) در همه‌جا؛
+    برای گزارش‌گیری، نه برای تغییر داده.
 
   این فایل تک‌منبع حقیقتِ دسترسی‌هاست، هم برای:
   - محافظت از route ها (RequireRole)
   - مخفی/غیرفعال کردن آیتم‌های Sidebar
   - مخفی/غیرفعال کردن دکمه‌های حساس داخل صفحات (حذف کاربر،
-    پاک‌سازی داده‌ها و ...)
+    پاک‌سازی داده‌ها، افزودن/ویرایش محصول و سفارش و ...)
 
   نکته: چون این پروژه بک‌اند واقعی نداره، این فقط یه لایه‌ی
   UI/UX هست، نه یه مکانیزم امنیتی واقعی — جلوی کاربر مخرب رو
@@ -32,9 +45,11 @@ export type Role = AuthUser["role"];
 */
 
 export const roleLabels: Record<Role, string> = {
-  admin: "مدیر سیستم",
-  manager: "مدیر فروش",
-  customer: "مشتری",
+  system_admin: "مدیر کل سیستم",
+  admin: "ادمین",
+  sales_manager: "مدیر فروش",
+  salesperson: "فروشنده",
+  analyst: "تحلیل‌گر",
 };
 
 /*
@@ -49,13 +64,26 @@ export const roleLabels: Record<Role, string> = {
   ----------------------------------------------------------
 */
 
+const ALL_ROLES: Role[] = [
+  "system_admin",
+  "admin",
+  "sales_manager",
+  "salesperson",
+  "analyst",
+];
+
 const PAGE_ACCESS: Record<string, Role[]> = {
-  "/dashboard": ["admin", "manager", "customer"],
-  "/dashboard/users": ["admin", "manager"],
-  "/dashboard/products": ["admin", "manager", "customer"],
-  "/dashboard/orders": ["admin", "manager", "customer"],
-  "/dashboard/analytics": ["admin", "manager"],
-  "/dashboard/settings": ["admin", "manager", "customer"],
+  "/dashboard": ALL_ROLES,
+  "/dashboard/users": ["system_admin", "admin", "sales_manager", "analyst"],
+  "/dashboard/products": ALL_ROLES,
+  "/dashboard/orders": ALL_ROLES,
+  "/dashboard/analytics": [
+    "system_admin",
+    "admin",
+    "sales_manager",
+    "analyst",
+  ],
+  "/dashboard/settings": ALL_ROLES,
 };
 
 export function canAccessPath(role: Role | undefined, path: string): boolean {
@@ -79,15 +107,22 @@ export function canAccessPath(role: Role | undefined, path: string): boolean {
 */
 
 export const permissions = {
-  /** پاک‌سازی کامل / بازنشانی داده‌های سیستم (Settings) */
-  canManageSystemData: (role?: Role) => role === "admin",
+  /** پاک‌سازی کامل / بازنشانی داده‌های سیستم (Settings) — فقط مدیر کل */
+  canManageSystemData: (role?: Role) => role === "system_admin",
 
   /** افزودن کاربر جدید */
-  canCreateUser: (role?: Role) => role === "admin" || role === "manager",
+  canCreateUser: (role?: Role) => role === "system_admin" || role === "admin",
 
   /** ویرایش کاربر */
-  canEditUser: (role?: Role) => role === "admin" || role === "manager",
+  canEditUser: (role?: Role) => role === "system_admin" || role === "admin",
 
-  /** حذف کاربر — حساس‌ترین اکشن، فقط ادمین */
-  canDeleteUser: (role?: Role) => role === "admin",
+  /** حذف کاربر — حساس‌ترین اکشن، فقط مدیر کل سیستم */
+  canDeleteUser: (role?: Role) => role === "system_admin",
+
+  /** افزودن/ویرایش/حذف محصول — تحلیل‌گر فقط مشاهده‌گره */
+  canManageProducts: (role?: Role) => role !== "analyst",
+
+  /** ویرایش/لغو سفارش — تحلیل‌گر فقط مشاهده‌گره */
+  canManageOrders: (role?: Role) => role !== "analyst",
 } as const;
+

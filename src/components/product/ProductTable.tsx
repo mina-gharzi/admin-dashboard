@@ -26,6 +26,8 @@ import { Modal } from "../ui/Modal";
 import Button from "../ui/Button";
 import type { Product } from "../../services/api";
 import { formatPrice } from "../../utils/format";
+import { useAuthStore } from "../../store";
+import { permissions } from "../../utils/permissions";
 
 interface ProductTableProps {
   products: Product[];
@@ -58,6 +60,8 @@ function PageBtn({ onClick, disabled, children }: { onClick: () => void; disable
 function ProductTable({ products, onEdit, onDelete }: ProductTableProps) {
   const navigate = useNavigate();
   const [sorting, setSorting] = useState<SortingState>([]);
+  const role = useAuthStore((state) => state.user?.role);
+  const canManage = permissions.canManageProducts(role);
   const [deleteModal, setDeleteModal] = useState({ open: false, productId: null as number | null, productName: "" });
 
   const columns = [
@@ -110,8 +114,12 @@ function ProductTable({ products, onEdit, onDelete }: ProductTableProps) {
               trigger={<button type="button" aria-label="عملیات محصول" className="flex h-8 w-8 items-center justify-center rounded-lg text-text-secondary transition hover:bg-primary-50 hover:text-primary-900"><MoreHorizontal size={18} /></button>}
               items={[
                 { label: "مشاهده", icon: <Eye size={14} />, onClick: () => navigate(`/dashboard/products/${product.id}`) },
-                { label: "ویرایش", icon: <Pencil size={14} />, onClick: () => onEdit?.(product) },
-                { label: "حذف", icon: <ShieldAlert size={14} />, danger: true, onClick: () => setDeleteModal({ open: true, productId: product.id, productName: product.name }) },
+                ...(canManage
+                  ? [
+                      { label: "ویرایش", icon: <Pencil size={14} />, onClick: () => onEdit?.(product) },
+                      { label: "حذف", icon: <ShieldAlert size={14} />, danger: true, onClick: () => setDeleteModal({ open: true, productId: product.id, productName: product.name }) },
+                    ]
+                  : []),
               ]}
             />
           </div>

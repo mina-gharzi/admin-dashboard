@@ -46,9 +46,11 @@ interface UserTableProps {
 const PAGE_SIZE = 8;
 
 const roleVariants: Record<User["role"], VariantProps<typeof badgeVariants>["variant"]> = {
-  admin: "primary",
-  manager: "info",
-  customer: "neutral",
+  system_admin: "primary",
+  admin: "info",
+  sales_manager: "success",
+  salesperson: "warning",
+  analyst: "neutral",
 };
 
 const statusConfig = {

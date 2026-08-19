@@ -7,16 +7,26 @@
 */
 
 import { useMemo, useState } from "react";
-import { AlertCircle, Clock3, PackageCheck, ShoppingBag } from "lucide-react";
+import { AlertCircle, Clock3, Download, PackageCheck, ShoppingBag } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { Card } from "../components/ui/Card";
+import Button from "../components/ui/Button";
 import PageHeader from "../components/ui/PageHeader";
 import OrderTable from "../components/order/OrderTable";
 import OrderFilters from "../components/order/OrderFilters";
 import OrderFormModal from "../components/order/OrderFormModal";
 import { useData } from "../hooks/useData";
 import { api, type Order } from "../services/api";
+import { formatPrice } from "../utils/format";
+import { exportToCsv, getFileDateStamp } from "../utils/exportToCsv";
+
+const orderStatusLabels: Record<Order["status"], string> = {
+  pending: "در انتظار",
+  processing: "در حال پردازش",
+  completed: "تکمیل شده",
+  cancelled: "لغو شده",
+};
 
 function Orders() {
   const { data: orders, loading, error, refetch } = useData(() => api.orders.getAll(), []);
@@ -50,9 +60,46 @@ function Orders() {
   const processing = orders?.filter((item) => item.status === "processing").length ?? 0;
   const completed = orders?.filter((item) => item.status === "completed").length ?? 0;
 
+  // خروجی CSV از سفارش‌های فیلترشده
+  const handleExport = () => {
+    if (filteredOrders.length === 0) {
+      toast.info("موردی برای خروجی گرفتن وجود ندارد.");
+      return;
+    }
+
+    exportToCsv(
+      filteredOrders,
+      [
+        { header: "شماره سفارش", accessor: (order) => order.id },
+        { header: "مشتری", accessor: (order) => order.customer },
+        { header: "ایمیل", accessor: (order) => order.email },
+        { header: "مبلغ (تومان)", accessor: (order) => formatPrice(order.amount) },
+        { header: "وضعیت", accessor: (order) => orderStatusLabels[order.status] },
+        { header: "تاریخ", accessor: (order) => order.date },
+      ],
+      `سفارش‌ها-${getFileDateStamp()}`,
+    );
+
+    toast.success(`خروجی ${filteredOrders.length} سفارش با موفقیت دانلود شد.`);
+  };
+
   return (
     <div className="space-y-6">
-      <PageHeader title="سفارش‌ها" description="مدیریت و پیگیری سفارش‌های فروشگاه" breadcrumbs={[{ label: "سفارش‌ها" }]} />
+      <PageHeader
+        title="سفارش‌ها"
+        description="مدیریت و پیگیری سفارش‌های فروشگاه"
+        breadcrumbs={[{ label: "سفارش‌ها" }]}
+        actions={
+          <Button
+            variant="outline"
+            onClick={handleExport}
+            disabled={filteredOrders.length === 0}
+          >
+            <Download size={17} />
+            خروجی CSV
+          </Button>
+        }
+      />
 
       <div className="grid gap-4 tablet:grid-cols-3">
         <Card className="flex items-center gap-3 p-4">

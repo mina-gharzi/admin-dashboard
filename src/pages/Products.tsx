@@ -7,7 +7,7 @@
 */
 
 import { useMemo, useState } from "react";
-import { AlertCircle, Package, Plus } from "lucide-react";
+import { AlertCircle, Download, Package, Plus } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { Card } from "../components/ui/Card";
@@ -19,8 +19,15 @@ import ProductFormModal from "../components/product/ProductFormModal";
 
 import { useData } from "../hooks/useData";
 import { api, type Product } from "../services/api";
+import { formatPrice } from "../utils/format";
+import { exportToCsv, getFileDateStamp } from "../utils/exportToCsv";
+import { useAuthStore } from "../store";
+import { permissions } from "../utils/permissions";
 
 function Products() {
+  const role = useAuthStore((state) => state.user?.role);
+  const canManage = permissions.canManageProducts(role);
+
   const { data: products, loading, error, refetch } = useData(
     () => api.products.getAll(),
     [],
@@ -68,6 +75,32 @@ function Products() {
   const activeCount = products?.filter((item) => item.status === "active").length ?? 0;
   const lowStockCount = products?.filter((item) => item.stock > 0 && item.stock <= 10).length ?? 0;
 
+  // خروجی CSV از محصولات فیلترشده
+  const handleExport = () => {
+    if (filteredProducts.length === 0) {
+      toast.info("موردی برای خروجی گرفتن وجود ندارد.");
+      return;
+    }
+
+    exportToCsv(
+      filteredProducts,
+      [
+        { header: "نام محصول", accessor: (product) => product.name },
+        { header: "دسته‌بندی", accessor: (product) => product.category },
+        { header: "قیمت (تومان)", accessor: (product) => formatPrice(product.price) },
+        { header: "موجودی", accessor: (product) => product.stock },
+        {
+          header: "وضعیت",
+          accessor: (product) =>
+            product.status === "active" ? "فعال" : "غیرفعال",
+        },
+      ],
+      `محصولات-${getFileDateStamp()}`,
+    );
+
+    toast.success(`خروجی ${filteredProducts.length} محصول با موفقیت دانلود شد.`);
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -75,10 +108,23 @@ function Products() {
         description="مدیریت محصولات، موجودی و اطلاعات فروشگاه"
         breadcrumbs={[{ label: "محصولات" }]}
         actions={
-          <Button onClick={openCreateModal}>
-            <Plus size={18} />
-            افزودن محصول
-          </Button>
+          <div className="flex items-center gap-2.5">
+            <Button
+              variant="outline"
+              onClick={handleExport}
+              disabled={filteredProducts.length === 0}
+            >
+              <Download size={17} />
+              خروجی CSV
+            </Button>
+
+            {canManage && (
+              <Button onClick={openCreateModal}>
+                <Plus size={18} />
+                افزودن محصول
+              </Button>
+            )}
+          </div>
         }
       />
 
@@ -138,10 +184,12 @@ function Products() {
             </div>
             <p className="font-estedad text-sm font-semibold text-text-primary">هنوز محصولی ثبت نشده است</p>
             <p className="font-estedad text-xs text-text-secondary">برای شروع، اولین محصول فروشگاه را اضافه کنید.</p>
-            <Button size="sm" onClick={openCreateModal} className="mt-1">
-              <Plus size={16} />
-              افزودن اولین محصول
-            </Button>
+            {canManage && (
+              <Button size="sm" onClick={openCreateModal} className="mt-1">
+                <Plus size={16} />
+                افزودن اولین محصول
+              </Button>
+            )}
           </div>
         )}
 

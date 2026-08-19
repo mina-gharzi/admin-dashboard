@@ -5,35 +5,38 @@
   صفحه ورود
   ----------------------------------------------------------
   نکته: چون این پروژه بک‌اند واقعی نداره، این یه ورود Demo
-  هست — هر ایمیل/رمزی که وارد بشه پذیرفته میشه. نام واردشده
-  همون چیزیه که تو کل پنل (Header, Dashboard و ...) نمایش
-  داده میشه.
+  هست، ولی برخلاف قبل، کاربر دیگه نقش خودش رو انتخاب نمی‌کنه.
+  فقط ایمیل‌های از پیش ثبت‌شده (src/data/demoAccounts.ts)
+  اجازه‌ی ورود دارن؛ سیستم با پیدا کردن ایمیل تو همون لیست،
+  خودش تشخیص می‌ده کاربر کیه و چه نقشی داره — دقیقاً مثل یه
+  سیستم واقعی که نقش از رکورد کاربر تو دیتابیس میاد، نه از
+  انتخاب خود کاربر. رمز عبور بررسی نمیشه (چون بک‌اند واقعی
+  نیست)، فقط باید خالی نباشه.
+
+  مشتری‌ها اصلاً جزو حساب‌های این پنل نیستن و نمی‌تونن وارد
+  بشن — این پنل فقط مخصوص کارکنانه.
   ==========================================================
 */
 
 import { useState, type FormEvent } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { Lock, Mail, User, ShieldCheck } from "lucide-react";
+import { Lock, Mail } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { Input } from "../components/ui/Input";
-import { Select } from "../components/ui/Select";
 import Button from "../components/ui/Button";
-import { useAuthStore, type AuthUser } from "../store";
+import { useAuthStore } from "../store";
 import { roleLabels } from "../utils/permissions";
+import { demoAccounts, findDemoAccountByEmail } from "../data/demoAccounts";
 
 interface FormState {
-  name: string;
   email: string;
   password: string;
-  role: AuthUser["role"];
 }
 
 const emptyForm: FormState = {
-  name: "",
   email: "",
   password: "",
-  role: "admin",
 };
 
 function Login() {
@@ -57,17 +60,24 @@ function Login() {
   if (isAuthenticated) {
     return <Navigate to={from} replace />;
   }
-  const validate = (): boolean => {
+
+  const validate = (): {
+    valid: boolean;
+    account?: (typeof demoAccounts)[number];
+  } => {
     const nextErrors: Partial<Record<keyof FormState, string>> = {};
 
-    if (form.name.trim().length < 2) {
-      nextErrors.name = "نام را وارد کنید";
-    }
-
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    let account: (typeof demoAccounts)[number] | undefined;
 
     if (!emailPattern.test(form.email)) {
       nextErrors.email = "ایمیل معتبر نیست";
+    } else {
+      account = findDemoAccountByEmail(form.email);
+
+      if (!account) {
+        nextErrors.email = "این ایمیل در سیستم ثبت نشده است";
+      }
     }
 
     if (form.password.length < 4) {
@@ -76,29 +86,36 @@ function Login() {
 
     setErrors(nextErrors);
 
-    return Object.keys(nextErrors).length === 0;
+    return { valid: Object.keys(nextErrors).length === 0, account };
   };
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
 
-    if (!validate()) return;
+    const { valid, account } = validate();
+
+    if (!valid || !account) return;
 
     setSubmitting(true);
 
     await new Promise((resolve) => setTimeout(resolve, 500));
 
     login({
-      name: form.name.trim(),
-      email: form.email.trim(),
-      role: form.role,
+      name: account.name,
+      email: account.email,
+      role: account.role,
     });
 
-    toast.success(`خوش آمدید، ${form.name.trim()}!`);
+    toast.success(`خوش آمدید، ${account.name}!`);
 
     setSubmitting(false);
 
     navigate(from, { replace: true });
+  };
+
+  const fillDemoAccount = (email: string) => {
+    setForm({ email, password: "demo1234" });
+    setErrors({});
   };
 
   return (
@@ -115,44 +132,13 @@ function Login() {
             <h1 className="font-inter text-xl font-bold tracking-tight text-text-primary">
               ورود به پنل مدیریت
             </h1>
+
+            <p className="mt-2 font-estedad text-xs text-text-secondary">
+              این پنل فقط مخصوص کارکنان فروشگاهه
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Name */}
-            <div>
-              <label className="mb-2 block font-estedad text-sm font-medium text-text-primary">
-                نام
-              </label>
-
-              <div className="relative">
-                <User
-                  size={17}
-                  strokeWidth={1.8}
-                  className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-text-secondary"
-                />
-
-                <Input
-                  value={form.name}
-                  onChange={(e) =>
-                    setForm((f) => ({
-                      ...f,
-                      name: e.target.value,
-                    }))
-                  }
-                  placeholder="نام خود را وارد کنید"
-                  className="h-11 border-border bg-background pr-10 text-text-primary placeholder:text-text-secondary/60 focus:border-primary-300 focus:ring-2 focus:ring-primary-100"
-                  error={Boolean(errors.name)}
-                  autoFocus
-                />
-              </div>
-
-              {errors.name && (
-                <p className="mt-1.5 font-estedad text-xs text-danger">
-                  {errors.name}
-                </p>
-              )}
-            </div>
-
             {/* Email */}
             <div>
               <label className="mb-2 block font-estedad text-sm font-medium text-text-primary">
@@ -176,9 +162,10 @@ function Login() {
                       email: e.target.value,
                     }))
                   }
-                  placeholder="you@example.com"
+                  placeholder="you@shopino.ir"
                   className="h-11 border-border bg-background pr-10 text-text-primary placeholder:text-text-secondary/60 focus:border-primary-300 focus:ring-2 focus:ring-primary-100"
                   error={Boolean(errors.email)}
+                  autoFocus
                 />
               </div>
 
@@ -225,41 +212,6 @@ function Login() {
               )}
             </div>
 
-            {/* Role — چون بک‌اند واقعی نیست، خود کاربر نقش دمو رو انتخاب می‌کنه */}
-            <div>
-              <label className="mb-2 block font-estedad text-sm font-medium text-text-primary">
-                نقش (نسخه نمایشی)
-              </label>
-
-              <div className="relative">
-                <ShieldCheck
-                  size={17}
-                  strokeWidth={1.8}
-                  className="pointer-events-none absolute right-3.5 top-1/2 z-10 -translate-y-1/2 text-text-secondary"
-                />
-
-                <Select
-                  value={form.role}
-                  onChange={(e) =>
-                    setForm((f) => ({
-                      ...f,
-                      role: e.target.value as AuthUser["role"],
-                    }))
-                  }
-                  className="h-11 border-border bg-background pr-10 text-text-primary focus:border-primary-300 focus:ring-2 focus:ring-primary-100"
-                >
-                  <option value="admin">{roleLabels.admin}</option>
-                  <option value="manager">{roleLabels.manager}</option>
-                  <option value="customer">{roleLabels.customer}</option>
-                </Select>
-              </div>
-
-              <p className="mt-1.5 font-estedad text-[11px] text-text-secondary">
-                این پروژه بک‌اند واقعی نداره، پس نقش رو خودتون برای تست
-                دسترسی‌ها انتخاب می‌کنید.
-              </p>
-            </div>
-
             {/* Button */}
             <Button
               type="submit"
@@ -269,6 +221,38 @@ function Login() {
               ورود
             </Button>
           </form>
+        </div>
+
+        {/* Demo Accounts — چون بک‌اند واقعی نیست، این حساب‌های
+            از پیش ثبت‌شده رو برای تست هر نقش نشون می‌دیم */}
+        <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 px-4 py-4">
+          <p className="mb-3 text-center font-estedad text-xs font-medium text-primary-100/80">
+            حساب‌های نمونه (برای تست هر نقش کلیک کنید)
+          </p>
+
+          <div className="space-y-1.5">
+            {demoAccounts.map((account) => (
+              <button
+                key={account.email}
+                type="button"
+                onClick={() => fillDemoAccount(account.email)}
+                className="flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-right transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+              >
+                <span className="min-w-0">
+                  <span className="block truncate font-estedad text-xs font-medium text-white">
+                    {account.name}
+                  </span>
+                  <span dir="ltr" className="block truncate font-inter text-[11px] text-primary-100/60">
+                    {account.email}
+                  </span>
+                </span>
+
+                <span className="shrink-0 rounded-full bg-white/10 px-2.5 py-1 font-estedad text-[11px] text-primary-100">
+                  {roleLabels[account.role]}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Demo */}

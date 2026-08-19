@@ -12,6 +12,7 @@ import { Select } from "../ui/Select";
 import Button from "../ui/Button";
 
 import type { User } from "../../services/api";
+import { roleLabels } from "../../utils/permissions";
 
 interface UserFormModalProps {
   open: boolean;
@@ -32,7 +33,7 @@ interface FormState {
 const emptyForm: FormState = {
   name: "",
   email: "",
-  role: "customer",
+  role: "salesperson",
   status: "active",
 };
 
@@ -165,9 +166,11 @@ function UserFormModal({
                 }))
               }
             >
-              <option value="admin">مدیر</option>
-              <option value="manager">مدیر فروش</option>
-              <option value="customer">مشتری</option>
+              <option value="system_admin">{roleLabels.system_admin}</option>
+              <option value="admin">{roleLabels.admin}</option>
+              <option value="sales_manager">{roleLabels.sales_manager}</option>
+              <option value="salesperson">{roleLabels.salesperson}</option>
+              <option value="analyst">{roleLabels.analyst}</option>
             </Select>
           </div>
 

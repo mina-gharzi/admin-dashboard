@@ -27,6 +27,7 @@ import { Dropdown } from "../ui/Dropdown";
 import NotificationsPanel from "./NotificationsPanel";
 
 import { cn } from "../../utils/cn";
+import { roleLabels } from "../../utils/permissions";
 import { useUIStore, useAuthStore } from "../../store";
 import { useLogout } from "../../hooks/useLogout";
 import { useData } from "../../hooks/useData";
@@ -66,12 +67,6 @@ function Header() {
     toggleDarkMode,
   } = useUIStore();
   const user = useAuthStore((state) => state.user);
-
-  const roleLabels = {
-    admin: "مدیر سیستم",
-    manager: "مدیر فروش",
-    customer: "مشتری",
-  };
 
   /*
     --------------------------------------------------------

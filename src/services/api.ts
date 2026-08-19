@@ -26,7 +26,7 @@ export interface User {
   id: number;
   name: string;
   email: string;
-  role: "admin" | "manager" | "customer";
+  role: "system_admin" | "admin" | "sales_manager" | "salesperson" | "analyst";
   status: "active" | "inactive";
   joinedAt: string;
 }
@@ -66,14 +66,21 @@ export interface OrderItem {
   ----------------------------------------------------------
 */
 
+/*
+  کاربران این پنل، کارکنان فروشگاه هستن (نه مشتری‌های
+  فروشگاه) — برای همین پنج نقش اول این لیست دقیقاً همون
+  ایمیل/نام/نقشِ حساب‌های نمونه‌ی صفحه‌ی ورود هستن
+  (src/data/demoAccounts.ts)، تا وقتی کسی با یکی از اون
+  ایمیل‌ها وارد میشه، خودش رو تو همین لیست کاربران هم ببینه.
+*/
 const seedUsers: User[] = [
-  { id: 1, name: "مینا احمدی", email: "mina@example.com", role: "admin", status: "active", joinedAt: "۱۴۰۴/۰۵/۱۲" },
-  { id: 2, name: "علی رضایی", email: "ali@example.com", role: "manager", status: "active", joinedAt: "۱۴۰۴/۰۶/۲۱" },
-  { id: 3, name: "سارا محمدی", email: "sara@example.com", role: "customer", status: "active", joinedAt: "۱۴۰۴/۰۷/۰۳" },
-  { id: 4, name: "امیر حسینی", email: "amir@example.com", role: "customer", status: "inactive", joinedAt: "۱۴۰۴/۰۷/۱۸" },
-  { id: 5, name: "نگار کریمی", email: "negar@example.com", role: "manager", status: "active", joinedAt: "۱۴۰۴/۰۸/۰۲" },
-  { id: 6, name: "محمد اکبری", email: "mohammad@example.com", role: "customer", status: "active", joinedAt: "۱۴۰۴/۰۸/۱۵" },
-  { id: 7, name: "رضا کاظمی", email: "reza@example.com", role: "customer", status: "active", joinedAt: "۱۴۰۴/۰۹/۰۱" },
+  { id: 1, name: "مینا احمدی", email: "admin@shopino.ir", role: "system_admin", status: "active", joinedAt: "۱۴۰۴/۰۵/۱۲" },
+  { id: 2, name: "علی رضایی", email: "ali.rezaei@shopino.ir", role: "admin", status: "active", joinedAt: "۱۴۰۴/۰۶/۲۱" },
+  { id: 3, name: "نگار کریمی", email: "negar.karimi@shopino.ir", role: "sales_manager", status: "active", joinedAt: "۱۴۰۴/۰۷/۰۳" },
+  { id: 4, name: "رضا کاظمی", email: "reza.kazemi@shopino.ir", role: "salesperson", status: "active", joinedAt: "۱۴۰۴/۰۷/۱۸" },
+  { id: 5, name: "سارا محمدی", email: "sara.mohammadi@shopino.ir", role: "analyst", status: "active", joinedAt: "۱۴۰۴/۰۸/۰۲" },
+  { id: 6, name: "امیر حسینی", email: "amir.hosseini@shopino.ir", role: "salesperson", status: "inactive", joinedAt: "۱۴۰۴/۰۸/۱۵" },
+  { id: 7, name: "محمد اکبری", email: "mohammad.akbari@shopino.ir", role: "sales_manager", status: "active", joinedAt: "۱۴۰۴/۰۹/۰۱" },
 ];
 
 const seedProducts: Product[] = [
@@ -104,7 +111,13 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
-const VALID_USER_ROLES = ["admin", "manager", "customer"] as const;
+const VALID_USER_ROLES = [
+  "system_admin",
+  "admin",
+  "sales_manager",
+  "salesperson",
+  "analyst",
+] as const;
 const VALID_USER_STATUSES = ["active", "inactive"] as const;
 const VALID_PRODUCT_STATUSES = ["active", "inactive"] as const;
 
@@ -445,9 +458,11 @@ export const api = {
       }
 
       const usersByRole: Record<User["role"], number> = {
+        system_admin: 0,
         admin: 0,
-        manager: 0,
-        customer: 0,
+        sales_manager: 0,
+        salesperson: 0,
+        analyst: 0,
       };
 
       const usersByStatus: Record<User["status"], number> = {
