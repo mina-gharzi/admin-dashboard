@@ -12,6 +12,7 @@ import { createBrowserRouter } from "react-router-dom";
 
 import DashboardLayout from "../components/layout/DashboardLayout";
 import RequireAuth from "./RequireAuth";
+import RequireRole from "./RequireRole";
 
 import Welcome from "../pages/Welcome";
 import Login from "../pages/Login";
@@ -29,6 +30,7 @@ import OrderDetails from "../pages/OrderDetails";
 
 import Analytics from "../pages/Analytics";
 import Settings from "../pages/Settings";
+import Forbidden from "../pages/Forbidden";
 import NotFound from "../pages/NotFound";
 
 /*
@@ -41,6 +43,12 @@ import NotFound from "../pages/NotFound";
   (بدون Sidebar/Header). بقیه‌ی مسیرها زیر /dashboard و
   RequireAuth هستن، پس بدون لاگین بودن مستقیم به /login
   هدایت میشن.
+
+  RequireRole (RBAC):
+  بعضی مسیرها (کاربران، گزارش‌ها) علاوه بر لاگین بودن، به
+  نقش خاصی هم نیاز دارن — این‌ها زیر RequireRole قرار گرفتن
+  و طبق src/utils/permissions.ts چک میشن. کاربر بدون دسترسی
+  به /dashboard/forbidden هدایت میشه.
   ==========================================================
 */
 
@@ -70,8 +78,19 @@ const router = createBrowserRouter([
           },
 
           {
-            path: "users",
-            element: <Users />,
+            element: <RequireRole />,
+
+            children: [
+              {
+                path: "users",
+                element: <Users />,
+              },
+
+              {
+                path: "analytics",
+                element: <Analytics />,
+              },
+            ],
           },
 
           {
@@ -93,13 +112,13 @@ const router = createBrowserRouter([
           },
 
           {
-            path: "analytics",
-            element: <Analytics />,
+            path: "settings",
+            element: <Settings />,
           },
 
           {
-            path: "settings",
-            element: <Settings />,
+            path: "forbidden",
+            element: <Forbidden />,
           },
         ],
       },

@@ -31,16 +31,12 @@ import { Modal } from "../components/ui/Modal";
 
 import { useAuthStore, useUIStore } from "../store";
 import { api } from "../services/api";
-
-const roleLabels = {
-  admin: "مدیر سیستم",
-  manager: "مدیر فروش",
-  customer: "مشتری",
-};
+import { roleLabels, permissions } from "../utils/permissions";
 
 function Settings() {
   const user = useAuthStore((state) => state.user);
   const { isDarkMode, toggleDarkMode } = useUIStore();
+  const canManageSystemData = permissions.canManageSystemData(user?.role);
 
   const [resetOpen, setResetOpen] = useState(false);
   const [clearOpen, setClearOpen] = useState(false);
@@ -180,8 +176,9 @@ function Settings() {
         </Card>
       </div>
 
-      {/* System Management */}
-      <Card className="overflow-hidden border-primary-300/60 p-0">
+      {/* System Management — فقط برای ادمین */}
+      {canManageSystemData && (
+        <Card className="overflow-hidden border-primary-300/60 p-0">
         <div className="border-b border-primary-300/60 px-6 py-4">
           <div className="flex items-center gap-2">
             <Shield size={16} className="text-text-secondary" />
@@ -246,9 +243,11 @@ function Settings() {
           </div>
         </div>
       </Card>
+      )}
 
       {/* Reset Confirmation Modal */}
-      <Modal
+      {canManageSystemData && (
+        <Modal
         open={resetOpen}
         onClose={() => setResetOpen(false)}
         title="بازنشانی داده‌ها"
@@ -269,9 +268,11 @@ function Settings() {
           می‌شوند.
         </p>
       </Modal>
+      )}
 
       {/* Clear Confirmation Modal */}
-      <Modal
+      {canManageSystemData && (
+        <Modal
         open={clearOpen}
         onClose={() => setClearOpen(false)}
         title="پاک‌سازی کامل داده‌ها"
@@ -292,6 +293,7 @@ function Settings() {
           دائمی حذف خواهند شد.
         </p>
       </Modal>
+      )}
     </div>
   );
 }

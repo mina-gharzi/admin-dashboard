@@ -33,6 +33,8 @@ import { Modal } from "../ui/Modal";
 import Button from "../ui/Button";
 
 import type { User } from "../../services/api";
+import { useAuthStore } from "../../store";
+import { roleLabels, permissions } from "../../utils/permissions";
 
 interface UserTableProps {
   users: User[];
@@ -42,12 +44,6 @@ interface UserTableProps {
 }
 
 const PAGE_SIZE = 8;
-
-const roleLabels: Record<User["role"], string> = {
-  admin: "مدیر",
-  manager: "مدیر فروش",
-  customer: "مشتری",
-};
 
 const roleVariants: Record<User["role"], VariantProps<typeof badgeVariants>["variant"]> = {
   admin: "primary",
@@ -107,6 +103,9 @@ function UserTable({
   onToggleStatus,
 }: UserTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const role = useAuthStore((state) => state.user?.role);
+  const canEdit = permissions.canEditUser(role);
+  const canDelete = permissions.canDeleteUser(role);
 
   const [deleteModal, setDeleteModal] = useState<{
     open: boolean;
@@ -170,14 +169,15 @@ function UserTable({
         return (
           <button
             type="button"
-            title="کلیک برای تغییر وضعیت"
+            title={canEdit ? "کلیک برای تغییر وضعیت" : "وضعیت"}
+            disabled={!canEdit}
             onClick={() =>
               onToggleStatus?.(
                 row.original.id,
                 status === "active" ? "inactive" : "active",
               )
             }
-            className={`inline-flex items-center gap-2 rounded-lg border px-2.5 py-1 transition-all active:scale-95 ${config.ring}`}
+            className={`inline-flex items-center gap-2 rounded-lg border px-2.5 py-1 transition-all active:scale-95 disabled:cursor-default disabled:active:scale-100 ${config.ring}`}
           >
             <span className={`h-1.5 w-1.5 rounded-full ${config.dot}`} />
             <span
@@ -216,30 +216,40 @@ function UserTable({
             }
             items={[
               {
-                label: "مشاهده و ویرایش",
+                label: canEdit ? "مشاهده و ویرایش" : "مشاهده",
                 onClick: () => onEdit?.(row.original),
               },
-              {
-                label:
-                  row.original.status === "active"
-                    ? "غیرفعال کردن"
-                    : "فعال کردن",
-                onClick: () =>
-                  onToggleStatus?.(
-                    row.original.id,
-                    row.original.status === "active" ? "inactive" : "active",
-                  ),
-              },
-              {
-                label: "حذف کاربر",
-                onClick: () =>
-                  setDeleteModal({
-                    open: true,
-                    userId: row.original.id,
-                    userName: row.original.name,
-                  }),
-                danger: true,
-              },
+              ...(canEdit
+                ? [
+                    {
+                      label:
+                        row.original.status === "active"
+                          ? "غیرفعال کردن"
+                          : "فعال کردن",
+                      onClick: () =>
+                        onToggleStatus?.(
+                          row.original.id,
+                          row.original.status === "active"
+                            ? "inactive"
+                            : "active",
+                        ),
+                    },
+                  ]
+                : []),
+              ...(canDelete
+                ? [
+                    {
+                      label: "حذف کاربر",
+                      onClick: () =>
+                        setDeleteModal({
+                          open: true,
+                          userId: row.original.id,
+                          userName: row.original.name,
+                        }),
+                      danger: true,
+                    },
+                  ]
+                : []),
             ]}
           />
         </div>

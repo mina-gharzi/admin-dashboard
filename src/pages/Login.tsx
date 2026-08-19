@@ -13,23 +13,27 @@
 
 import { useState, type FormEvent } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { Lock, Mail, User } from "lucide-react";
+import { Lock, Mail, User, ShieldCheck } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { Input } from "../components/ui/Input";
+import { Select } from "../components/ui/Select";
 import Button from "../components/ui/Button";
-import { useAuthStore } from "../store";
+import { useAuthStore, type AuthUser } from "../store";
+import { roleLabels } from "../utils/permissions";
 
 interface FormState {
   name: string;
   email: string;
   password: string;
+  role: AuthUser["role"];
 }
 
 const emptyForm: FormState = {
   name: "",
   email: "",
   password: "",
+  role: "admin",
 };
 
 function Login() {
@@ -87,7 +91,7 @@ function Login() {
     login({
       name: form.name.trim(),
       email: form.email.trim(),
-      role: "admin",
+      role: form.role,
     });
 
     toast.success(`خوش آمدید، ${form.name.trim()}!`);
@@ -109,7 +113,7 @@ function Login() {
           {/* Title */}
           <div className="mb-7 text-center">
             <h1 className="font-inter text-xl font-bold tracking-tight text-text-primary">
-              Login To Dashboard
+              ورود به پنل مدیریت
             </h1>
           </div>
 
@@ -219,6 +223,41 @@ function Login() {
                   {errors.password}
                 </p>
               )}
+            </div>
+
+            {/* Role — چون بک‌اند واقعی نیست، خود کاربر نقش دمو رو انتخاب می‌کنه */}
+            <div>
+              <label className="mb-2 block font-estedad text-sm font-medium text-text-primary">
+                نقش (نسخه نمایشی)
+              </label>
+
+              <div className="relative">
+                <ShieldCheck
+                  size={17}
+                  strokeWidth={1.8}
+                  className="pointer-events-none absolute right-3.5 top-1/2 z-10 -translate-y-1/2 text-text-secondary"
+                />
+
+                <Select
+                  value={form.role}
+                  onChange={(e) =>
+                    setForm((f) => ({
+                      ...f,
+                      role: e.target.value as AuthUser["role"],
+                    }))
+                  }
+                  className="h-11 border-border bg-background pr-10 text-text-primary focus:border-primary-300 focus:ring-2 focus:ring-primary-100"
+                >
+                  <option value="admin">{roleLabels.admin}</option>
+                  <option value="manager">{roleLabels.manager}</option>
+                  <option value="customer">{roleLabels.customer}</option>
+                </Select>
+              </div>
+
+              <p className="mt-1.5 font-estedad text-[11px] text-text-secondary">
+                این پروژه بک‌اند واقعی نداره، پس نقش رو خودتون برای تست
+                دسترسی‌ها انتخاب می‌کنید.
+              </p>
             </div>
 
             {/* Button */}

@@ -19,8 +19,14 @@ import UserFormModal from "../components/user/UserFormModal";
 
 import { useData } from "../hooks/useData";
 import { api, type User } from "../services/api";
+import { useAuthStore } from "../store";
+import { permissions } from "../utils/permissions";
 
 function Users() {
+  const role = useAuthStore((state) => state.user?.role);
+  const canCreate = permissions.canCreateUser(role);
+  const canEdit = permissions.canEditUser(role);
+
   const {
     data: users,
     loading,
@@ -90,10 +96,12 @@ function Users() {
         description="مدیریت کاربران سیستم و مشاهده اطلاعات آن‌ها"
         breadcrumbs={[{ label: "کاربران" }]}
         actions={
-          <Button onClick={openCreateModal}>
-            <Plus size={18} />
-            افزودن کاربر
-          </Button>
+          canCreate ? (
+            <Button onClick={openCreateModal}>
+              <Plus size={18} />
+              افزودن کاربر
+            </Button>
+          ) : undefined
         }
       />
 
@@ -144,10 +152,12 @@ function Users() {
             <p className="font-estedad text-xs text-text-secondary">
               برای شروع، اولین کاربر خود را اضافه کنید.
             </p>
-            <Button size="sm" onClick={openCreateModal} className="mt-2">
-              <Plus size={16} />
-              افزودن اولین کاربر
-            </Button>
+            {canCreate && (
+              <Button size="sm" onClick={openCreateModal} className="mt-2">
+                <Plus size={16} />
+                افزودن اولین کاربر
+              </Button>
+            )}
           </div>
         )}
 
@@ -169,6 +179,7 @@ function Users() {
         onClose={closeFormModal}
         onSubmit={handleFormSubmit}
         initialUser={formModal.editingUser}
+        readOnly={Boolean(formModal.editingUser) && !canEdit}
       />
     </div>
   );

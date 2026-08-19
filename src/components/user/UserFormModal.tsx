@@ -18,6 +18,8 @@ interface UserFormModalProps {
   onClose: () => void;
   onSubmit: (data: Omit<User, "id" | "joinedAt">) => Promise<void>;
   initialUser?: User | null;
+  /** حالت فقط‌مشاهده — برای نقش‌هایی که اجازه‌ی ویرایش کاربر رو ندارن (RBAC) */
+  readOnly?: boolean;
 }
 
 interface FormState {
@@ -49,6 +51,7 @@ function UserFormModal({
   onClose,
   onSubmit,
   initialUser,
+  readOnly = false,
 }: UserFormModalProps) {
   const isEditMode = Boolean(initialUser);
 
@@ -91,14 +94,23 @@ function UserFormModal({
     <Modal
       open={open}
       onClose={onClose}
-      title={isEditMode ? "ویرایش کاربر" : "افزودن کاربر جدید"}
+      title={
+        readOnly
+          ? "مشاهده کاربر"
+          : isEditMode
+            ? "ویرایش کاربر"
+            : "افزودن کاربر جدید"
+      }
       description={
-        isEditMode
-          ? "اطلاعات کاربر را ویرایش کنید"
-          : "اطلاعات کاربر جدید را وارد کنید"
+        readOnly
+          ? "شما فقط اجازه‌ی مشاهده‌ی این کاربر رو دارید"
+          : isEditMode
+            ? "اطلاعات کاربر را ویرایش کنید"
+            : "اطلاعات کاربر جدید را وارد کنید"
       }
     >
       <form onSubmit={handleSubmit} className="space-y-5">
+        <fieldset disabled={readOnly} className="space-y-5 border-0 p-0">
         {/* Name */}
         <div>
           <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
@@ -177,15 +189,18 @@ function UserFormModal({
             </Select>
           </div>
         </div>
+        </fieldset>
 
         {/* Footer Actions */}
         <div className="flex items-center justify-end gap-3 border-t border-primary-300/60 pt-4">
           <Button type="button" variant="outline" onClick={onClose}>
-            انصراف
+            {readOnly ? "بستن" : "انصراف"}
           </Button>
-          <Button type="submit" loading={submitting}>
-            {isEditMode ? "ذخیره تغییرات" : "افزودن کاربر"}
-          </Button>
+          {!readOnly && (
+            <Button type="submit" loading={submitting}>
+              {isEditMode ? "ذخیره تغییرات" : "افزودن کاربر"}
+            </Button>
+          )}
         </div>
       </form>
     </Modal>

@@ -32,7 +32,8 @@ import { NavLink } from "react-router-dom";
 
 import { cn } from "../../utils/cn";
 
-import { useUIStore } from "../../store";
+import { useUIStore, useAuthStore } from "../../store";
+import { canAccessPath } from "../../utils/permissions";
 
 import { useMobileSidebar } from "../../hooks/useMobileSidebar";
 import { useLogout } from "../../hooks/useLogout";
@@ -113,6 +114,12 @@ function Sidebar() {
   } = useUIStore();
 
   const { logout } = useLogout();
+  const role = useAuthStore((state) => state.user?.role);
+
+  // فقط آیتم‌هایی که نقش کاربر فعلی اجازه‌ی دیدنشون رو داره
+  const visibleNavigationItems = navigationItems.filter((item) =>
+    canAccessPath(role, item.path),
+  );
 
   return (
     <>
@@ -302,7 +309,7 @@ function Sidebar() {
           {/* Navigation Items */}
 
           <div className="space-y-1">
-            {navigationItems.map((item) => {
+            {visibleNavigationItems.map((item) => {
               const Icon = item.icon;
 
               return (
