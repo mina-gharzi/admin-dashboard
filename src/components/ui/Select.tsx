@@ -38,7 +38,7 @@ function Select({ className, error = false, children, ...props }: SelectProps) {
           "font-estedad text-sm",
           "text-text-primary",
           "px-3 pl-9",
-          "rounded-md",
+          "rounded-xl",
           "border",
           "border-border",
           "bg-surface",

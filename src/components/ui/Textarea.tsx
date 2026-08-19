@@ -38,7 +38,7 @@ function Textarea({ className, error = false, ...props }: TextareaProps) {
         "font-estedad text-sm",
         "text-text-primary",
         "px-3 py-2",
-        "rounded-md",
+        "rounded-xl",
         "border",
         "border-border",
         "bg-surface",

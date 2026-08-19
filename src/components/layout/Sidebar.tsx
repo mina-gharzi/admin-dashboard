@@ -382,7 +382,7 @@ function Sidebar() {
             className={({ isActive }) =>
               cn(
                 "mb-1 flex items-center",
-                "rounded-md py-2.5",
+                "rounded-xl py-2.5",
                 "font-estedad text-sm",
                 "transition-colors",
 
@@ -412,7 +412,7 @@ function Sidebar() {
             onClick={logout}
             className={cn(
               "flex w-full items-center",
-              "rounded-md py-2.5",
+              "rounded-xl py-2.5",
               "font-estedad text-sm",
               "text-danger",
               "transition-colors",

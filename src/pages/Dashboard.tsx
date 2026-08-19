@@ -373,7 +373,7 @@ function Dashboard() {
           return (
             <Card
               key={stat.title}
-              className="group relative overflow-hidden border border-primary-300/50 p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary-700/50 hover:shadow-md"
+              className="group relative overflow-hidden border border-primary-300/60 p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary-700/50 hover:shadow-md"
             >
               <div className="absolute -left-8 -top-8 h-20 w-20 rounded-full bg-primary-100/30 opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-100" />
 
@@ -421,7 +421,7 @@ function Dashboard() {
 
       <section className="grid gap-6 desktop:grid-cols-3">
         {/* Chart */}
-        <Card className="overflow-hidden border border-primary-300/50 p-0 shadow-sm desktop:col-span-2">
+        <Card className="overflow-hidden border border-primary-300/60 p-0 shadow-sm desktop:col-span-2">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-primary-100 px-6 py-4">
             <div>
               <h2 className="font-estedad text-base font-bold text-text-primary">
@@ -521,7 +521,7 @@ function Dashboard() {
         </Card>
 
         {/* Recent Orders */}
-        <Card className="flex flex-col overflow-hidden border border-primary-300/50 p-0 shadow-sm">
+        <Card className="flex flex-col overflow-hidden border border-primary-300/60 p-0 shadow-sm">
           <div className="flex items-center justify-between border-b border-primary-100 px-6 py-4">
             <div>
               <h2 className="font-estedad text-base font-bold text-text-primary">
@@ -588,7 +588,7 @@ function Dashboard() {
 
       <section className="grid gap-6 tablet:grid-cols-2 desktop:grid-cols-3">
         {/* Top Products */}
-        <Card className="overflow-hidden border border-primary-300/50 p-0 shadow-sm">
+        <Card className="overflow-hidden border border-primary-300/60 p-0 shadow-sm">
           <div className="border-b border-primary-100 px-6 py-4">
             <h2 className="font-estedad text-base font-bold text-text-primary">
               محصولات پرفروش
@@ -645,7 +645,7 @@ function Dashboard() {
         </Card>
 
         {/* Performance */}
-        <Card className="border border-primary-300/50 p-0 shadow-sm">
+        <Card className="border border-primary-300/60 p-0 shadow-sm">
           <div className="border-b border-primary-100 px-6 py-4">
             <h2 className="font-estedad text-base font-bold text-text-primary">
               خلاصه عملکرد

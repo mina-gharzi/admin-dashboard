@@ -62,7 +62,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 */
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: cn("bg-primary-900", "text-white", "hover:bg-primary-800"),
+  primary: cn("bg-primary-900", "text-white", "hover:bg-primary-700"),
 
   secondary: cn("bg-primary-100", "text-primary-900", "hover:bg-primary-200"),
 
@@ -90,7 +90,7 @@ const variantStyles: Record<ButtonVariant, string> = {
 */
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: cn("h-8", "px-3", "text-xs"),
+  sm: cn("h-9", "px-3.5", "text-xs"),
 
   md: cn("h-10", "px-4", "text-sm"),
 
@@ -130,7 +130,7 @@ function Button({
         "justify-center",
         "gap-2",
 
-        "rounded-md",
+        "rounded-xl",
 
         "font-estedad",
         "font-medium",

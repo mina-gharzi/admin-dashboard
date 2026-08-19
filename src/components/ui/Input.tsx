@@ -50,7 +50,7 @@ function Input({ className, error = false, ...props }: InputProps) {
         "px-3",
 
         // Shape
-        "rounded-md",
+        "rounded-xl",
         "border",
 
         // Default colors

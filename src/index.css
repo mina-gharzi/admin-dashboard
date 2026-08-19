@@ -69,6 +69,7 @@
   --color-primary-200: #a8cdee;
   --color-primary-300: #7288ae;
   --color-primary-700: #4b5694;
+  --color-primary-800: #303a72;
   --color-primary-900: #111844;
 
   --color-background: #f5f5f5;
@@ -130,28 +131,12 @@
 }
 
 /*
-  Dark Mode Support
+  Dark Mode
+  ----------------------------------------------------------
+  Dark mode is controlled by the application toggle (.dark).
+  We intentionally do not use prefers-color-scheme here so
+  the UI always follows the user's explicit dashboard choice.
 */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-primary-50: #1a2440;
-    --color-primary-100: #223159;
-    --color-primary-200: #2b3d6b;
-    --color-primary-300: #3a4d84;
-    --color-primary-700: #5568ab;
-    --color-primary-900: #90caf9;
-
-    --color-background: #0f172a;
-    --color-surface: #1e293b;
-    --color-text-primary: #f1f5f9;
-    --color-text-secondary: #94a3b8;
-    --color-border: #334155;
-
-    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.25);
-    --shadow-md: 0 4px 12px rgb(0 0 0 / 0.4);
-    --shadow-lg: 0 10px 30px rgb(0 0 0 / 0.5);
-  }
-}
 
 /*
   Dark Mode Class (Manual Toggle)
@@ -162,6 +147,7 @@
   --color-primary-200: #2b3d6b;
   --color-primary-300: #3a4d84;
   --color-primary-700: #5568ab;
+  --color-primary-800: #465892;
   --color-primary-900: #90caf9;
 
   --color-background: #0f172a;

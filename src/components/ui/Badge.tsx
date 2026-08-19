@@ -33,9 +33,9 @@ const badgeVariants = cva(
     "justify-center",
     "whitespace-nowrap",
 
-    "rounded-md",
+    "rounded-full",
 
-    "px-2",
+    "px-2.5",
     "py-1",
 
     "font-estedad",

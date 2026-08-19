@@ -441,7 +441,7 @@ function Dropdown({
                   }}
                   className={cn(
                     "flex w-full items-center gap-2.5",
-                    "rounded-lg px-3 py-2",
+                    "rounded-xl px-3 py-2",
                     "font-estedad text-[12px] font-medium leading-6",
                     "text-text-primary",
                     "transition-colors",

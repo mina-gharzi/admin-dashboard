@@ -78,7 +78,7 @@ const CustomPieTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0];
     return (
-      <div className="rounded-xl border border-primary-300/80 bg-white/95 p-3 shadow-xl backdrop-blur-md">
+      <div className="rounded-xl border border-primary-300/70 bg-white/95 p-3 shadow-xl backdrop-blur-md">
         <div className="flex items-center gap-2">
           <span
             className="h-2.5 w-2.5 rounded-full"
@@ -104,7 +104,7 @@ const CustomBarTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0];
     return (
-      <div className="rounded-xl border border-primary-300/80 bg-white/95 p-3 shadow-xl backdrop-blur-md">
+      <div className="rounded-xl border border-primary-300/70 bg-white/95 p-3 shadow-xl backdrop-blur-md">
         <span className="font-estedad text-xs font-bold text-text-primary">
           {data.payload.category}
         </span>

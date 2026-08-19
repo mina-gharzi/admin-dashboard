@@ -196,7 +196,7 @@ function Modal({
           "rounded-xl",
           "border border-border",
           "bg-surface",
-          "shadow-lg",
+          "shadow-xl",
           "outline-none",
           className,
         )}

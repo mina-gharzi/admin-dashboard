@@ -23,7 +23,7 @@ function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
-        "rounded-lg",
+        "rounded-2xl",
         "border border-border",
         "bg-surface",
         "text-text-primary",

@@ -2,26 +2,17 @@
   ==========================================================
   Products.tsx
   ----------------------------------------------------------
-  Products management page.
-  ----------------------------------------------------------
-  این صفحه مسئول هماهنگ کردن:
-
-  - Product Filters
-  - Product Table
-  - Product data (از services/api)
-  - افزودن / ویرایش محصول (ProductFormModal)
+  Products management page — polished Dashboard language
   ==========================================================
 */
 
 import { useMemo, useState } from "react";
-
-import { Plus } from "lucide-react";
+import { AlertCircle, Package, Plus } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { Card } from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import PageHeader from "../components/ui/PageHeader";
-
 import ProductTable from "../components/product/ProductTable";
 import ProductFilters from "../components/product/ProductFilters";
 import ProductFormModal from "../components/product/ProductFormModal";
@@ -29,72 +20,33 @@ import ProductFormModal from "../components/product/ProductFormModal";
 import { useData } from "../hooks/useData";
 import { api, type Product } from "../services/api";
 
-/*
-  ----------------------------------------------------------
-  Products Page
-  ----------------------------------------------------------
-*/
-
 function Products() {
-  /*
-    --------------------------------------------------------
-    Data Fetching
-    --------------------------------------------------------
-  */
-
-  const {
-    data: products,
-    loading,
-    error,
-    refetch,
-  } = useData(() => api.products.getAll(), []);
-
-  /*
-    --------------------------------------------------------
-    Filters
-    --------------------------------------------------------
-  */
+  const { data: products, loading, error, refetch } = useData(
+    () => api.products.getAll(),
+    [],
+  );
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("همه");
-
-  const filteredProducts = useMemo(() => {
-    if (!products) return [];
-
-    return products.filter((product) => {
-      const matchesSearch = product.name
-        .toLowerCase()
-        .includes(search.toLowerCase());
-
-      const matchesCategory =
-        category === "همه" || product.category === category;
-
-      return matchesSearch && matchesCategory;
-    });
-  }, [products, search, category]);
-
-  /*
-    --------------------------------------------------------
-    Form Modal State (Create / Edit)
-    --------------------------------------------------------
-  */
-
   const [formModal, setFormModal] = useState<{
     open: boolean;
     editingProduct: Product | null;
   }>({ open: false, editingProduct: null });
 
-  const openCreateModal = () => {
-    setFormModal({ open: true, editingProduct: null });
-  };
+  const filteredProducts = useMemo(() => {
+    if (!products) return [];
+    const searchValue = search.trim().toLowerCase();
 
-  const openEditModal = (product: Product) => {
-    setFormModal({ open: true, editingProduct: product });
-  };
+    return products.filter((product) => {
+      const matchesSearch = product.name.toLowerCase().includes(searchValue);
+      const matchesCategory = category === "همه" || product.category === category;
+      return matchesSearch && matchesCategory;
+    });
+  }, [products, search, category]);
 
-  const closeFormModal = () => {
-    setFormModal({ open: false, editingProduct: null });
-  };
+  const openCreateModal = () => setFormModal({ open: true, editingProduct: null });
+  const openEditModal = (product: Product) => setFormModal({ open: true, editingProduct: product });
+  const closeFormModal = () => setFormModal({ open: false, editingProduct: null });
 
   const handleFormSubmit = async (data: Omit<Product, "id">) => {
     if (formModal.editingProduct) {
@@ -104,15 +56,8 @@ function Products() {
       await api.products.create(data);
       toast.success(`محصول «${data.name}» با موفقیت اضافه شد.`);
     }
-
     await refetch();
   };
-
-  /*
-    --------------------------------------------------------
-    Other Actions
-    --------------------------------------------------------
-  */
 
   const handleDelete = async (id: number) => {
     await api.products.delete(id);
@@ -120,13 +65,14 @@ function Products() {
     await refetch();
   };
 
+  const activeCount = products?.filter((item) => item.status === "active").length ?? 0;
+  const lowStockCount = products?.filter((item) => item.stock > 0 && item.stock <= 10).length ?? 0;
+
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-
       <PageHeader
         title="محصولات"
-        description="مدیریت محصولات فروشگاه"
+        description="مدیریت محصولات، موجودی و اطلاعات فروشگاه"
         breadcrumbs={[{ label: "محصولات" }]}
         actions={
           <Button onClick={openCreateModal}>
@@ -136,9 +82,28 @@ function Products() {
         }
       />
 
-      {/* Products Card */}
+      <div className="grid gap-4 tablet:grid-cols-3">
+        <Card className="p-4">
+          <p className="font-estedad text-xs text-text-secondary">کل محصولات</p>
+          <p className="mt-1 font-estedad text-xl font-bold text-text-primary">
+            {(products?.length ?? 0).toLocaleString("fa-IR")}
+          </p>
+        </Card>
+        <Card className="p-4">
+          <p className="font-estedad text-xs text-text-secondary">محصولات فعال</p>
+          <p className="mt-1 font-estedad text-xl font-bold text-success">
+            {activeCount.toLocaleString("fa-IR")}
+          </p>
+        </Card>
+        <Card className="p-4">
+          <p className="font-estedad text-xs text-text-secondary">موجودی رو به اتمام</p>
+          <p className="mt-1 font-estedad text-xl font-bold text-text-primary">
+            {lowStockCount.toLocaleString("fa-IR")}
+          </p>
+        </Card>
+      </div>
 
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden border border-primary-300/60 p-0">
         <ProductFilters
           search={search}
           category={category}
@@ -147,48 +112,50 @@ function Products() {
           resultCount={filteredProducts.length}
         />
 
-        {/* Loading State */}
         {loading && (
-          <div className="flex items-center justify-center p-12">
-            <p className="font-estedad text-sm text-text-secondary">
-              در حال بارگذاری محصولات...
-            </p>
+          <div className="flex min-h-72 items-center justify-center p-12">
+            <div className="flex flex-col items-center gap-3">
+              <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-primary-100 border-t-primary-900" />
+              <p className="font-estedad text-sm text-text-secondary">در حال بارگذاری محصولات...</p>
+            </div>
           </div>
         )}
 
-        {/* Error State */}
         {!loading && error && (
-          <div className="flex items-center justify-center p-12">
-            <p className="font-estedad text-sm text-danger">
-              خطا در دریافت اطلاعات: {error.message}
-            </p>
+          <div className="flex min-h-72 flex-col items-center justify-center gap-3 p-12 text-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-danger/10 text-danger">
+              <AlertCircle size={24} />
+            </div>
+            <p className="font-estedad text-sm font-medium text-text-primary">خطا در دریافت اطلاعات</p>
+            <p className="font-estedad text-xs text-text-secondary">{error.message}</p>
           </div>
         )}
 
-        {/* Empty State */}
         {!loading && !error && products && products.length === 0 && (
-          <div className="flex flex-col items-center justify-center gap-3 p-12 text-center">
-            <p className="font-estedad text-sm text-text-secondary">
-              هنوز هیچ محصولی ثبت نشده است.
-            </p>
-            <Button size="sm" onClick={openCreateModal}>
+          <div className="flex min-h-72 flex-col items-center justify-center gap-3 p-12 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-100 text-primary-900">
+              <Package size={24} />
+            </div>
+            <p className="font-estedad text-sm font-semibold text-text-primary">هنوز محصولی ثبت نشده است</p>
+            <p className="font-estedad text-xs text-text-secondary">برای شروع، اولین محصول فروشگاه را اضافه کنید.</p>
+            <Button size="sm" onClick={openCreateModal} className="mt-1">
               <Plus size={16} />
               افزودن اولین محصول
             </Button>
           </div>
         )}
 
-        {/* Table */}
-        {!loading && !error && products && products.length > 0 && (
-          <ProductTable
-            products={filteredProducts}
-            onEdit={openEditModal}
-            onDelete={handleDelete}
-          />
+        {!loading && !error && products && products.length > 0 && filteredProducts.length === 0 && (
+          <div className="flex min-h-56 flex-col items-center justify-center gap-2 p-10 text-center">
+            <p className="font-estedad text-sm font-medium text-text-primary">محصولی با این فیلتر پیدا نشد</p>
+            <p className="font-estedad text-xs text-text-secondary">جستجو یا دسته‌بندی انتخاب‌شده را تغییر دهید.</p>
+          </div>
+        )}
+
+        {!loading && !error && filteredProducts.length > 0 && (
+          <ProductTable products={filteredProducts} onEdit={openEditModal} onDelete={handleDelete} />
         )}
       </Card>
-
-      {/* Form Modal */}
 
       <ProductFormModal
         key={`${formModal.open}-${formModal.editingProduct?.id ?? "create"}`}

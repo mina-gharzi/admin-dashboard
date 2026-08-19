@@ -62,7 +62,7 @@ function PageHeader({
   className,
 }: PageHeaderProps) {
   return (
-    <div className={cn("mb-6", className)}>
+    <div className={cn("mb-7", className)}>
       {/* ==================================================
           Breadcrumb
           ================================================== */}
@@ -93,9 +93,9 @@ function PageHeader({
           <h1
             className={cn(
               "font-estedad",
-              "text-2xl font-bold",
+              "text-2xl font-bold tracking-tight",
               "text-text-primary",
-              "tablet:text-3xl",
+              "tablet:text-2xl",
             )}
           >
             {title}
@@ -104,7 +104,7 @@ function PageHeader({
           {description && (
             <p
               className={cn(
-                "mt-1.5",
+                "mt-2",
                 "font-estedad",
                 "text-sm",
                 "text-text-secondary",
