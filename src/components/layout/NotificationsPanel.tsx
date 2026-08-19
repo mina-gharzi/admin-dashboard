@@ -10,6 +10,10 @@
   - محصولاتی که موجودی‌شون کمه (از api.analytics)
   - سفارش‌هایی که در وضعیت «در انتظار» هستن
 
+  summary/loading از Header پاس داده میشن تا هم دکمه‌ی زنگ
+  (نقطه‌ی قرمز) و هم این پنل از یک fetch مشترک استفاده کنن
+  و دوباره‌کاری در درخواست شبکه پیش نیاد.
+
   با کلیک بیرون از پنل یا Escape بسته میشه.
   ==========================================================
 */
@@ -18,8 +22,7 @@ import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { AlertTriangle, Clock3, PackageX } from "lucide-react";
 
-import { useData } from "../../hooks/useData";
-import { api } from "../../services/api";
+import type { api } from "../../services/api";
 import { cn } from "../../utils/cn";
 
 /*
@@ -28,7 +31,11 @@ import { cn } from "../../utils/cn";
   ----------------------------------------------------------
 */
 
+type AnalyticsSummary = Awaited<ReturnType<typeof api.analytics.getSummary>>;
+
 interface NotificationsPanelProps {
+  summary: AnalyticsSummary | null | undefined;
+  loading: boolean;
   onClose: () => void;
 }
 
@@ -38,14 +45,13 @@ interface NotificationsPanelProps {
   ----------------------------------------------------------
 */
 
-function NotificationsPanel({ onClose }: NotificationsPanelProps) {
+function NotificationsPanel({
+  summary,
+  loading,
+  onClose,
+}: NotificationsPanelProps) {
   const navigate = useNavigate();
   const panelRef = useRef<HTMLDivElement>(null);
-
-  const { data: summary, loading } = useData(
-    () => api.analytics.getSummary(),
-    [],
-  );
 
   /*
     بستن با کلیک بیرون یا Escape

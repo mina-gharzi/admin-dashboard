@@ -29,6 +29,7 @@ import NotificationsPanel from "./NotificationsPanel";
 import { cn } from "../../utils/cn";
 import { useUIStore, useAuthStore } from "../../store";
 import { useLogout } from "../../hooks/useLogout";
+import { useData } from "../../hooks/useData";
 import {
   api,
   type Order,
@@ -164,6 +165,16 @@ function Header() {
     --------------------------------------------------------
   */
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+
+  // خلاصه‌ی داده‌ها برای تشخیص وجود اعلان جدید (موجودی کم / سفارش در انتظار)
+  // این نتیجه بین دکمه‌ی زنگ (برای نقطه‌ی قرمز) و خود پنل به اشتراک گذاشته میشه
+  const { data: summary, loading: summaryLoading } = useData(
+    () => api.analytics.getSummary(),
+    [],
+  );
+  const hasNotifications =
+    (summary?.lowStockProducts.length ?? 0) > 0 ||
+    (summary?.ordersByStatus.pending ?? 0) > 0;
 
   return (
     <header
@@ -395,15 +406,21 @@ function Header() {
             >
               <Bell size={18} strokeWidth={2} />
 
-              {/* Notification Pulse Indicator */}
-              <span className="absolute right-2.5 top-2.5 flex h-2.5 w-2.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-danger opacity-75" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-danger ring-2 ring-surface" />
-              </span>
+              {/* Notification Pulse Indicator — فقط وقتی واقعاً اعلان جدید هست نشون داده میشه */}
+              {hasNotifications && (
+                <span className="absolute right-2.5 top-2.5 flex h-2.5 w-2.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-danger opacity-75" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-danger ring-2 ring-surface" />
+                </span>
+              )}
             </button>
 
             {notificationsOpen && (
-              <NotificationsPanel onClose={() => setNotificationsOpen(false)} />
+              <NotificationsPanel
+                summary={summary}
+                loading={summaryLoading}
+                onClose={() => setNotificationsOpen(false)}
+              />
             )}
           </div>
 

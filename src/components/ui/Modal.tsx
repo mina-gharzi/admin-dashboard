@@ -20,11 +20,20 @@
   ==========================================================
 */
 
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 import { X } from "lucide-react";
 
 import { cn } from "../../utils/cn";
+
+/*
+  ----------------------------------------------------------
+  Focusable elements selector — برای پیدا کردن اعضای قابل
+  فوکوس داخل مودال (برای focus trap و فوکوس اولیه)
+  ----------------------------------------------------------
+*/
+const FOCUSABLE_SELECTOR =
+  'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 /*
   ----------------------------------------------------------
@@ -57,6 +66,9 @@ function Modal({
   footer,
   className,
 }: ModalProps) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
+
   /*
     --------------------------------------------------------
     Close modal with Escape
@@ -82,6 +94,74 @@ function Modal({
   }, [open, onClose]);
 
   /*
+    --------------------------------------------------------
+    Focus management: موقع باز شدن، فوکوس رو از پشت صفحه
+    می‌گیریم و می‌بریم داخل مودال؛ موقع بسته شدن، فوکوس رو
+    به همون عنصری که مودال رو باز کرده بود برمی‌گردونیم.
+    Tab هم داخل مودال قفل میشه (focus trap) تا کاربر با
+    کیبورد به پشت مودال نره.
+    --------------------------------------------------------
+  */
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    previouslyFocusedRef.current = document.activeElement as HTMLElement | null;
+
+    const dialogNode = dialogRef.current;
+    const focusables = dialogNode
+      ? Array.from(dialogNode.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
+      : [];
+
+    (focusables[0] ?? dialogNode)?.focus();
+
+    function handleTabTrap(event: KeyboardEvent) {
+      if (event.key !== "Tab" || !dialogRef.current) return;
+
+      const focusableEls = Array.from(
+        dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
+      );
+      if (focusableEls.length === 0) return;
+
+      const first = focusableEls[0];
+      const last = focusableEls[focusableEls.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", handleTabTrap);
+
+    return () => {
+      document.removeEventListener("keydown", handleTabTrap);
+      previouslyFocusedRef.current?.focus();
+    };
+  }, [open]);
+
+  /*
+    --------------------------------------------------------
+    قفل اسکرول پشت صفحه وقتی مودال بازه
+    --------------------------------------------------------
+  */
+
+  useEffect(() => {
+    if (!open) return;
+
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  /*
     اگر Modal باز نیست چیزی Render نمی‌کنیم.
   */
 
@@ -94,12 +174,13 @@ function Modal({
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
+      aria-labelledby={title ? "modal-title" : undefined}
     >
       {/* Backdrop */}
 
       <button
         type="button"
-        aria-label="Close modal"
+        aria-label="بستن مودال"
         className="absolute inset-0 cursor-default bg-slate-950/40 backdrop-blur-[2px]"
         onClick={onClose}
       />
@@ -107,6 +188,8 @@ function Modal({
       {/* Modal */}
 
       <div
+        ref={dialogRef}
+        tabIndex={-1}
         className={cn(
           "relative z-10 w-full max-w-lg",
           "overflow-hidden",
@@ -114,6 +197,7 @@ function Modal({
           "border border-border",
           "bg-surface",
           "shadow-lg",
+          "outline-none",
           className,
         )}
       >
@@ -123,7 +207,10 @@ function Modal({
           <div className="flex items-start justify-between gap-4 border-b border-border p-6">
             <div>
               {title && (
-                <h2 className="font-estedad text-lg font-semibold text-text-primary">
+                <h2
+                  id="modal-title"
+                  className="font-estedad text-lg font-semibold text-text-primary"
+                >
                   {title}
                 </h2>
               )}
@@ -148,7 +235,7 @@ function Modal({
                 "focus-visible:ring-2",
                 "focus-visible:ring-primary-900",
               )}
-              aria-label="Close"
+              aria-label="بستن"
             >
               <X size={18} />
             </button>

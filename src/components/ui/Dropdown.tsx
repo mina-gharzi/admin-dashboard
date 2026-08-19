@@ -16,6 +16,7 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
 } from "react";
 
@@ -61,6 +62,8 @@ function Dropdown({
 
   const triggerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const triggerButtonRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   /*
     ==========================================================
@@ -224,7 +227,7 @@ function Dropdown({
 
   /*
     ==========================================================
-    Escape
+    Escape (و برگردوندن فوکوس به trigger)
     ==========================================================
   */
 
@@ -234,6 +237,7 @@ function Dropdown({
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setOpen(false);
+        triggerButtonRef.current?.focus();
       }
     }
 
@@ -243,6 +247,84 @@ function Dropdown({
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [open]);
+
+  /*
+    ==========================================================
+    Keyboard: موقع باز شدن منو، فوکوس میره روی اولین گزینه
+    (برای دسترسی‌پذیری کیبورد کامل)
+    ==========================================================
+  */
+
+  useEffect(() => {
+    if (!open) return;
+
+    const enabledIndex = items.findIndex((item) => !item.disabled);
+    if (enabledIndex === -1) return;
+
+    // یک فریم صبر می‌کنیم تا دکمه‌های منو mount بشن
+    const frame = requestAnimationFrame(() => {
+      itemRefs.current[enabledIndex]?.focus();
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [open, items]);
+
+  /*
+    ==========================================================
+    Roving focus بین آیتم‌های منو با کلیدهای جهت‌دار
+    ==========================================================
+  */
+
+  const focusItemAt = (index: number) => {
+    const total = items.length;
+    if (total === 0) return;
+
+    let nextIndex = ((index % total) + total) % total;
+    let attempts = 0;
+
+    while (items[nextIndex]?.disabled && attempts < total) {
+      nextIndex = (nextIndex + 1) % total;
+      attempts += 1;
+    }
+
+    itemRefs.current[nextIndex]?.focus();
+  };
+
+  const handleMenuKeyDown = (event: ReactKeyboardEvent) => {
+    const currentIndex = itemRefs.current.findIndex(
+      (el) => el === document.activeElement,
+    );
+
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      focusItemAt(currentIndex + 1);
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      focusItemAt(currentIndex - 1);
+    } else if (event.key === "Home") {
+      event.preventDefault();
+      focusItemAt(0);
+    } else if (event.key === "End") {
+      event.preventDefault();
+      focusItemAt(items.length - 1);
+    }
+  };
+
+  /*
+    ==========================================================
+    باز/بسته کردن با کیبورد از روی Trigger
+    ==========================================================
+  */
+
+  const handleTriggerKeyDown = (event: ReactKeyboardEvent) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      setOpen((current) => !current);
+    } else if (event.key === "ArrowDown" && !open) {
+      event.preventDefault();
+      setOpen(true);
+    }
+  };
 
   /*
     ==========================================================
@@ -257,9 +339,18 @@ function Dropdown({
           ==================================================== */}
 
       <div
+        ref={triggerButtonRef}
         onClick={() => setOpen((current) => !current)}
+        onKeyDown={trigger ? handleTriggerKeyDown : undefined}
+        role={trigger ? "button" : undefined}
+        tabIndex={trigger ? 0 : undefined}
+        aria-haspopup="menu"
         aria-expanded={open}
-        className="inline-flex cursor-pointer items-center"
+        className={cn(
+          "inline-flex cursor-pointer items-center",
+          trigger &&
+            "rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-100",
+        )}
       >
         {trigger ? (
           <div className="inline-flex items-center gap-1.5">
@@ -310,6 +401,7 @@ function Dropdown({
         <div
           ref={menuRef}
           role="menu"
+          onKeyDown={handleMenuKeyDown}
           style={{
             position: "fixed",
             top: menuPosition.top,
@@ -335,6 +427,9 @@ function Dropdown({
                 {showDivider && <div className="my-1 h-px bg-primary-100/80" />}
 
                 <button
+                  ref={(el) => {
+                    itemRefs.current[index] = el;
+                  }}
                   type="button"
                   disabled={item.disabled}
                   onClick={() => {
@@ -342,6 +437,7 @@ function Dropdown({
 
                     item.onClick();
                     setOpen(false);
+                    triggerButtonRef.current?.focus();
                   }}
                   className={cn(
                     "flex w-full items-center gap-2.5",
@@ -350,10 +446,12 @@ function Dropdown({
                     "text-text-primary",
                     "transition-colors",
                     "hover:bg-primary-100/60",
+                    "focus-visible:outline-none focus-visible:bg-primary-100/60",
                     item.danger && "text-danger hover:bg-danger/10",
                     item.disabled && "cursor-not-allowed opacity-50",
                   )}
                   role="menuitem"
+                  tabIndex={-1}
                 >
                   {item.icon && <span className="shrink-0">{item.icon}</span>}
 

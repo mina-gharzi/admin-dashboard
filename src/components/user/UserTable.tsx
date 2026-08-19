@@ -25,7 +25,9 @@ import {
   type SortingState,
 } from "@tanstack/react-table";
 
-import { Badge } from "../ui/Badge";
+import type { VariantProps } from "class-variance-authority";
+
+import { Badge, badgeVariants } from "../ui/Badge";
 import { Dropdown } from "../ui/Dropdown";
 import { Modal } from "../ui/Modal";
 import Button from "../ui/Button";
@@ -47,7 +49,7 @@ const roleLabels: Record<User["role"], string> = {
   customer: "مشتری",
 };
 
-const roleVariants: Record<User["role"], string> = {
+const roleVariants: Record<User["role"], VariantProps<typeof badgeVariants>["variant"]> = {
   admin: "primary",
   manager: "info",
   customer: "neutral",
@@ -154,7 +156,7 @@ function UserTable({
       cell: ({ getValue }) => {
         const role = getValue();
         return (
-          <Badge variant={roleVariants[role] as any}>{roleLabels[role]}</Badge>
+          <Badge variant={roleVariants[role]}>{roleLabels[role]}</Badge>
         );
       },
     }),
