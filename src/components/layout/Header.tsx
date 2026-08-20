@@ -33,9 +33,9 @@ import { useLogout } from "../../hooks/useLogout";
 import { useData } from "../../hooks/useData";
 import {
   api,
+  type Customer,
   type Order,
   type Product,
-  type User as UserType,
 } from "../../services/api";
 
 /*
@@ -44,12 +44,12 @@ import {
   ----------------------------------------------------------
 */
 interface SearchResults {
-  users: UserType[];
+  customers: Customer[];
   products: Product[];
   orders: Order[];
 }
 
-const emptyResults: SearchResults = { users: [], products: [], orders: [] };
+const emptyResults: SearchResults = { customers: [], products: [], orders: [] };
 
 /*
   ----------------------------------------------------------
@@ -105,8 +105,8 @@ function Header() {
     setSearching(true);
 
     const timeoutId = setTimeout(async () => {
-      const [users, products, orders] = await Promise.all([
-        api.users.search(query),
+      const [customers, products, orders] = await Promise.all([
+        api.customers.search(query),
         api.products.search(query),
         api.orders.search(query),
       ]);
@@ -114,7 +114,7 @@ function Header() {
       if (cancelled) return;
 
       setResults({
-        users: users.slice(0, 3),
+        customers: customers.slice(0, 3),
         products: products.slice(0, 3),
         orders: orders.slice(0, 3),
       });
@@ -144,7 +144,7 @@ function Header() {
   }, []);
 
   const hasResults =
-    results.users.length > 0 ||
+    results.customers.length > 0 ||
     results.products.length > 0 ||
     results.orders.length > 0;
 
@@ -275,27 +275,27 @@ function Header() {
                   </div>
                 )}
 
-                {/* Users Section */}
-                {results.users.length > 0 && (
+                {/* Customers Section */}
+                {results.customers.length > 0 && (
                   <div className="border-b border-primary-100/80 p-2">
                     <div className="flex items-center gap-1.5 px-2 py-1 text-primary-900">
                       <Users size={13} />
                       <span className="font-estedad text-[11px] font-bold">
-                        کاربران
+                        مشتریان
                       </span>
                     </div>
-                    {results.users.map((u) => (
+                    {results.customers.map((c) => (
                       <button
-                        key={u.id}
+                        key={c.email}
                         type="button"
-                        onClick={() => goTo("/dashboard/users")}
+                        onClick={() => goTo("/dashboard/customers")}
                         className="flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-right transition-colors hover:bg-primary-100/40"
                       >
                         <span className="font-estedad text-xs font-medium text-text-primary">
-                          {u.name}
+                          {c.name}
                         </span>
                         <span className="font-inter text-[11px] text-text-secondary">
-                          {u.email}
+                          {c.email}
                         </span>
                       </button>
                     ))}

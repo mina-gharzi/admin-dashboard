@@ -34,8 +34,8 @@ function Welcome() {
   const features = [
     {
       icon: Users,
-      title: "مدیریت کاربران",
-      desc: "حساب‌ها، وضعیت فعالیت و دسترسی کاربران را مدیریت کنید.",
+      title: "مدیریت مشتریان",
+      desc: "مشتریان فروشگاه و سفارش‌هایی که ثبت کرده‌اند را مشاهده کنید.",
     },
     {
       icon: Package,
@@ -125,7 +125,7 @@ function Welcome() {
               {/* Description */}
 
               <p className="mt-4 max-w-lg font-estedad text-xs leading-6 text-primary-100/80 tablet:text-sm">
-                کاربران، محصولات و سفارش‌ها را از یک محیط متمرکز مدیریت کنید.
+                مشتریان، محصولات و سفارش‌ها را از یک محیط متمرکز مدیریت کنید.
               </p>
 
               {/* Action */}
@@ -175,7 +175,7 @@ function Welcome() {
                     <div className="flex items-center gap-1.5 text-primary-100/60">
                       <Users size={12} />
 
-                      <span className="font-estedad text-[9px]">کاربران</span>
+                      <span className="font-estedad text-[9px]">مشتریان</span>
                     </div>
 
                     <p className="mt-2 font-inter text-lg font-bold text-white">

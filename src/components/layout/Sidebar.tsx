@@ -51,8 +51,8 @@ const navigationItems = [
     icon: LayoutDashboard,
   },
   {
-    label: "کاربران",
-    path: "/dashboard/users",
+    label: "مشتریان",
+    path: "/dashboard/customers",
     icon: Users,
   },
   {

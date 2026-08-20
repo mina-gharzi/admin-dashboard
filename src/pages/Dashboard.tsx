@@ -235,9 +235,9 @@ function Dashboard() {
         )
       : 0;
 
-  const activeUserRate =
-    summary.totalUsers > 0
-      ? Math.round((summary.usersByStatus.active / summary.totalUsers) * 100)
+  const activeCustomerRate =
+    summary.totalCustomers > 0
+      ? Math.round((summary.activeCustomers / summary.totalCustomers) * 100)
       : 0;
 
   const activeProductRate =
@@ -253,11 +253,11 @@ function Dashboard() {
 
   const statistics = [
     {
-      title: "کل کاربران",
-      value: summary.totalUsers.toLocaleString("fa-IR"),
-      subLabel: `${summary.usersByStatus.active.toLocaleString("fa-IR")} کاربر فعال`,
+      title: "کل مشتریان",
+      value: summary.totalCustomers.toLocaleString("fa-IR"),
+      subLabel: `${summary.activeCustomers.toLocaleString("fa-IR")} مشتری فعال`,
       icon: Users,
-      badgeText: "کاربران",
+      badgeText: "مشتریان",
     },
 
     {
@@ -679,15 +679,15 @@ function Dashboard() {
               </div>
             </div>
 
-            {/* Active Users */}
+            {/* Active Customers */}
             <div>
               <div className="mb-2 flex items-center justify-between">
                 <span className="font-estedad text-xs font-medium text-text-secondary">
-                  نرخ کاربران فعال
+                  نرخ مشتریان فعال
                 </span>
 
                 <span className="font-inter text-xs font-bold text-text-primary">
-                  {activeUserRate}%
+                  {activeCustomerRate}%
                 </span>
               </div>
 
@@ -695,7 +695,7 @@ function Dashboard() {
                 <div
                   className="h-full rounded-full bg-primary-700 transition-all duration-500"
                   style={{
-                    width: `${activeUserRate}%`,
+                    width: `${activeCustomerRate}%`,
                   }}
                 />
               </div>

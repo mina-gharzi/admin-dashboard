@@ -353,15 +353,15 @@ function Analytics() {
           )}
         </Card>
 
-        {/* Users by Role */}
+        {/* Team by Role */}
         <Card className="overflow-hidden border border-primary-300/60 p-0 shadow-sm">
           <div className="flex items-center justify-between border-b border-primary-300/60 px-6 py-4">
             <div>
               <h2 className="font-estedad text-base font-bold text-text-primary">
-                توزیع نقش کاربران
+                توزیع نقش اعضای تیم
               </h2>
               <p className="mt-0.5 font-estedad text-xs text-text-secondary">
-                مجموع {summary.totalUsers.toLocaleString("fa-IR")} کاربر فعال
+                مجموع {summary.totalUsers.toLocaleString("fa-IR")} عضو تیم
               </p>
             </div>
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-100/70 text-primary-900">
@@ -371,7 +371,7 @@ function Analytics() {
 
           {usersPieData.length === 0 ? (
             <div className="flex h-72 items-center justify-center font-estedad text-xs text-text-secondary">
-              هنوز کاربری ثبت نشده است.
+              هنوز عضوی به تیم اضافه نشده است.
             </div>
           ) : (
             <div className="p-6">

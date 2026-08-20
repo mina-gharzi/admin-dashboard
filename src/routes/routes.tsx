@@ -18,7 +18,7 @@ import Welcome from "../pages/Welcome";
 import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 
-import Users from "../pages/Users";
+import Customers from "../pages/Customers";
 
 import Products from "../pages/Products";
 
@@ -45,10 +45,11 @@ import NotFound from "../pages/NotFound";
   هدایت میشن.
 
   RequireRole (RBAC):
-  بعضی مسیرها (کاربران، گزارش‌ها) علاوه بر لاگین بودن، به
-  نقش خاصی هم نیاز دارن — این‌ها زیر RequireRole قرار گرفتن
-  و طبق src/utils/permissions.ts چک میشن. کاربر بدون دسترسی
-  به /dashboard/forbidden هدایت میشه.
+  فقط صفحه‌ی گزارش‌ها (analytics) به نقش خاصی نیاز داره —
+  زیر RequireRole قرار گرفته و طبق src/utils/permissions.ts
+  چک میشه. کاربر بدون دسترسی به /dashboard/forbidden هدایت
+  میشه. بقیه‌ی صفحات (مشتریان، محصولات، سفارش‌ها، تنظیمات)
+  برای همه‌ی نقش‌های لاگین‌شده بازن.
   ==========================================================
 */
 
@@ -78,14 +79,14 @@ const router = createBrowserRouter([
           },
 
           {
+            path: "customers",
+            element: <Customers />,
+          },
+
+          {
             element: <RequireRole />,
 
             children: [
-              {
-                path: "users",
-                element: <Users />,
-              },
-
               {
                 path: "analytics",
                 element: <Analytics />,

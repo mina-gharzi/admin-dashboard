@@ -130,8 +130,12 @@ function Login() {
           {/* Title */}
           <div className="mb-7 text-center">
             <h1 className="font-inter text-xl font-bold tracking-tight text-text-primary">
-              Login To Dashboard
+              ورود به پنل مدیریت
             </h1>
+
+            <p className="mt-2 font-estedad text-xs text-text-secondary">
+              این پنل فقط مخصوص کارکنان فروشگاهه
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -218,6 +222,43 @@ function Login() {
             </Button>
           </form>
         </div>
+
+        {/* Demo Accounts — چون بک‌اند واقعی نیست، این حساب‌های
+            از پیش ثبت‌شده رو برای تست هر نقش نشون می‌دیم */}
+        <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 px-4 py-4">
+          <p className="mb-3 text-center font-estedad text-xs font-medium text-primary-100/80">
+            حساب‌های نمونه (برای تست هر نقش کلیک کنید)
+          </p>
+
+          <div className="space-y-1.5">
+            {demoAccounts.map((account) => (
+              <button
+                key={account.email}
+                type="button"
+                onClick={() => fillDemoAccount(account.email)}
+                className="flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-right transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+              >
+                <span className="min-w-0">
+                  <span className="block truncate font-estedad text-xs font-medium text-white">
+                    {account.name}
+                  </span>
+                  <span dir="ltr" className="block truncate font-inter text-[11px] text-primary-100/60">
+                    {account.email}
+                  </span>
+                </span>
+
+                <span className="shrink-0 rounded-full bg-white/10 px-2.5 py-1 font-estedad text-[11px] text-primary-100">
+                  {roleLabels[account.role]}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Demo */}
+        <p className="mt-5 text-center font-estedad text-xs text-text-secondary">
+          نسخه نمایشی پنل مدیریت
+        </p>
       </div>
     </div>
   );

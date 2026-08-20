@@ -62,6 +62,30 @@ export interface OrderItem {
 
 /*
   ----------------------------------------------------------
+  Customer
+  ----------------------------------------------------------
+  برخلاف User (که کارکنانه)، Customer یه رکورد جدا و مستقل
+  نیست — از روی سفارش‌ها (mockOrders) به‌صورت خودکار محاسبه
+  میشه: هر ایمیل یکتا داخل سفارش‌ها = یک مشتری. یعنی این
+  پنل هیچ فرم «افزودن مشتری» نداره؛ مشتری با اولین سفارشش
+  به این لیست اضافه میشه — دقیقاً مثل یه فروشگاه واقعی.
+  ----------------------------------------------------------
+*/
+
+export interface Customer {
+  email: string;
+  name: string;
+  phone?: string;
+  address?: string;
+  ordersCount: number;
+  totalSpent: number;
+  lastOrderDate: string;
+  /** «فعال» یعنی حداقل یک سفارش لغونشده داره */
+  status: "active" | "inactive";
+}
+
+/*
+  ----------------------------------------------------------
   Seed Data
   ----------------------------------------------------------
 */
@@ -252,6 +276,51 @@ function delay(ms: number = 500): Promise<void> {
   ----------------------------------------------------------
 */
 
+/*
+  ----------------------------------------------------------
+  محاسبه‌ی لیست مشتری‌ها از روی سفارش‌ها
+  ----------------------------------------------------------
+  هر ایمیل یکتای داخل سفارش‌ها = یک مشتری. اطلاعاتش (تعداد
+  سفارش، مجموع خرید، آخرین سفارش) با یه پیمایش روی سفارش‌ها
+  محاسبه میشه.
+  ----------------------------------------------------------
+*/
+
+function buildCustomersFromOrders(orders: Order[]): Customer[] {
+  const customersByEmail = new Map<string, Customer>();
+
+  for (const order of orders) {
+    const key = order.email.trim().toLowerCase();
+    const isCancelled = order.status === "cancelled";
+    const existing = customersByEmail.get(key);
+
+    if (existing) {
+      existing.ordersCount += 1;
+      if (!isCancelled) {
+        existing.totalSpent += order.amount;
+        existing.status = "active";
+      }
+      // آخرین سفارش برنده‌ست (سفارش‌ها به ترتیب زمانی درج میشن)
+      existing.lastOrderDate = order.date;
+      if (order.phone) existing.phone = order.phone;
+      if (order.address) existing.address = order.address;
+    } else {
+      customersByEmail.set(key, {
+        email: order.email,
+        name: order.customer,
+        phone: order.phone,
+        address: order.address,
+        ordersCount: 1,
+        totalSpent: isCancelled ? 0 : order.amount,
+        lastOrderDate: order.date,
+        status: isCancelled ? "inactive" : "active",
+      });
+    }
+  }
+
+  return Array.from(customersByEmail.values());
+}
+
 export const api = {
   users: {
     async getAll(): Promise<User[]> {
@@ -414,6 +483,34 @@ export const api = {
     },
   },
 
+  customers: {
+    async getAll(): Promise<Customer[]> {
+      await delay();
+      return buildCustomersFromOrders(mockOrders);
+    },
+
+    async search(query: string): Promise<Customer[]> {
+      await delay();
+      const q = query.trim().toLowerCase();
+      const all = buildCustomersFromOrders(mockOrders);
+      if (!q) return all;
+      return all.filter(
+        (c) =>
+          c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q),
+      );
+    },
+
+    /** لیست سفارش‌های یک مشتری خاص، بر اساس ایمیل */
+    async getOrdersByEmail(email: string): Promise<Order[]> {
+      await delay();
+      const key = email.trim().toLowerCase();
+      return mockOrders
+        .filter((o) => o.email.trim().toLowerCase() === key)
+        .slice()
+        .reverse(); // جدیدترین سفارش اول
+    },
+  },
+
   analytics: {
     async getSummary(): Promise<{
       totalUsers: number;
@@ -425,6 +522,8 @@ export const api = {
       ordersByStatus: Record<Order["status"], number>;
       usersByRole: Record<User["role"], number>;
       usersByStatus: Record<User["status"], number>;
+      totalCustomers: number;
+      activeCustomers: number;
       productsByCategory: { category: string; count: number }[];
       lowStockProducts: Product[];
       topProducts: { name: string; quantity: number; revenue: number }[];
@@ -517,6 +616,12 @@ export const api = {
 
       const recentOrders = mockOrders.slice(-5).reverse();
 
+      const customers = buildCustomersFromOrders(mockOrders);
+      const totalCustomers = customers.length;
+      const activeCustomers = customers.filter(
+        (c) => c.status === "active",
+      ).length;
+
       return {
         totalUsers: mockUsers.length,
         totalProducts: mockProducts.length,
@@ -528,6 +633,8 @@ export const api = {
         ordersByStatus,
         usersByRole,
         usersByStatus,
+        totalCustomers,
+        activeCustomers,
         productsByCategory,
         lowStockProducts,
         topProducts,
