@@ -60,6 +60,7 @@ function ProductFilters({
             <Input
               value={search}
               onChange={(event) => onSearchChange(event.target.value)}
+              aria-label="جستجوی محصول"
               placeholder="جستجوی محصول..."
               className="h-10 pr-10"
             />
@@ -78,6 +79,7 @@ function ProductFilters({
           <div className="flex h-10 items-center gap-2 rounded-xl border border-primary-300/70 bg-background/60 px-3 transition-colors focus-within:border-primary-900">
             <SlidersHorizontal size={15} className="text-text-secondary" />
             <select
+              aria-label="فیلتر وضعیت محصول"
               value={status}
               onChange={(event) => onStatusChange(event.target.value)}
               className="h-full cursor-pointer bg-transparent font-estedad text-xs text-text-primary outline-none"
@@ -107,13 +109,15 @@ function ProductFilters({
         </div>
 
         {/* Category Chips */}
-        <div className="flex flex-wrap items-center gap-1.5">
+        <div role="group" aria-label="فیلتر دسته‌بندی محصولات" className="flex flex-wrap items-center gap-1.5">
           {categories.map((item) => {
             const active = category === item;
             return (
               <button
                 key={item}
                 type="button"
+                aria-pressed={active}
+                aria-label={`دسته‌بندی ${item}`}
                 onClick={() => onCategoryChange(item)}
                 className={`rounded-xl px-3 py-2 font-estedad text-[11px] font-medium transition-all active:scale-[.98] ${
                   active

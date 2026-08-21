@@ -33,6 +33,7 @@ function Select({ className, error = false, children, ...props }: SelectProps) {
   return (
     <div className="relative">
       <select
+        aria-invalid={error || undefined}
         className={cn(
           "flex h-10 w-full appearance-none",
           "font-estedad text-sm",

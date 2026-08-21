@@ -114,18 +114,20 @@ function UserFormModal({
         <fieldset disabled={readOnly} className="space-y-5 border-0 p-0">
         {/* Name */}
         <div>
-          <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
+          <label htmlFor="user-name" className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
             نام و نام خانوادگی
           </label>
           <Input
+            id="user-name"
             value={form.name}
+            aria-describedby={errors.name ? "user-name-error" : undefined}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
             placeholder="مثلاً: مینا احمدی"
             error={Boolean(errors.name)}
             autoFocus
           />
           {errors.name && (
-            <p className="mt-1.5 font-estedad text-[11px] text-danger">
+            <p id="user-name-error" role="alert" className="mt-1.5 font-estedad text-[11px] text-danger">
               {errors.name}
             </p>
           )}
@@ -133,11 +135,13 @@ function UserFormModal({
 
         {/* Email */}
         <div>
-          <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
+          <label htmlFor="user-email" className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
             ایمیل
           </label>
           <Input
+            id="user-email"
             type="email"
+            aria-describedby={errors.email ? "user-email-error" : undefined}
             dir="ltr"
             value={form.email}
             onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
@@ -145,7 +149,7 @@ function UserFormModal({
             error={Boolean(errors.email)}
           />
           {errors.email && (
-            <p className="mt-1.5 font-estedad text-[11px] text-danger">
+            <p id="user-email-error" role="alert" className="mt-1.5 font-estedad text-[11px] text-danger">
               {errors.email}
             </p>
           )}
@@ -154,10 +158,11 @@ function UserFormModal({
         {/* Role + Status */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
+            <label htmlFor="user-role" className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
               نقش
             </label>
             <Select
+              id="user-role"
               value={form.role}
               onChange={(e) =>
                 setForm((f) => ({
@@ -175,10 +180,11 @@ function UserFormModal({
           </div>
 
           <div>
-            <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
+            <label htmlFor="user-status" className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
               وضعیت
             </label>
             <Select
+              id="user-status"
               value={form.status}
               onChange={(e) =>
                 setForm((f) => ({

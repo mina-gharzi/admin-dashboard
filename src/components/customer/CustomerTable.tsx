@@ -9,6 +9,7 @@
 */
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   ChevronDown,
   ChevronLeft,
@@ -118,9 +119,14 @@ function CustomerTable({ customers }: CustomerTableProps) {
             </div>
 
             <div className="min-w-0">
-              <p className="truncate font-estedad text-sm font-bold text-text-primary">
-                {customer.name}
-              </p>
+              <Link
+                to={`/dashboard/customers/${encodeURIComponent(customer.email)}`}
+                className="block w-fit max-w-full rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-900 focus-visible:ring-offset-2"
+              >
+                <p className="truncate font-estedad text-sm font-bold text-text-primary transition-colors hover:text-primary-900">
+                  {customer.name}
+                </p>
+              </Link>
               <span dir="ltr" className="block truncate text-right font-inter text-xs text-text-secondary">
                 {customer.email}
               </span>
@@ -177,14 +183,21 @@ function CustomerTable({ customers }: CustomerTableProps) {
       header: "",
       enableSorting: false,
       cell: ({ row }) => (
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-1">
+          <Link
+            to={`/dashboard/customers/${encodeURIComponent(row.original.email)}`}
+            className="inline-flex h-8 items-center gap-1.5 rounded-lg px-3 font-estedad text-[11px] font-medium text-primary-900 transition hover:bg-primary-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-900 focus-visible:ring-offset-2"
+          >
+            <UserRound size={14} />
+            جزئیات
+          </Link>
           <button
             type="button"
             onClick={() => openOrdersModal(row.original)}
-            className="inline-flex h-8 items-center gap-1.5 rounded-lg px-3 font-estedad text-[11px] font-medium text-primary-900 transition hover:bg-primary-100"
+            className="inline-flex h-8 items-center gap-1.5 rounded-lg px-3 font-estedad text-[11px] font-medium text-text-secondary transition hover:bg-primary-100 hover:text-primary-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-900 focus-visible:ring-offset-2"
           >
             <Eye size={14} />
-            مشاهده سفارش‌ها
+            سفارش‌ها
           </button>
         </div>
       ),
@@ -209,7 +222,7 @@ function CustomerTable({ customers }: CustomerTableProps) {
   return (
     <>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-175">
+        <table aria-label="جدول مشتریان" className="w-full min-w-175">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr
@@ -221,11 +234,16 @@ function CustomerTable({ customers }: CustomerTableProps) {
                   const sorted = header.column.getIsSorted();
 
                   return (
-                    <th key={header.id} className="px-6 py-3 text-right">
+                    <th
+                      key={header.id}
+                      aria-sort={sorted === "asc" ? "ascending" : sorted === "desc" ? "descending" : "none"}
+                      className="px-6 py-3 text-right"
+                    >
                       {header.isPlaceholder ? null : (
                         <button
                           type="button"
                           disabled={!canSort}
+                          aria-label={`مرتب‌سازی بر اساس ${typeof header.column.columnDef.header === "string" ? header.column.columnDef.header : "این ستون"}`}
                           onClick={header.column.getToggleSortingHandler()}
                           className={`group/th inline-flex items-center gap-1 font-estedad text-[11px] font-bold uppercase tracking-wider ${
                             canSort
@@ -320,6 +338,8 @@ function CustomerTable({ customers }: CustomerTableProps) {
                 <button
                   key={page}
                   type="button"
+                  aria-label={`صفحه ${page + 1}`}
+                  aria-current={isActive ? "page" : undefined}
                   onClick={() => table.setPageIndex(page)}
                   className={`h-8 min-w-8 rounded-lg px-2 font-inter text-xs font-bold transition-all active:scale-95 ${
                     isActive

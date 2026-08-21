@@ -229,6 +229,7 @@ function Header() {
               }}
               onFocus={() => setShowResults(true)}
               type="search"
+              aria-label="جستجوی کاربر، محصول یا سفارش"
               placeholder="جستجوی کاربر، محصول، سفارش..."
               className={cn(
                 "h-10 w-full",
@@ -398,6 +399,8 @@ function Header() {
                   "bg-primary-100 text-primary-900 border-primary-700/40",
               )}
               aria-label="اعلان‌ها"
+              aria-expanded={notificationsOpen}
+              aria-controls="notifications-panel"
             >
               <Bell size={18} strokeWidth={2} />
 
@@ -449,6 +452,8 @@ function Header() {
                   </div>
                   <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-success ring-2 ring-surface" />
                 </div>
+
+                <span className="sr-only">منوی کاربری {user?.name ?? "کاربر سیستم"}</span>
 
                 {/* User Info */}
                 <div className="hidden text-right tablet:block">

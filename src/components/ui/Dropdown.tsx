@@ -13,10 +13,14 @@
 
 import {
   useEffect,
+  useId,
   useLayoutEffect,
   useRef,
   useState,
+  cloneElement,
+  isValidElement,
   type KeyboardEvent as ReactKeyboardEvent,
+  type ReactElement,
   type ReactNode,
 } from "react";
 
@@ -53,6 +57,7 @@ function Dropdown({
   showChevron = false,
 }: DropdownProps) {
   const [open, setOpen] = useState(false);
+  const menuId = useId();
 
   const [menuPosition, setMenuPosition] = useState<MenuPosition>({
     top: 0,
@@ -62,7 +67,7 @@ function Dropdown({
 
   const triggerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const triggerButtonRef = useRef<HTMLDivElement>(null);
+  const triggerButtonRef = useRef<HTMLElement>(null);
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   /*
@@ -332,66 +337,69 @@ function Dropdown({
     ==========================================================
   */
 
+  const triggerElement = isValidElement(trigger) ? (trigger as ReactElement<any>) : null;
+
   return (
     <div ref={triggerRef} className={cn("relative inline-block", className)}>
       {/* ====================================================
           Trigger
           ==================================================== */}
 
-      <div
-        ref={triggerButtonRef}
-        onClick={() => setOpen((current) => !current)}
-        onKeyDown={trigger ? handleTriggerKeyDown : undefined}
-        role={trigger ? "button" : undefined}
-        tabIndex={trigger ? 0 : undefined}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        className={cn(
-          "inline-flex cursor-pointer items-center",
-          trigger &&
-            "rounded-[var(--radius-control)] ds-focus-ring",
-        )}
-      >
-        {trigger ? (
-          <div className="inline-flex items-center gap-1.5">
-            {trigger}
-
-            {showChevron && (
-              <ChevronDown
-                size={15}
-                className={cn(
-                  "text-text-secondary transition-transform ds-transition",
-                  open && "rotate-180",
-                )}
-              />
-            )}
-          </div>
-        ) : (
-          <button
-            type="button"
+      {triggerElement ? (
+        cloneElement(triggerElement, {
+          ref: triggerButtonRef,
+          onClick: (event: React.MouseEvent) => {
+            triggerElement.props.onClick?.(event);
+            setOpen((current) => !current);
+          },
+          onKeyDown: (event: React.KeyboardEvent) => {
+            triggerElement.props.onKeyDown?.(event);
+            if (event.defaultPrevented) return;
+            handleTriggerKeyDown(event);
+          },
+          ...(triggerElement.type === "button"
+            ? {}
+            : {
+                role: "button",
+                tabIndex: 0,
+              }),
+          "aria-haspopup": "menu",
+          "aria-expanded": open,
+          "aria-controls": menuId,
+          className: cn(
+            triggerElement.props.className,
+            "ds-focus-ring",
+          ),
+        })
+      ) : (
+        <button
+          ref={triggerButtonRef as React.RefObject<HTMLButtonElement>}
+          type="button"
+          onClick={() => setOpen((current) => !current)}
+          aria-haspopup="menu"
+          aria-expanded={open}
+          aria-controls={menuId}
+          className={cn(
+            "inline-flex items-center gap-2 rounded-[var(--radius-control)]",
+            "border border-primary-300/70 bg-surface",
+            "px-3 py-2 font-estedad text-sm text-text-primary",
+            "transition-colors",
+            "hover:bg-primary-100 hover:text-primary-900",
+            "focus-visible:outline-none",
+            "ds-focus-ring",
+          )}
+        >
+          <span>گزینه‌ها</span>
+          <ChevronDown
+            size={15}
+            aria-hidden="true"
             className={cn(
-              "inline-flex items-center gap-2 rounded-[var(--radius-control)]",
-              "border border-primary-300/70 bg-surface",
-              "px-3 py-2 font-estedad text-sm text-text-primary",
-              "transition-colors",
-              "hover:bg-primary-100 hover:text-primary-900",
-              "focus-visible:outline-none",
-              "ds-focus-ring",
+              "transition-transform ds-transition",
+              open && "rotate-180",
             )}
-          >
-            <span>گزینه‌ها</span>
-
-            <ChevronDown
-              size={15}
-              className={cn(
-                "transition-transform ds-transition",
-                open && "rotate-180",
-              )}
-            />
-          </button>
-        )}
-      </div>
-
+          />
+        </button>
+      )}
       {/* ====================================================
           Menu
           ==================================================== */}
@@ -399,7 +407,9 @@ function Dropdown({
       {open && (
         <div
           ref={menuRef}
+          id={menuId}
           role="menu"
+          aria-label="گزینه‌ها"
           onKeyDown={handleMenuKeyDown}
           style={{
             position: "fixed",

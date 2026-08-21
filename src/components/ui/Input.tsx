@@ -38,6 +38,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 function Input({ className, error = false, ...props }: InputProps) {
   return (
     <input
+      aria-invalid={error || undefined}
       className={cn(
         // Layout
         "flex h-10 w-full",

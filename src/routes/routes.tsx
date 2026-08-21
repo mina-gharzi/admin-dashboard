@@ -19,6 +19,7 @@ import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 
 import Customers from "../pages/Customers";
+import CustomerDetails from "../pages/CustomerDetails";
 
 import Products from "../pages/Products";
 
@@ -83,6 +84,10 @@ const router = createBrowserRouter([
           {
             path: "customers",
             element: <Customers />,
+          },
+          {
+            path: "customers/:email",
+            element: <CustomerDetails />,
           },
 
           {

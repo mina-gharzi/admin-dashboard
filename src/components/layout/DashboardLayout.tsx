@@ -24,6 +24,13 @@ function DashboardLayout() {
         desktop:p-5
       "
     >
+      <a
+        href="#main-content"
+        className="ds-skip-link"
+      >
+        رفتن به محتوای اصلی
+      </a>
+
       <div
         className="
           relative
@@ -52,6 +59,8 @@ function DashboardLayout() {
           <Header />
 
           <main
+            id="main-content"
+            tabIndex={-1}
             className="
               min-h-[calc(100vh-4rem)]
               p-4

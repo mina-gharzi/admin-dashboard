@@ -500,6 +500,17 @@ export const api = {
       );
     },
 
+    /** دریافت جزئیات یک مشتری، بر اساس ایمیل */
+    async getByEmail(email: string): Promise<Customer | null> {
+      await delay();
+      const key = email.trim().toLowerCase();
+      return (
+        buildCustomersFromOrders(mockOrders).find(
+          (customer) => customer.email.trim().toLowerCase() === key,
+        ) ?? null
+      );
+    },
+
     /** لیست سفارش‌های یک مشتری خاص، بر اساس ایمیل */
     async getOrdersByEmail(email: string): Promise<Order[]> {
       await delay();

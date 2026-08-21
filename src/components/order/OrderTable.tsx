@@ -329,7 +329,7 @@ function OrderTable({ orders, onEdit, onCancel, onDelete }: OrderTableProps) {
 
       <div className="hidden tablet:block">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-190">
+          <table aria-label="جدول سفارش‌ها" className="w-full min-w-190">
             <thead>
               {table.getHeaderGroups().map((group) => (
                 <tr
@@ -343,12 +343,14 @@ function OrderTable({ orders, onEdit, onCancel, onDelete }: OrderTableProps) {
                     return (
                       <th
                         key={header.id}
+                        aria-sort={sorted === "asc" ? "ascending" : sorted === "desc" ? "descending" : "none"}
                         className="px-5 py-3 text-right first:pr-6 last:pl-6"
                       >
                         {header.isPlaceholder ? null : (
                           <button
                             type="button"
                             disabled={!canSort}
+                            aria-label={`مرتب‌سازی بر اساس ${typeof header.column.columnDef.header === "string" ? header.column.columnDef.header : "این ستون"}`}
                             onClick={header.column.getToggleSortingHandler()}
                             className={`group/th inline-flex items-center gap-1 font-estedad text-[11px] font-semibold ${
                               canSort
@@ -494,6 +496,8 @@ function OrderTable({ orders, onEdit, onCancel, onDelete }: OrderTableProps) {
               <button
                 key={page}
                 type="button"
+                aria-label={`صفحه ${page + 1}`}
+                aria-current={page === currentPage - 1 ? "page" : undefined}
                 onClick={() => table.setPageIndex(page)}
                 className={`h-8 min-w-8 rounded-lg px-2 font-estedad text-[11px] ${
                   page === currentPage - 1

@@ -163,12 +163,14 @@ function ProductFormModal({
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Name */}
         <div>
-          <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
+          <label htmlFor="product-name" className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
             نام محصول
           </label>
 
           <Input
+            id="product-name"
             value={form.name}
+            aria-describedby={errors.name ? "product-name-error" : undefined}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
             placeholder="مثلاً: iPhone 16 Pro"
             error={Boolean(errors.name)}
@@ -176,7 +178,7 @@ function ProductFormModal({
           />
 
           {errors.name && (
-            <p className="mt-1 font-estedad text-xs text-danger">
+            <p id="product-name-error" role="alert" className="mt-1 font-estedad text-xs text-danger">
               {errors.name}
             </p>
           )}
@@ -185,11 +187,12 @@ function ProductFormModal({
         {/* Category + Status */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
+            <label htmlFor="product-category" className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
               دسته‌بندی
             </label>
 
             <Select
+              id="product-category"
               value={form.category}
               onChange={(e) =>
                 setForm((f) => ({ ...f, category: e.target.value }))
@@ -204,11 +207,12 @@ function ProductFormModal({
           </div>
 
           <div>
-            <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
+            <label htmlFor="product-status" className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
               وضعیت
             </label>
 
             <Select
+              id="product-status"
               value={form.status}
               onChange={(e) =>
                 setForm((f) => ({
@@ -226,12 +230,14 @@ function ProductFormModal({
         {/* Price + Stock */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
+            <label htmlFor="product-price" className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
               قیمت (تومان)
             </label>
 
             <Input
+              id="product-price"
               type="number"
+              aria-describedby={errors.price ? "product-price-error" : undefined}
               dir="ltr"
               min={0}
               value={form.price}
@@ -243,19 +249,21 @@ function ProductFormModal({
             />
 
             {errors.price && (
-              <p className="mt-1 font-estedad text-xs text-danger">
+              <p id="product-price-error" role="alert" className="mt-1 font-estedad text-xs text-danger">
                 {errors.price}
               </p>
             )}
           </div>
 
           <div>
-            <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
+            <label htmlFor="product-stock" className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
               موجودی
             </label>
 
             <Input
+              id="product-stock"
               type="number"
+              aria-describedby={errors.stock ? "product-stock-error" : undefined}
               dir="ltr"
               min={0}
               value={form.stock}
@@ -267,7 +275,7 @@ function ProductFormModal({
             />
 
             {errors.stock && (
-              <p className="mt-1 font-estedad text-xs text-danger">
+              <p id="product-stock-error" role="alert" className="mt-1 font-estedad text-xs text-danger">
                 {errors.stock}
               </p>
             )}
@@ -276,11 +284,12 @@ function ProductFormModal({
 
         {/* Description */}
         <div>
-          <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
+          <label htmlFor="product-description" className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
             توضیحات (اختیاری)
           </label>
 
           <Textarea
+            id="product-description"
             value={form.description}
             onChange={(e) =>
               setForm((f) => ({ ...f, description: e.target.value }))

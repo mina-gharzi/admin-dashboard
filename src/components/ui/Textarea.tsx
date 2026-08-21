@@ -32,6 +32,7 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 function Textarea({ className, error = false, ...props }: TextareaProps) {
   return (
     <textarea
+      aria-invalid={error || undefined}
       className={cn(
         "flex w-full",
         "min-h-24",

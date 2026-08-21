@@ -159,6 +159,7 @@ function Sidebar() {
           ================================================== */}
 
       <aside
+        aria-label="ناوبری پنل مدیریت"
         className={cn(
           /*
             ------------------------------------------------
@@ -301,7 +302,7 @@ function Sidebar() {
             Navigation
             ================================================== */}
 
-        <nav className="flex-1 overflow-y-auto p-4">
+        <nav aria-label="منوی اصلی" className="flex-1 overflow-y-auto p-4">
           {/* Navigation Title */}
 
           {!isSidebarCollapsed && (
@@ -322,6 +323,7 @@ function Sidebar() {
                   to={item.path}
                   end={item.path === "/dashboard"}
                   onClick={closeMobileSidebar}
+                  aria-label={isSidebarCollapsed ? item.label : undefined}
                   className={({ isActive }) =>
                     cn(
                       /*
@@ -385,6 +387,7 @@ function Sidebar() {
             <NavLink
               to="/dashboard/team"
               onClick={closeMobileSidebar}
+              aria-label={isSidebarCollapsed ? "تیم" : undefined}
               className={({ isActive }) =>
                 cn(
                   "mb-1 flex items-center",
@@ -417,6 +420,7 @@ function Sidebar() {
           <NavLink
             to="/dashboard/settings"
             onClick={closeMobileSidebar}
+            aria-label={isSidebarCollapsed ? "تنظیمات" : undefined}
             className={({ isActive }) =>
               cn(
                 "mb-1 flex items-center",
@@ -447,6 +451,7 @@ function Sidebar() {
 
           <button
             type="button"
+            aria-label={isSidebarCollapsed ? "خروج از حساب" : undefined}
             onClick={logout}
             className={cn(
               "flex w-full items-center",

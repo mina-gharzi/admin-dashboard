@@ -299,6 +299,30 @@
   .ds-animation-fast {
     animation-duration: var(--transition-fast);
   }
+  .ds-skip-link {
+    position: fixed;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 10000;
+    transform: translateY(-200%);
+    border: var(--border-width-default) solid var(--color-border);
+    border-radius: var(--radius-control);
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    padding: 0.625rem 0.875rem;
+    font-family: var(--font-estedad);
+    font-size: 0.875rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-popover);
+    transition: transform var(--transition-fast) var(--transition-ease);
+  }
+
+  .ds-skip-link:focus-visible {
+    transform: translateY(0);
+    outline: none;
+    box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color), var(--shadow-popover);
+  }
+
 }
 
 /*
@@ -347,6 +371,23 @@ select {
 
 button {
   cursor: pointer;
+}
+
+button:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+@media (forced-colors: active) {
+  .ds-focus-ring:focus-visible {
+    outline: 2px solid ButtonText;
+    outline-offset: 2px;
+    box-shadow: none;
+  }
 }
 
 /*

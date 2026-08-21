@@ -167,6 +167,7 @@ function Team() {
                       trigger={
                         <button
                           type="button"
+                          aria-label={`عملیات ${member.name}`}
                           className="flex h-8 w-8 items-center justify-center rounded-lg text-text-secondary transition hover:bg-primary-100 hover:text-primary-900"
                         >
                           <MoreHorizontal size={18} />

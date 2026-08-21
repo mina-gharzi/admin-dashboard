@@ -86,6 +86,9 @@ function NotificationsPanel({
   return (
     <div
       ref={panelRef}
+      id="notifications-panel"
+      role="region"
+      aria-label="اعلان‌ها"
       className={cn(
         "absolute left-0 top-full z-40 mt-2",
         "w-80",

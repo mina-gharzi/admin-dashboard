@@ -46,7 +46,7 @@ interface BreadcrumbProps {
 
 function Breadcrumb({ items }: BreadcrumbProps) {
   return (
-    <nav aria-label="Breadcrumb" className="font-estedad">
+    <nav aria-label="مسیر صفحه" className="font-estedad">
       <ol className={cn("flex items-center gap-1.5", "text-xs tablet:text-sm")}>
         {/* ==================================================
             Home
@@ -55,6 +55,7 @@ function Breadcrumb({ items }: BreadcrumbProps) {
         <li className="flex items-center">
           <Link
             to="/dashboard"
+            aria-label="داشبورد"
             className={cn(
               "flex items-center gap-1.5",
               "text-text-secondary",
@@ -62,7 +63,7 @@ function Breadcrumb({ items }: BreadcrumbProps) {
               "hover:text-primary-900",
             )}
           >
-            <Home size={15} />
+            <Home size={15} aria-hidden="true" />
 
             <span className="hidden tablet:inline">داشبورد</span>
           </Link>
@@ -82,7 +83,7 @@ function Breadcrumb({ items }: BreadcrumbProps) {
             >
               {/* Separator */}
 
-              <ChevronLeft size={14} className="text-text-secondary" />
+              <ChevronLeft size={14} aria-hidden="true" className="text-text-secondary" />
 
               {/* Item */}
 

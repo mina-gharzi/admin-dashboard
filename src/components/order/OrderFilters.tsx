@@ -51,6 +51,7 @@ function OrderFilters({
           <Input
             value={search}
             onChange={(event) => onSearchChange(event.target.value)}
+            aria-label="جستجوی شماره سفارش یا مشتری"
             placeholder="جستجوی شماره سفارش یا مشتری..."
             className="h-10 pr-10"
           />
@@ -66,13 +67,15 @@ function OrderFilters({
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-1.5">
+        <div role="group" aria-label="فیلتر وضعیت سفارش" className="flex flex-wrap items-center gap-1.5">
           {statuses.map((item) => {
             const active = status === item.value;
             return (
               <button
                 key={item.value}
                 type="button"
+                aria-pressed={active}
+                aria-label={`فیلتر وضعیت ${item.label}`}
                 onClick={() => onStatusChange(item.value)}
                 className={`rounded-xl px-3 py-2 font-estedad text-[11px] font-medium transition-all active:scale-[.98] ${
                   active

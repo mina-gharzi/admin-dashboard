@@ -118,6 +118,7 @@ function Button({
     <button
       type="button"
       disabled={disabled || loading}
+      aria-busy={loading || undefined}
       className={cn(
         /*
           ------------------------------------------------

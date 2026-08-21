@@ -20,7 +20,7 @@
   ==========================================================
 */
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 
 import { X } from "lucide-react";
 
@@ -68,6 +68,8 @@ function Modal({
 }: ModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
+  const titleId = useId();
+  const descriptionId = useId();
 
   /*
     --------------------------------------------------------
@@ -174,13 +176,13 @@ function Modal({
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
-      aria-labelledby={title ? "modal-title" : undefined}
+      aria-labelledby={title ? titleId : undefined}
+      aria-describedby={description ? descriptionId : undefined}
     >
       {/* Backdrop */}
 
-      <button
-        type="button"
-        aria-label="بستن مودال"
+      <div
+        aria-hidden="true"
         className="absolute inset-0 cursor-default bg-slate-950/40 backdrop-blur-[2px]"
         onClick={onClose}
       />
@@ -208,7 +210,7 @@ function Modal({
             <div>
               {title && (
                 <h2
-                  id="modal-title"
+                  id={titleId}
                   className="font-estedad text-lg font-semibold text-text-primary"
                 >
                   {title}
@@ -216,7 +218,7 @@ function Modal({
               )}
 
               {description && (
-                <p className="mt-1 font-estedad text-sm text-text-secondary">
+                <p id={descriptionId} className="mt-1 font-estedad text-sm text-text-secondary">
                   {description}
                 </p>
               )}

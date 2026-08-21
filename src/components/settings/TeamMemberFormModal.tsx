@@ -107,18 +107,20 @@ function TeamMemberFormModal({
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Name */}
         <div>
-          <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
+          <label htmlFor="team-name" className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
             نام و نام خانوادگی
           </label>
           <Input
+            id="team-name"
             value={form.name}
+            aria-describedby={errors.name ? "team-name-error" : undefined}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
             placeholder="مثلاً: مینا احمدی"
             error={Boolean(errors.name)}
             autoFocus
           />
           {errors.name && (
-            <p className="mt-1.5 font-estedad text-[11px] text-danger">
+            <p id="team-name-error" role="alert" className="mt-1.5 font-estedad text-[11px] text-danger">
               {errors.name}
             </p>
           )}
@@ -126,11 +128,13 @@ function TeamMemberFormModal({
 
         {/* Email */}
         <div>
-          <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
+          <label htmlFor="team-email" className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
             ایمیل
           </label>
           <Input
+            id="team-email"
             type="email"
+            aria-describedby={errors.email ? "team-email-error" : undefined}
             dir="ltr"
             value={form.email}
             onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
@@ -138,7 +142,7 @@ function TeamMemberFormModal({
             error={Boolean(errors.email)}
           />
           {errors.email && (
-            <p className="mt-1.5 font-estedad text-[11px] text-danger">
+            <p id="team-email-error" role="alert" className="mt-1.5 font-estedad text-[11px] text-danger">
               {errors.email}
             </p>
           )}
@@ -147,10 +151,11 @@ function TeamMemberFormModal({
         {/* Role + Status */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
+            <label htmlFor="team-role" className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
               نقش
             </label>
             <Select
+              id="team-role"
               value={form.role}
               onChange={(e) =>
                 setForm((f) => ({
@@ -168,10 +173,11 @@ function TeamMemberFormModal({
           </div>
 
           <div>
-            <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
+            <label htmlFor="team-status" className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
               وضعیت
             </label>
             <Select
+              id="team-status"
               value={form.status}
               onChange={(e) =>
                 setForm((f) => ({

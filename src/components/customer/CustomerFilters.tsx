@@ -51,6 +51,7 @@ function CustomerFilters({
           <Input
             value={search}
             onChange={(event) => onSearchChange(event.target.value)}
+            aria-label="جستجوی نام یا ایمیل مشتری"
             placeholder="جستجوی نام یا ایمیل مشتری..."
             className="h-10 pr-10"
           />
@@ -71,6 +72,7 @@ function CustomerFilters({
           <div className="flex h-10 items-center gap-2 rounded-xl border border-primary-300/70 bg-background/60 px-3 transition-colors focus-within:border-primary-900">
             <SlidersHorizontal size={15} className="text-text-secondary" />
             <select
+              aria-label="فیلتر وضعیت مشتری"
               value={status}
               onChange={(event) => onStatusChange(event.target.value)}
               className="h-full cursor-pointer bg-transparent font-estedad text-xs text-text-primary outline-none"

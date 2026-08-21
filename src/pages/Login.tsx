@@ -119,8 +119,9 @@ function Login() {
   };
 
   return (
-    <div
+    <main
       dir="rtl"
+      aria-labelledby="login-title"
       className="flex min-h-screen items-center justify-center bg-primary-900 px-5 py-10"
     >
       <div className="w-full max-w-100">
@@ -129,7 +130,7 @@ function Login() {
         <div className="rounded-2xl border border-border bg-surface px-6 py-7 shadow-[var(--shadow-modal)] tablet:px-8 tablet:py-8">
           {/* Title */}
           <div className="mb-7 text-center">
-            <h1 className="font-inter text-xl font-bold tracking-tight text-text-primary">
+            <h1 id="login-title" className="font-inter text-xl font-bold tracking-tight text-text-primary">
               ورود به پنل مدیریت
             </h1>
 
@@ -141,7 +142,7 @@ function Login() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div>
-              <label className="mb-2 block font-estedad text-sm font-medium text-text-primary">
+              <label htmlFor="login-email" className="mb-2 block font-estedad text-sm font-medium text-text-primary">
                 ایمیل
               </label>
 
@@ -153,8 +154,10 @@ function Login() {
                 />
 
                 <Input
+                  id="login-email"
                   type="email"
                   dir="ltr"
+                  aria-describedby={errors.email ? "login-email-error" : undefined}
                   value={form.email}
                   onChange={(e) =>
                     setForm((f) => ({
@@ -170,7 +173,7 @@ function Login() {
               </div>
 
               {errors.email && (
-                <p className="mt-1.5 font-estedad text-xs text-danger">
+                <p id="login-email-error" role="alert" className="mt-1.5 font-estedad text-xs text-danger">
                   {errors.email}
                 </p>
               )}
@@ -178,7 +181,7 @@ function Login() {
 
             {/* Password */}
             <div>
-              <label className="mb-2 block font-estedad text-sm font-medium text-text-primary">
+              <label htmlFor="login-password" className="mb-2 block font-estedad text-sm font-medium text-text-primary">
                 رمز عبور
               </label>
 
@@ -190,8 +193,10 @@ function Login() {
                 />
 
                 <Input
+                  id="login-password"
                   type="password"
                   dir="ltr"
+                  aria-describedby={errors.password ? "login-password-error" : undefined}
                   value={form.password}
                   onChange={(e) =>
                     setForm((f) => ({
@@ -206,7 +211,7 @@ function Login() {
               </div>
 
               {errors.password && (
-                <p className="mt-1.5 font-estedad text-xs text-danger">
+                <p id="login-password-error" role="alert" className="mt-1.5 font-estedad text-xs text-danger">
                   {errors.password}
                 </p>
               )}
@@ -260,7 +265,7 @@ function Login() {
           نسخه نمایشی پنل مدیریت
         </p>
       </div>
-    </div>
+    </main>
   );
 }
 

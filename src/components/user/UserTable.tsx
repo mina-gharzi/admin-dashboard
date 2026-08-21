@@ -172,6 +172,7 @@ function UserTable({
           <button
             type="button"
             title={canEdit ? "کلیک برای تغییر وضعیت" : "وضعیت"}
+            aria-label={canEdit ? `تغییر وضعیت ${user.name} به ${config.label === "فعال" ? "غیرفعال" : "فعال"}` : `وضعیت ${config.label}`}
             disabled={!canEdit}
             onClick={() =>
               onToggleStatus?.(
@@ -211,6 +212,7 @@ function UserTable({
             trigger={
               <button
                 type="button"
+                aria-label={`عملیات ${row.original.name}`}
                 className="flex h-8 w-8 items-center justify-center rounded-lg text-text-secondary transition hover:bg-primary-100 hover:text-primary-900"
               >
                 <MoreHorizontal size={18} />
@@ -284,7 +286,7 @@ function UserTable({
   return (
     <>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-175">
+        <table aria-label="جدول کاربران" className="w-full min-w-175">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr
@@ -296,11 +298,16 @@ function UserTable({
                   const sorted = header.column.getIsSorted();
 
                   return (
-                    <th key={header.id} className="px-6 py-3 text-right">
+                    <th
+                      key={header.id}
+                      aria-sort={sorted === "asc" ? "ascending" : sorted === "desc" ? "descending" : "none"}
+                      className="px-6 py-3 text-right"
+                    >
                       {header.isPlaceholder ? null : (
                         <button
                           type="button"
                           disabled={!canSort}
+                          aria-label={`مرتب‌سازی بر اساس ${typeof header.column.columnDef.header === "string" ? header.column.columnDef.header : "این ستون"}`}
                           onClick={header.column.getToggleSortingHandler()}
                           className={`group/th inline-flex items-center gap-1 font-estedad text-[11px] font-bold uppercase tracking-wider ${
                             canSort
@@ -396,6 +403,8 @@ function UserTable({
                 <button
                   key={page}
                   type="button"
+                  aria-label={`صفحه ${page + 1}`}
+                  aria-current={isActive ? "page" : undefined}
                   onClick={() => table.setPageIndex(page)}
                   className={`h-8 min-w-8 rounded-lg px-2 font-inter text-xs font-bold transition-all active:scale-95 ${
                     isActive

@@ -121,12 +121,14 @@ function OrderFormModal({
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Customer */}
         <div>
-          <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
+          <label htmlFor="order-customer" className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
             نام مشتری
           </label>
 
           <Input
+            id="order-customer"
             value={form.customer}
+            aria-describedby={errors.customer ? "order-customer-error" : undefined}
             onChange={(e) =>
               setForm((f) => ({ ...f, customer: e.target.value }))
             }
@@ -135,7 +137,7 @@ function OrderFormModal({
           />
 
           {errors.customer && (
-            <p className="mt-1.5 font-estedad text-xs text-danger">
+            <p id="order-customer-error" role="alert" className="mt-1.5 font-estedad text-xs text-danger">
               {errors.customer}
             </p>
           )}
@@ -144,12 +146,14 @@ function OrderFormModal({
         {/* Email + Phone */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
+            <label htmlFor="order-email" className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
               ایمیل
             </label>
 
             <Input
+              id="order-email"
               type="email"
+              aria-describedby={errors.email ? "order-email-error" : undefined}
               dir="ltr"
               value={form.email}
               onChange={(e) =>
@@ -159,18 +163,19 @@ function OrderFormModal({
             />
 
             {errors.email && (
-              <p className="mt-1.5 font-estedad text-xs text-danger">
+              <p id="order-email-error" role="alert" className="mt-1.5 font-estedad text-xs text-danger">
                 {errors.email}
               </p>
             )}
           </div>
 
           <div>
-            <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
+            <label htmlFor="order-phone" className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
               شماره تماس
             </label>
 
             <Input
+              id="order-phone"
               dir="ltr"
               value={form.phone}
               onChange={(e) =>
@@ -183,11 +188,12 @@ function OrderFormModal({
 
         {/* Address */}
         <div>
-          <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
+          <label htmlFor="order-address" className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
             آدرس
           </label>
 
           <Input
+            id="order-address"
             value={form.address}
             onChange={(e) =>
               setForm((f) => ({ ...f, address: e.target.value }))
@@ -197,11 +203,12 @@ function OrderFormModal({
 
         {/* Status */}
         <div>
-          <label className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
+          <label htmlFor="order-status" className="mb-1.5 block font-estedad text-xs font-medium text-text-secondary">
             وضعیت سفارش
           </label>
 
           <Select
+            id="order-status"
             value={form.status}
             onChange={(e) =>
               setForm((f) => ({
