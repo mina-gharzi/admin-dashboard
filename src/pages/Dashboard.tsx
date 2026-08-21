@@ -55,25 +55,25 @@ import { formatPrice } from "../utils/format";
 const statusMeta = {
   pending: {
     label: "در انتظار",
-    color: "#a8cdee",
+    color: "var(--color-primary-200)",
     badge: "warning" as const,
   },
 
   processing: {
     label: "در حال پردازش",
-    color: "#7288ae",
+    color: "var(--color-primary-300)",
     badge: "info" as const,
   },
 
   completed: {
     label: "تکمیل شده",
-    color: "#4b5694",
+    color: "var(--color-primary-700)",
     badge: "success" as const,
   },
 
   cancelled: {
     label: "لغو شده",
-    color: "#111844",
+    color: "var(--color-primary-900)",
     badge: "danger" as const,
   },
 };
@@ -373,9 +373,9 @@ function Dashboard() {
           return (
             <Card
               key={stat.title}
-              className="group relative overflow-hidden border border-primary-300/60 p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary-700/50 hover:shadow-md"
+              className="group relative overflow-hidden border border-primary-300/60 p-5 shadow-sm transition-all ds-transition-slow hover:-translate-y-1 hover:border-primary-700/50 hover:shadow-md"
             >
-              <div className="absolute -left-8 -top-8 h-20 w-20 rounded-full bg-primary-100/30 opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="absolute -left-8 -top-8 h-20 w-20 rounded-full bg-primary-100/30 opacity-0 blur-2xl transition-opacity ds-transition-slow group-hover:opacity-100" />
 
               <div className="relative flex items-start justify-between">
                 <div>
@@ -396,7 +396,7 @@ function Dashboard() {
                   </div>
                 </div>
 
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary-50 text-primary-900 transition-all duration-300 group-hover:bg-primary-900 group-hover:text-white">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary-50 text-primary-900 transition-all ds-transition-slow group-hover:bg-primary-900 group-hover:text-white">
                   <Icon size={20} strokeWidth={2} />
                 </div>
               </div>
@@ -472,7 +472,7 @@ function Dashboard() {
                   <CartesianGrid
                     strokeDasharray="4 4"
                     vertical={false}
-                    stroke="#e3f0fd"
+                    stroke="var(--color-primary-50)"
                   />
 
                   <XAxis
@@ -481,7 +481,7 @@ function Dashboard() {
                     tickLine={false}
                     tick={{
                       fontSize: 11,
-                      fill: "#64748b",
+                      fill: "var(--color-text-secondary)",
                       fontFamily: "Estedad",
                     }}
                     dy={8}
@@ -493,7 +493,7 @@ function Dashboard() {
                     allowDecimals={false}
                     tick={{
                       fontSize: 10,
-                      fill: "#64748b",
+                      fill: "var(--color-text-secondary)",
                       fontFamily: "Inter",
                     }}
                   />
@@ -501,7 +501,7 @@ function Dashboard() {
                   <Tooltip
                     content={<CustomTooltip />}
                     cursor={{
-                      fill: "rgba(17, 24, 68, 0.03)",
+                      fill: "var(--color-primary-900)",
                     }}
                   />
 
@@ -510,7 +510,7 @@ function Dashboard() {
                       <Cell
                         key={entry.key}
                         fill={entry.color}
-                        className="transition-opacity duration-300 hover:opacity-80"
+                        className="transition-opacity ds-transition-slow hover:opacity-80"
                       />
                     ))}
                   </Bar>
@@ -671,7 +671,7 @@ function Dashboard() {
 
               <div className="h-2 w-full overflow-hidden rounded-full bg-primary-50">
                 <div
-                  className="h-full rounded-full bg-primary-900 transition-all duration-500"
+                  className="h-full rounded-full bg-primary-900 transition-all ds-transition-emphasis"
                   style={{
                     width: `${completionRate}%`,
                   }}
@@ -693,7 +693,7 @@ function Dashboard() {
 
               <div className="h-2 w-full overflow-hidden rounded-full bg-primary-50">
                 <div
-                  className="h-full rounded-full bg-primary-700 transition-all duration-500"
+                  className="h-full rounded-full bg-primary-700 transition-all ds-transition-emphasis"
                   style={{
                     width: `${activeCustomerRate}%`,
                   }}
@@ -715,7 +715,7 @@ function Dashboard() {
 
               <div className="h-2 w-full overflow-hidden rounded-full bg-primary-50">
                 <div
-                  className="h-full rounded-full bg-primary-300 transition-all duration-500"
+                  className="h-full rounded-full bg-primary-300 transition-all ds-transition-emphasis"
                   style={{
                     width: `${activeProductRate}%`,
                   }}

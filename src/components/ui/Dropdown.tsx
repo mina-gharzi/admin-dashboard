@@ -349,7 +349,7 @@ function Dropdown({
         className={cn(
           "inline-flex cursor-pointer items-center",
           trigger &&
-            "rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-100",
+            "rounded-[var(--radius-control)] ds-focus-ring",
         )}
       >
         {trigger ? (
@@ -360,7 +360,7 @@ function Dropdown({
               <ChevronDown
                 size={15}
                 className={cn(
-                  "text-text-secondary transition-transform duration-200",
+                  "text-text-secondary transition-transform ds-transition",
                   open && "rotate-180",
                 )}
               />
@@ -370,14 +370,13 @@ function Dropdown({
           <button
             type="button"
             className={cn(
-              "inline-flex items-center gap-2 rounded-xl",
+              "inline-flex items-center gap-2 rounded-[var(--radius-control)]",
               "border border-primary-300/70 bg-surface",
               "px-3 py-2 font-estedad text-sm text-text-primary",
               "transition-colors",
               "hover:bg-primary-100 hover:text-primary-900",
               "focus-visible:outline-none",
-              "focus-visible:ring-2",
-              "focus-visible:ring-primary-100",
+              "ds-focus-ring",
             )}
           >
             <span>گزینه‌ها</span>
@@ -385,7 +384,7 @@ function Dropdown({
             <ChevronDown
               size={15}
               className={cn(
-                "transition-transform duration-200",
+                "transition-transform ds-transition",
                 open && "rotate-180",
               )}
             />
@@ -410,12 +409,12 @@ function Dropdown({
           }}
           className={cn(
             "min-w-45",
-            "overflow-hidden rounded-xl",
+            "overflow-hidden rounded-[var(--radius-control)]",
             "border border-primary-300/70",
             "bg-surface/95 backdrop-blur-sm",
             "p-1.5",
-            "shadow-lg shadow-primary-900/5",
-            "animate-in fade-in-50 zoom-in-95 duration-150",
+            "shadow-[var(--shadow-popover)]",
+            "animate-in fade-in-50 zoom-in-95",
           )}
         >
           {items.map((item, index) => {

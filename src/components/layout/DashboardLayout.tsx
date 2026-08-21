@@ -29,11 +29,11 @@ function DashboardLayout() {
           relative
           min-h-[calc(100vh-1.5rem)]
           overflow-hidden
-          rounded-[24px]
+          rounded-[var(--radius-page)]
           bg-background
           shadow-sm
           tablet:min-h-[calc(100vh-2rem)]
-          tablet:rounded-[28px]
+          tablet:rounded-[calc(var(--radius-page)+0.25rem)]
           desktop:min-h-[calc(100vh-2.5rem)]
         "
       >
@@ -42,7 +42,7 @@ function DashboardLayout() {
         <div
           className={cn(
             "min-h-screen",
-            "transition-all duration-300",
+            "ds-transition-slow",
 
             isSidebarCollapsed ? "desktop:mr-20" : "desktop:mr-64",
 

@@ -201,7 +201,7 @@ function Header() {
               "items-center justify-center",
               "rounded-xl border border-primary-300/60",
               "bg-background/80 text-text-secondary",
-              "transition-all duration-200",
+              "transition-all ds-transition",
               "hover:bg-primary-100 hover:text-primary-900 hover:shadow-sm",
               "active:scale-95",
             )}
@@ -239,7 +239,7 @@ function Header() {
                 "font-estedad text-xs text-text-primary",
                 "placeholder:text-text-secondary/70",
                 "outline-none",
-                "transition-all duration-200",
+                "transition-all ds-transition",
                 "focus:border-primary-900 focus:bg-surface focus:shadow-sm",
                 "focus:ring-2 focus:ring-primary-100",
               )}
@@ -262,7 +262,7 @@ function Header() {
                   "border border-primary-300/80",
                   "bg-surface/95 backdrop-blur-md",
                   "shadow-xl shadow-primary-900/5",
-                  "animate-in fade-in-50 zoom-in-95 duration-150",
+                  "animate-in fade-in-50 zoom-in-95 ds-animation-fast",
                 )}
               >
                 {!searching && !hasResults && (
@@ -373,7 +373,7 @@ function Header() {
               "flex h-10 w-10 items-center justify-center",
               "rounded-xl border border-primary-300/60",
               "bg-background/80 text-text-secondary",
-              "transition-all duration-200",
+              "transition-all ds-transition",
               "hover:bg-primary-100 hover:text-primary-900 hover:shadow-sm",
               "active:scale-95",
             )}
@@ -391,7 +391,7 @@ function Header() {
                 "flex h-10 w-10 items-center justify-center",
                 "rounded-xl border border-primary-300/60",
                 "bg-background/80 text-text-secondary",
-                "transition-all duration-200",
+                "transition-all ds-transition",
                 "hover:bg-primary-100 hover:text-primary-900 hover:shadow-sm",
                 "active:scale-95",
                 notificationsOpen &&
@@ -431,7 +431,7 @@ function Header() {
                   "cursor-pointer",
                   "rounded-2xl py-1.5 pr-2 pl-2.5",
                   "border border-transparent",
-                  "transition-all duration-200",
+                  "transition-all ds-transition",
                   "hover:border-primary-300/60 hover:bg-background/80 hover:shadow-xs",
                 )}
               >

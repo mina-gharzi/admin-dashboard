@@ -130,20 +130,18 @@ function Button({
         "justify-center",
         "gap-2",
 
-        "rounded-xl",
+        "rounded-[var(--radius-control)]",
 
         "font-estedad",
         "font-medium",
 
         "whitespace-nowrap",
 
-        "transition-colors",
-        "duration-200",
+        "ds-transition",
 
         "outline-none",
 
-        "focus-visible:ring-2",
-        "focus-visible:ring-primary-300",
+        "ds-focus-ring",
 
         /*
           ------------------------------------------------

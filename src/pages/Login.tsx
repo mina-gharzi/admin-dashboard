@@ -126,7 +126,7 @@ function Login() {
       <div className="w-full max-w-100">
         {/* Login Card */}
 
-        <div className="rounded-2xl border border-border bg-surface px-6 py-7 shadow-[0_12px_40px_rgba(17,24,68,0.08)] tablet:px-8 tablet:py-8">
+        <div className="rounded-2xl border border-border bg-surface px-6 py-7 shadow-[var(--shadow-modal)] tablet:px-8 tablet:py-8">
           {/* Title */}
           <div className="mb-7 text-center">
             <h1 className="font-inter text-xl font-bold tracking-tight text-text-primary">

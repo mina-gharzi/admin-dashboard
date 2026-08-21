@@ -79,12 +79,12 @@ function Welcome() {
 
           <Link
             to="/login"
-            className="group inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-surface px-4 font-estedad text-xs font-semibold text-text-primary transition-all duration-200 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-900"
+            className="group inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-surface px-4 font-estedad text-xs font-semibold text-text-primary transition-all ds-transition hover:border-primary-300 hover:bg-primary-50 hover:text-primary-900"
           >
             ورود
             <ArrowLeft
               size={15}
-              className="transition-transform duration-200 group-hover:-translate-x-0.5"
+              className="transition-transform ds-transition group-hover:-translate-x-0.5"
             />
           </Link>
         </div>
@@ -133,12 +133,12 @@ function Welcome() {
               <div className="mt-6">
                 <Link
                   to="/login"
-                  className="group inline-flex h-10 items-center gap-2.5 rounded-lg bg-white px-5 font-estedad text-xs font-bold text-primary-900 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                  className="group inline-flex h-10 items-center gap-2.5 rounded-lg bg-white px-5 font-estedad text-xs font-bold text-primary-900 shadow-sm transition-all ds-transition hover:-translate-y-0.5 hover:shadow-md"
                 >
                   ورود به پنل
                   <ArrowLeft
                     size={16}
-                    className="transition-transform duration-200 group-hover:-translate-x-1"
+                    className="transition-transform ds-transition group-hover:-translate-x-1"
                   />
                 </Link>
               </div>
@@ -251,9 +251,9 @@ function Welcome() {
               return (
                 <div
                   key={feature.title}
-                  className="group rounded-xl border border-border bg-surface p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary-300/70 hover:shadow-md"
+                  className="group rounded-xl border border-border bg-surface p-5 shadow-sm transition-all ds-transition hover:-translate-y-0.5 hover:border-primary-300/70 hover:shadow-md"
                 >
-                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary-900 transition-colors duration-200 group-hover:bg-primary-900 group-hover:text-white">
+                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary-900 transition-colors ds-transition group-hover:bg-primary-900 group-hover:text-white">
                     <Icon size={18} strokeWidth={2} />
                   </div>
 
@@ -344,12 +344,12 @@ function Welcome() {
 
             <Link
               to="/login"
-              className="group inline-flex h-10 shrink-0 items-center justify-center gap-2.5 rounded-lg bg-white px-5 font-estedad text-xs font-bold text-primary-900 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+              className="group inline-flex h-10 shrink-0 items-center justify-center gap-2.5 rounded-lg bg-white px-5 font-estedad text-xs font-bold text-primary-900 shadow-sm transition-all ds-transition hover:-translate-y-0.5 hover:shadow-md"
             >
               ورود به پنل
               <ArrowLeft
                 size={16}
-                className="transition-transform duration-200 group-hover:-translate-x-1"
+                className="transition-transform ds-transition group-hover:-translate-x-1"
               />
             </Link>
           </div>

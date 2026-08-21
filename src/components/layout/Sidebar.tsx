@@ -170,7 +170,7 @@ function Sidebar() {
           "flex flex-col",
           "border-l border-border",
           "bg-surface",
-          "transition-all duration-300",
+          "transition-all ds-transition-slow",
 
           /*
             ------------------------------------------------
@@ -239,7 +239,7 @@ function Sidebar() {
 
             "shadow-sm",
 
-            "transition-all duration-200",
+            "transition-all ds-transition",
 
             "hover:bg-primary-100",
             "hover:text-primary-900",

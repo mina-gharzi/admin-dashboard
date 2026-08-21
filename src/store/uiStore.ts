@@ -2,108 +2,59 @@
   ==========================================================
   uiStore.ts
   ----------------------------------------------------------
-  Global UI State
-  ----------------------------------------------------------
-  این فایل Stateهای عمومی رابط کاربری را مدیریت می‌کند.
-
-  موارد فعلی:
-
-  - باز / بسته بودن Sidebar
-  - باز / بسته بودن Sidebar در موبایل
-  - Dark Mode
-
-  برای مدیریت این Stateها از Zustand استفاده می‌کنیم.
+  Global UI state + persisted user preferences.
+  Theme is persisted so the selected appearance survives reloads.
   ==========================================================
 */
 
 import { create } from "zustand";
-
-/*
-  ----------------------------------------------------------
-  UI Store Type
-  ----------------------------------------------------------
-*/
+import { persist } from "zustand/middleware";
 
 interface UIStore {
-  /*
-    Sidebar
-  */
-
   isSidebarCollapsed: boolean;
-
   toggleSidebar: () => void;
 
-  /*
-    Mobile Sidebar
-  */
-
   isMobileSidebarOpen: boolean;
-
   toggleMobileSidebar: () => void;
-
   closeMobileSidebar: () => void;
 
-  /*
-    Theme
-  */
-
   isDarkMode: boolean;
-
   toggleDarkMode: () => void;
 }
 
-/*
-  ----------------------------------------------------------
-  UI Store
-  ----------------------------------------------------------
-*/
+export const useUIStore = create<UIStore>()(
+  persist(
+    (set) => ({
+      isSidebarCollapsed: false,
 
-export const useUIStore =
-  create<UIStore>((set) => ({
-    /*
-      ------------------------------------------------------
-      Sidebar
-      ------------------------------------------------------
-    */
+      toggleSidebar: () =>
+        set((state) => ({
+          isSidebarCollapsed: !state.isSidebarCollapsed,
+        })),
 
-    isSidebarCollapsed: false,
+      isMobileSidebarOpen: false,
 
-    toggleSidebar: () =>
-      set((state) => ({
-        isSidebarCollapsed:
-          !state.isSidebarCollapsed,
-      })),
+      toggleMobileSidebar: () =>
+        set((state) => ({
+          isMobileSidebarOpen: !state.isMobileSidebarOpen,
+        })),
 
-    /*
-      ------------------------------------------------------
-      Mobile Sidebar
-      ------------------------------------------------------
-    */
+      closeMobileSidebar: () =>
+        set({ isMobileSidebarOpen: false }),
 
-    isMobileSidebarOpen: false,
+      isDarkMode: false,
 
-    toggleMobileSidebar: () =>
-      set((state) => ({
-        isMobileSidebarOpen:
-          !state.isMobileSidebarOpen,
-      })),
-
-    closeMobileSidebar: () =>
-      set({
-        isMobileSidebarOpen: false,
+      toggleDarkMode: () =>
+        set((state) => ({
+          isDarkMode: !state.isDarkMode,
+        })),
+    }),
+    {
+      name: "ui-preferences",
+      partialize: (state) => ({
+        isSidebarCollapsed: state.isSidebarCollapsed,
+        isDarkMode: state.isDarkMode,
       }),
-
-    /*
-      ------------------------------------------------------
-      Dark Mode
-      ------------------------------------------------------
-    */
-
-    isDarkMode: false,
-
-    toggleDarkMode: () =>
-      set((state) => ({
-        isDarkMode:
-          !state.isDarkMode,
-      })),
-  }));
+    },
+  ),
+);

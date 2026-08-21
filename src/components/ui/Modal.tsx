@@ -193,10 +193,10 @@ function Modal({
         className={cn(
           "relative z-10 w-full max-w-lg",
           "overflow-hidden",
-          "rounded-xl",
+          "rounded-[var(--radius-panel)]",
           "border border-border",
           "bg-surface",
-          "shadow-xl",
+          "shadow-[var(--shadow-modal)]",
           "outline-none",
           className,
         )}
@@ -232,8 +232,7 @@ function Modal({
                 "hover:bg-primary-100",
                 "hover:text-primary-900",
                 "focus-visible:outline-none",
-                "focus-visible:ring-2",
-                "focus-visible:ring-primary-900",
+                "ds-focus-ring",
               )}
               aria-label="بستن"
             >

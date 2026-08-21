@@ -73,10 +73,31 @@ function OrderFormModal({
   order,
 }: OrderFormModalProps) {
   const [form, setForm] = useState<FormState>(() => toFormState(order));
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof FormState, string>>
+  >({});
   const [submitting, setSubmitting] = useState(false);
+
+  const validate = (): boolean => {
+    const nextErrors: Partial<Record<keyof FormState, string>> = {};
+
+    if (form.customer.trim().length < 2) {
+      nextErrors.customer = "نام مشتری باید حداقل ۲ حرف باشد";
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(form.email)) {
+      nextErrors.email = "ایمیل معتبر نیست";
+    }
+
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  };
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+
+    if (!validate()) return;
 
     setSubmitting(true);
 
@@ -109,8 +130,15 @@ function OrderFormModal({
             onChange={(e) =>
               setForm((f) => ({ ...f, customer: e.target.value }))
             }
+            error={Boolean(errors.customer)}
             autoFocus
           />
+
+          {errors.customer && (
+            <p className="mt-1.5 font-estedad text-xs text-danger">
+              {errors.customer}
+            </p>
+          )}
         </div>
 
         {/* Email + Phone */}
@@ -127,7 +155,14 @@ function OrderFormModal({
               onChange={(e) =>
                 setForm((f) => ({ ...f, email: e.target.value }))
               }
+              error={Boolean(errors.email)}
             />
+
+            {errors.email && (
+              <p className="mt-1.5 font-estedad text-xs text-danger">
+                {errors.email}
+              </p>
+            )}
           </div>
 
           <div>

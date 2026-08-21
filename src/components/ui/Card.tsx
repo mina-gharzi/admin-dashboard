@@ -23,11 +23,11 @@ function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
-        "rounded-2xl",
-        "border border-border",
+        "rounded-[var(--radius-card)]",
+        "border-[var(--border-width-default)] border-border",
         "bg-surface",
         "text-text-primary",
-        "shadow-sm",
+        "shadow-[var(--shadow-card)]",
         className,
       )}
       {...props}
@@ -44,7 +44,7 @@ function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
 function CardHeader({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("flex flex-col", "gap-1.5", "p-6", className)}
+      className={cn("flex flex-col", "gap-1.5", "p-[var(--spacing-card)]", className)}
       {...props}
     />
   );
@@ -106,7 +106,7 @@ function CardDescription({
 */
 
 function CardContent({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("px-6", "pb-6", className)} {...props} />;
+  return <div className={cn("px-[var(--spacing-card)]", "pb-[var(--spacing-card)]", className)} {...props} />;
 }
 
 /*

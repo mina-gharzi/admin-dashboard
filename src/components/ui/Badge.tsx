@@ -33,7 +33,7 @@ const badgeVariants = cva(
     "justify-center",
     "whitespace-nowrap",
 
-    "rounded-full",
+    "rounded-[var(--radius-pill)]",
 
     "px-2.5",
     "py-1",
@@ -45,17 +45,17 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        success: ["bg-green-100", "text-success"],
+        success: ["bg-success-soft", "text-success"],
 
-        warning: ["bg-amber-100", "text-amber-700"],
+        warning: ["bg-warning-soft", "text-warning"],
 
-        danger: ["bg-red-100", "text-danger"],
+        danger: ["bg-danger-soft", "text-danger"],
 
-        info: ["bg-sky-100", "text-info"],
+        info: ["bg-info-soft", "text-info"],
 
         primary: ["bg-primary-100", "text-primary-900"],
 
-        neutral: ["bg-slate-100", "text-text-secondary"],
+        neutral: ["bg-surface-muted", "text-text-secondary"],
       },
     },
 

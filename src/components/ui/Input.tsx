@@ -47,11 +47,11 @@ function Input({ className, error = false, ...props }: InputProps) {
         "text-text-primary",
 
         // Spacing
-        "px-3",
+        "px-[var(--spacing-control-x)]",
 
         // Shape
-        "rounded-xl",
-        "border",
+        "rounded-[var(--radius-control)]",
+        "border-[var(--border-width-default)] border",
 
         // Default colors
         "border-border",
@@ -63,16 +63,15 @@ function Input({ className, error = false, ...props }: InputProps) {
         // Focus
         "outline-none",
         "focus:border-primary-900",
-        "focus:ring-2",
-        "focus:ring-primary-100",
+        "ds-focus-ring",
 
         // Disabled
         "disabled:cursor-not-allowed",
-        "disabled:bg-neutral-100",
+        "disabled:bg-surface-muted",
         "disabled:opacity-60",
 
         // Error
-        error && ["border-danger", "focus:border-danger", "focus:ring-red-100"],
+        error && ["border-danger", "focus:border-danger", "focus:ring-danger-soft"],
 
         className,
       )}

@@ -49,26 +49,26 @@ import { formatPrice } from "../utils/format";
   ----------------------------------------------------------
 */
 const statusMeta = {
-  pending: { label: "در انتظار", color: "#f59e0b", badge: "warning" as const },
+  pending: { label: "در انتظار", color: "var(--color-warning)", badge: "warning" as const },
   processing: {
     label: "در حال پردازش",
-    color: "#0284c7",
+    color: "var(--color-info)",
     badge: "info" as const,
   },
   completed: {
     label: "تکمیل شده",
-    color: "#16a34a",
+    color: "var(--color-success)",
     badge: "success" as const,
   },
-  cancelled: { label: "لغو شده", color: "#dc2626", badge: "danger" as const },
+  cancelled: { label: "لغو شده", color: "var(--color-danger)", badge: "danger" as const },
 };
 
 const roleMeta = {
-  system_admin: { label: "مدیر کل سیستم", color: "#111844" },
-  admin: { label: "ادمین", color: "#0284c7" },
-  sales_manager: { label: "مدیر فروش", color: "#16a34a" },
-  salesperson: { label: "فروشنده", color: "#d97706" },
-  analyst: { label: "تحلیل‌گر", color: "#64748b" },
+  system_admin: { label: "مدیر کل سیستم", color: "var(--color-primary-900)" },
+  admin: { label: "ادمین", color: "var(--color-info)" },
+  sales_manager: { label: "مدیر فروش", color: "var(--color-success)" },
+  salesperson: { label: "فروشنده", color: "var(--color-warning)" },
+  analyst: { label: "تحلیل‌گر", color: "var(--color-text-secondary)" },
 };
 
 /*
@@ -80,7 +80,7 @@ const CustomPieTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0];
     return (
-      <div className="rounded-xl border border-primary-300/70 bg-white/95 p-3 shadow-xl backdrop-blur-md">
+      <div className="rounded-xl border border-primary-300/70 bg-surface/95 p-3 shadow-[var(--shadow-card-hover)] backdrop-blur-md">
         <div className="flex items-center gap-2">
           <span
             className="h-2.5 w-2.5 rounded-full"
@@ -106,7 +106,7 @@ const CustomBarTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0];
     return (
-      <div className="rounded-xl border border-primary-300/70 bg-white/95 p-3 shadow-xl backdrop-blur-md">
+      <div className="rounded-xl border border-primary-300/70 bg-surface/95 p-3 shadow-[var(--shadow-card-hover)] backdrop-blur-md">
         <span className="font-estedad text-xs font-bold text-text-primary">
           {data.payload.category}
         </span>
@@ -158,7 +158,7 @@ function Analytics() {
 
   if (error || !summary) {
     return (
-      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 rounded-[28px] border border-danger/20 bg-danger/5 p-8 text-center">
+      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 rounded-[var(--radius-panel)] border border-danger/20 bg-danger/5 p-8 text-center">
         <p className="font-estedad text-sm font-bold text-danger">
           خطا در دریافت گزارشات سیستم. لطفا دوباره تلاش کنید.
         </p>
@@ -249,7 +249,7 @@ function Analytics() {
           return (
             <Card
               key={card.title}
-              className="group relative overflow-hidden border border-primary-300/60 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary-700/40 hover:shadow-xl hover:shadow-primary-900/5"
+              className="group relative overflow-hidden border border-primary-300/60 p-5 transition-all ds-transition-slow hover:-translate-y-1 hover:border-primary-700/40 hover:shadow-[var(--shadow-card-hover)]"
             >
               <div className="flex items-start justify-between">
                 <div>
@@ -267,7 +267,7 @@ function Analytics() {
                 </div>
 
                 <div
-                  className={`flex h-11 w-11 items-center justify-center rounded-2xl ${card.bg} transition-transform duration-300 group-hover:scale-110 shadow-sm`}
+                  className={`flex h-11 w-11 items-center justify-center rounded-2xl ${card.bg} transition-transform ds-transition-slow group-hover:scale-110 shadow-sm`}
                 >
                   <Icon size={21} strokeWidth={2.2} />
                 </div>
@@ -323,7 +323,7 @@ function Analytics() {
                         <Cell
                           key={entry.key}
                           fill={entry.color}
-                          className="transition-all duration-300 hover:opacity-80"
+                          className="transition-all ds-transition-slow hover:opacity-80"
                         />
                       ))}
                     </Pie>
@@ -390,7 +390,7 @@ function Analytics() {
                         <Cell
                           key={entry.key}
                           fill={entry.color}
-                          className="transition-all duration-300 hover:opacity-80"
+                          className="transition-all ds-transition-slow hover:opacity-80"
                         />
                       ))}
                     </Pie>
@@ -452,7 +452,7 @@ function Analytics() {
                 <CartesianGrid
                   strokeDasharray="4 4"
                   vertical={false}
-                  stroke="#E6F2DD"
+                  stroke="var(--color-primary-50)"
                 />
                 <XAxis
                   dataKey="category"
@@ -460,7 +460,7 @@ function Analytics() {
                   tickLine={false}
                   tick={{
                     fontSize: 11,
-                    fill: "#64748B",
+                    fill: "var(--color-text-secondary)",
                     fontFamily: "Estedad",
                   }}
                   dy={8}
@@ -469,15 +469,15 @@ function Analytics() {
                   axisLine={false}
                   tickLine={false}
                   allowDecimals={false}
-                  tick={{ fontSize: 10, fill: "#64748B", fontFamily: "Inter" }}
+                  tick={{ fontSize: 10, fill: "var(--color-text-secondary)", fontFamily: "Inter" }}
                 />
                 <Tooltip
                   content={<CustomBarTooltip />}
-                  cursor={{ fill: "rgba(17, 24, 68, 0.03)" }}
+                  cursor={{ fill: "var(--color-primary-900)" }}
                 />
                 <Bar
                   dataKey="count"
-                  fill="#111844"
+                  fill="var(--color-primary-900)"
                   radius={[10, 10, 0, 0]}
                   barSize={42}
                 />
