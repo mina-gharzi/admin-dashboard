@@ -20,6 +20,7 @@ import { Textarea } from "../ui/Textarea";
 import Button from "../ui/Button";
 
 import type { Product } from "../../services/api";
+import { PRODUCT_CATEGORIES } from "../../data/productCategories";
 
 /*
   ----------------------------------------------------------
@@ -36,11 +37,12 @@ interface ProductFormModalProps {
 
 /*
   ----------------------------------------------------------
-  Categories (باید با ProductFilters.tsx هماهنگ باشه)
+  Categories — از src/data/productCategories.ts میاد تا با
+  ProductFilters.tsx همیشه هماهنگ بمونه (تک‌منبع مشترک)
   ----------------------------------------------------------
 */
 
-const categories = ["موبایل", "لپ‌تاپ", "هدفون", "ساعت هوشمند"];
+const categories = PRODUCT_CATEGORIES;
 
 /*
   ----------------------------------------------------------

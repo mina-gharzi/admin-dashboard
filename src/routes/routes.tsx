@@ -29,6 +29,7 @@ import Orders from "../pages/Orders";
 import OrderDetails from "../pages/OrderDetails";
 
 import Analytics from "../pages/Analytics";
+import Team from "../pages/Team";
 import Settings from "../pages/Settings";
 import Forbidden from "../pages/Forbidden";
 import NotFound from "../pages/NotFound";
@@ -45,11 +46,12 @@ import NotFound from "../pages/NotFound";
   هدایت میشن.
 
   RequireRole (RBAC):
-  فقط صفحه‌ی گزارش‌ها (analytics) به نقش خاصی نیاز داره —
-  زیر RequireRole قرار گرفته و طبق src/utils/permissions.ts
-  چک میشه. کاربر بدون دسترسی به /dashboard/forbidden هدایت
-  میشه. بقیه‌ی صفحات (مشتریان، محصولات، سفارش‌ها، تنظیمات)
-  برای همه‌ی نقش‌های لاگین‌شده بازن.
+  صفحه‌ی گزارش‌ها (analytics) و تیم (team) به نقش خاصی نیاز
+  دارن — زیر RequireRole قرار گرفتن و طبق
+  src/utils/permissions.ts چک میشن. کاربر بدون دسترسی به
+  /dashboard/forbidden هدایت میشه. بقیه‌ی صفحات (مشتریان،
+  محصولات، سفارش‌ها، تنظیمات) برای همه‌ی نقش‌های لاگین‌شده
+  بازن.
   ==========================================================
 */
 
@@ -90,6 +92,10 @@ const router = createBrowserRouter([
               {
                 path: "analytics",
                 element: <Analytics />,
+              },
+              {
+                path: "team",
+                element: <Team />,
               },
             ],
           },

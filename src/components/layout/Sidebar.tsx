@@ -23,6 +23,7 @@ import {
   Package,
   BarChart3,
   Settings,
+  UsersRound,
   LogOut,
   PanelRightClose,
   PanelRightOpen,
@@ -120,6 +121,9 @@ function Sidebar() {
   const visibleNavigationItems = navigationItems.filter((item) =>
     canAccessPath(role, item.path),
   );
+
+  // «تیم» فقط برای مدیر کل سیستم قابل مشاهده‌ست
+  const canSeeTeam = canAccessPath(role, "/dashboard/team");
 
   return (
     <>
@@ -368,10 +372,44 @@ function Sidebar() {
         </nav>
 
         {/* ==================================================
-            Bottom Actions
+            Bottom Actions — گروه مدیریتی (تیم + تنظیمات)،
+            با یه خط جدا از منوی اصلی بالا تفکیک شده.
             ================================================== */}
 
         <div className="border-t border-border p-4">
+          {/* ==================================================
+              Team — فقط مدیر کل سیستم
+              ================================================== */}
+
+          {canSeeTeam && (
+            <NavLink
+              to="/dashboard/team"
+              onClick={closeMobileSidebar}
+              className={({ isActive }) =>
+                cn(
+                  "mb-1 flex items-center",
+                  "rounded-xl py-2.5",
+                  "font-estedad text-sm",
+                  "transition-colors",
+
+                  isSidebarCollapsed ? "justify-center" : "gap-3 px-3",
+
+                  isActive
+                    ? "bg-primary-100 text-primary-900"
+                    : [
+                        "text-text-secondary",
+                        "hover:bg-primary-100",
+                        "hover:text-primary-900",
+                      ],
+                )
+              }
+            >
+              <UsersRound size={19} strokeWidth={1.8} />
+
+              {!isSidebarCollapsed && <span>تیم</span>}
+            </NavLink>
+          )}
+
           {/* ==================================================
               Settings
               ================================================== */}

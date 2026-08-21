@@ -90,6 +90,7 @@ const PAGE_ACCESS: Record<string, Role[]> = {
   "/dashboard/customers": ALL_ROLES,
   "/dashboard/products": ALL_ROLES,
   "/dashboard/orders": ALL_ROLES,
+  "/dashboard/team": ["system_admin"],
   "/dashboard/analytics": [
     "system_admin",
     "admin",
@@ -122,9 +123,6 @@ export function canAccessPath(role: Role | undefined, path: string): boolean {
 export const permissions = {
   /** پاک‌سازی کامل / بازنشانی داده‌های سیستم (Settings) — فقط مدیر کل */
   canManageSystemData: (role?: Role) => role === "system_admin",
-
-  /** مدیریت اعضای تیم/کارکنان (افزودن/ویرایش/حذف) — فقط مدیر کل سیستم */
-  canManageTeam: (role?: Role) => role === "system_admin",
 
   /** افزودن/ویرایش/حذف محصول — تحلیل‌گر فقط مشاهده‌گره */
   canManageProducts: (role?: Role) => role !== "analyst",

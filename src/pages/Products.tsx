@@ -35,6 +35,7 @@ function Products() {
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("همه");
+  const [status, setStatus] = useState("همه");
   const [formModal, setFormModal] = useState<{
     open: boolean;
     editingProduct: Product | null;
@@ -47,29 +48,42 @@ function Products() {
     return products.filter((product) => {
       const matchesSearch = product.name.toLowerCase().includes(searchValue);
       const matchesCategory = category === "همه" || product.category === category;
-      return matchesSearch && matchesCategory;
+      const matchesStatus = status === "همه" || product.status === status;
+      return matchesSearch && matchesCategory && matchesStatus;
     });
-  }, [products, search, category]);
+  }, [products, search, category, status]);
 
   const openCreateModal = () => setFormModal({ open: true, editingProduct: null });
   const openEditModal = (product: Product) => setFormModal({ open: true, editingProduct: product });
   const closeFormModal = () => setFormModal({ open: false, editingProduct: null });
 
   const handleFormSubmit = async (data: Omit<Product, "id">) => {
-    if (formModal.editingProduct) {
-      await api.products.update(formModal.editingProduct.id, data);
-      toast.success(`محصول «${data.name}» ویرایش شد.`);
-    } else {
-      await api.products.create(data);
-      toast.success(`محصول «${data.name}» با موفقیت اضافه شد.`);
+    try {
+      if (formModal.editingProduct) {
+        await api.products.update(formModal.editingProduct.id, data);
+        toast.success(`محصول «${data.name}» ویرایش شد.`);
+      } else {
+        await api.products.create(data);
+        toast.success(`محصول «${data.name}» با موفقیت اضافه شد.`);
+      }
+      await refetch();
+    } catch (err) {
+      toast.error("خطا در ذخیره‌سازی محصول. دوباره تلاش کنید.");
+      // دوباره throw می‌کنیم تا ProductFormModal مودال رو نبنده
+      // (چون موفقیت‌آمیز نبوده) و کاربر بتونه دوباره تلاش کنه
+      throw err;
     }
-    await refetch();
   };
 
   const handleDelete = async (id: number) => {
-    await api.products.delete(id);
-    toast.success("محصول حذف شد.");
-    await refetch();
+    try {
+      await api.products.delete(id);
+      toast.success("محصول حذف شد.");
+      await refetch();
+    } catch (err) {
+      toast.error("خطا در حذف محصول. دوباره تلاش کنید.");
+      throw err;
+    }
   };
 
   const activeCount = products?.filter((item) => item.status === "active").length ?? 0;
@@ -153,8 +167,10 @@ function Products() {
         <ProductFilters
           search={search}
           category={category}
+          status={status}
           onSearchChange={setSearch}
           onCategoryChange={setCategory}
+          onStatusChange={setStatus}
           resultCount={filteredProducts.length}
         />
 
@@ -174,6 +190,9 @@ function Products() {
             </div>
             <p className="font-estedad text-sm font-medium text-text-primary">خطا در دریافت اطلاعات</p>
             <p className="font-estedad text-xs text-text-secondary">{error.message}</p>
+            <Button variant="outline" size="sm" onClick={() => refetch()} className="mt-1">
+              تلاش مجدد
+            </Button>
           </div>
         )}
 
@@ -196,7 +215,7 @@ function Products() {
         {!loading && !error && products && products.length > 0 && filteredProducts.length === 0 && (
           <div className="flex min-h-56 flex-col items-center justify-center gap-2 p-10 text-center">
             <p className="font-estedad text-sm font-medium text-text-primary">محصولی با این فیلتر پیدا نشد</p>
-            <p className="font-estedad text-xs text-text-secondary">جستجو یا دسته‌بندی انتخاب‌شده را تغییر دهید.</p>
+            <p className="font-estedad text-xs text-text-secondary">جستجو، دسته‌بندی یا وضعیت انتخاب‌شده را تغییر دهید.</p>
           </div>
         )}
 

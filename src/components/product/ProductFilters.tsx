@@ -1,41 +1,112 @@
-import { Search, SlidersHorizontal } from "lucide-react";
+/*
+  ==========================================================
+  ProductFilters.tsx
+  ----------------------------------------------------------
+  نوار فیلتر صفحه‌ی محصولات — جستجو، دسته‌بندی، وضعیت.
+  ==========================================================
+*/
+
+import { Search, SlidersHorizontal, X } from "lucide-react";
+
 import { Input } from "../ui/Input";
+import { PRODUCT_CATEGORIES } from "../../data/productCategories";
 
 interface ProductFiltersProps {
   search: string;
   category: string;
+  status: string;
   onSearchChange: (value: string) => void;
   onCategoryChange: (value: string) => void;
+  onStatusChange: (value: string) => void;
   resultCount: number;
 }
 
-const categories = ["همه", "موبایل", "لپ‌تاپ", "هدفون", "ساعت هوشمند"];
+const categories = ["همه", ...PRODUCT_CATEGORIES];
+
+const statuses = [
+  { value: "همه", label: "همه وضعیت‌ها" },
+  { value: "active", label: "فعال" },
+  { value: "inactive", label: "غیرفعال" },
+];
 
 function ProductFilters({
   search,
   category,
+  status,
   onSearchChange,
   onCategoryChange,
+  onStatusChange,
   resultCount,
 }: ProductFiltersProps) {
+  const hasFilters =
+    search.length > 0 || category !== "همه" || status !== "همه";
+
+  const clearFilters = () => {
+    onSearchChange("");
+    onCategoryChange("همه");
+    onStatusChange("همه");
+  };
+
   return (
     <div className="border-b border-primary-300/60 bg-surface px-5 py-4">
-      <div className="flex flex-col gap-4 desktop:flex-row desktop:items-center desktop:justify-between">
-        <div className="flex min-w-0 flex-1 items-center gap-3">
+      <div className="flex flex-col gap-4">
+        {/* Search + Status + Result Count */}
+        <div className="flex flex-col gap-3 desktop:flex-row desktop:items-center">
           <div className="relative w-full desktop:max-w-sm">
-            <Search size={16} className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-text-secondary" />
+            <Search
+              size={16}
+              className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-text-secondary"
+            />
             <Input
               value={search}
               onChange={(event) => onSearchChange(event.target.value)}
               placeholder="جستجوی محصول..."
               className="h-10 pr-10"
             />
+            {search && (
+              <button
+                type="button"
+                onClick={() => onSearchChange("")}
+                aria-label="پاک کردن جستجو"
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 rounded-lg p-1 text-text-secondary transition-colors hover:bg-primary-100 hover:text-primary-900"
+              >
+                <X size={14} />
+              </button>
+            )}
           </div>
-          <div className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-900 tablet:flex">
-            <SlidersHorizontal size={16} />
+
+          <div className="flex h-10 items-center gap-2 rounded-xl border border-primary-300/70 bg-background/60 px-3 transition-colors focus-within:border-primary-900">
+            <SlidersHorizontal size={15} className="text-text-secondary" />
+            <select
+              value={status}
+              onChange={(event) => onStatusChange(event.target.value)}
+              className="h-full cursor-pointer bg-transparent font-estedad text-xs text-text-primary outline-none"
+            >
+              {statuses.map((item) => (
+                <option key={item.value} value={item.value}>
+                  {item.label}
+                </option>
+              ))}
+            </select>
           </div>
+
+          {hasFilters && (
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="inline-flex h-10 items-center gap-1 rounded-xl px-3 font-estedad text-xs font-medium text-text-secondary transition-colors hover:bg-primary-100 hover:text-primary-900"
+            >
+              <X size={13} />
+              پاک کردن فیلترها
+            </button>
+          )}
+
+          <span className="shrink-0 font-estedad text-xs text-text-secondary desktop:mr-auto">
+            {resultCount.toLocaleString("fa-IR")} محصول
+          </span>
         </div>
 
+        {/* Category Chips */}
         <div className="flex flex-wrap items-center gap-1.5">
           {categories.map((item) => {
             const active = category === item;
@@ -55,10 +126,6 @@ function ProductFilters({
             );
           })}
         </div>
-
-        <span className="shrink-0 font-estedad text-xs text-text-secondary">
-          {resultCount.toLocaleString("fa-IR")} محصول
-        </span>
       </div>
     </div>
   );
