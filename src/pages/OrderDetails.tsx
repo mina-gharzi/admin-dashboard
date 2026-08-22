@@ -23,7 +23,6 @@ import {
   Clock3,
   Edit,
   Package,
-  RefreshCw,
   Trash2,
   Truck,
   XCircle,
@@ -35,6 +34,7 @@ import { Badge } from "../components/ui/Badge";
 import { Modal } from "../components/ui/Modal";
 import Button from "../components/ui/Button";
 import PageHeader from "../components/ui/PageHeader";
+import { DetailLoadingState, DetailMissingState } from "../components/ui/DetailState";
 import OrderFormModal from "../components/order/OrderFormModal";
 
 import { useData } from "../hooks/useData";
@@ -77,16 +77,7 @@ function OrderDetails() {
   */
 
   if (loading) {
-    return (
-      <div className="flex min-h-[50vh] items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-primary-100 border-t-primary-900" />
-          <p className="font-estedad text-sm text-text-secondary">
-            در حال بارگذاری سفارش...
-          </p>
-        </div>
-      </div>
-    );
+    return <DetailLoadingState text="در حال بارگذاری سفارش..." />;
   }
 
   /*
@@ -97,30 +88,15 @@ function OrderDetails() {
 
   if (error || !order) {
     return (
-      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-100 text-primary-900">
-          <Package size={25} />
-        </div>
-        <p className="font-estedad text-sm font-semibold text-text-primary">
-          سفارش مورد نظر پیدا نشد
-        </p>
-        <p className="font-estedad text-xs text-text-secondary">
-          ممکن است سفارش حذف شده یا شناسه اشتباه باشد.
-        </p>
-
-        <div className="mt-2 flex items-center gap-2">
-          {error && (
-            <Button variant="outline" onClick={() => refetch()}>
-              <RefreshCw size={16} />
-              تلاش مجدد
-            </Button>
-          )}
-          <Button onClick={() => navigate("/dashboard/orders")}>
-            <ArrowRight size={17} />
-            بازگشت به سفارش‌ها
-          </Button>
-        </div>
-      </div>
+      <DetailMissingState
+        icon={Package}
+        title="سفارش مورد نظر پیدا نشد"
+        description="ممکن است سفارش حذف شده یا شناسه اشتباه باشد."
+        error={error}
+        onRetry={refetch}
+        backLabel="بازگشت به سفارش‌ها"
+        onBack={() => navigate("/dashboard/orders")}
+      />
     );
   }
 

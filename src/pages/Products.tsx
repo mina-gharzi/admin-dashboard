@@ -7,20 +7,23 @@
 */
 
 import { useMemo, useState } from "react";
-import { AlertCircle, Download, Package, Plus } from "lucide-react";
+import { Download, Package, Plus } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { Card } from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import PageHeader from "../components/ui/PageHeader";
+import ResourceState from "../components/ui/ResourceState";
 import ProductTable from "../components/product/ProductTable";
 import ProductFilters from "../components/product/ProductFilters";
 import ProductFormModal from "../components/product/ProductFormModal";
 
 import { useData } from "../hooks/useData";
+import { useEditModal } from "../hooks/useEditModal";
 import { api, type Product } from "../services/api";
 import { formatPrice } from "../utils/format";
 import { exportToCsv, getFileDateStamp } from "../utils/exportToCsv";
+import { runWithToast } from "../utils/toastAction";
 import { useAuthStore } from "../store";
 import { permissions } from "../utils/permissions";
 
@@ -36,10 +39,8 @@ function Products() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("همه");
   const [status, setStatus] = useState("همه");
-  const [formModal, setFormModal] = useState<{
-    open: boolean;
-    editingProduct: Product | null;
-  }>({ open: false, editingProduct: null });
+
+  const formModal = useEditModal<Product>();
 
   const filteredProducts = useMemo(() => {
     if (!products) return [];
@@ -53,37 +54,28 @@ function Products() {
     });
   }, [products, search, category, status]);
 
-  const openCreateModal = () => setFormModal({ open: true, editingProduct: null });
-  const openEditModal = (product: Product) => setFormModal({ open: true, editingProduct: product });
-  const closeFormModal = () => setFormModal({ open: false, editingProduct: null });
-
   const handleFormSubmit = async (data: Omit<Product, "id">) => {
-    try {
-      if (formModal.editingProduct) {
-        await api.products.update(formModal.editingProduct.id, data);
-        toast.success(`محصول «${data.name}» ویرایش شد.`);
-      } else {
-        await api.products.create(data);
-        toast.success(`محصول «${data.name}» با موفقیت اضافه شد.`);
-      }
-      await refetch();
-    } catch (err) {
-      toast.error("خطا در ذخیره‌سازی محصول. دوباره تلاش کنید.");
-      // دوباره throw می‌کنیم تا ProductFormModal مودال رو نبنده
-      // (چون موفقیت‌آمیز نبوده) و کاربر بتونه دوباره تلاش کنه
-      throw err;
-    }
+    await runWithToast(
+      () =>
+        formModal.editingItem
+          ? api.products.update(formModal.editingItem.id, data)
+          : api.products.create(data),
+      {
+        success: formModal.editingItem
+          ? `محصول «${data.name}» ویرایش شد.`
+          : `محصول «${data.name}» با موفقیت اضافه شد.`,
+        error: "خطا در ذخیره‌سازی محصول. دوباره تلاش کنید.",
+      },
+    );
+    await refetch();
   };
 
   const handleDelete = async (id: number) => {
-    try {
-      await api.products.delete(id);
-      toast.success("محصول حذف شد.");
-      await refetch();
-    } catch (err) {
-      toast.error("خطا در حذف محصول. دوباره تلاش کنید.");
-      throw err;
-    }
+    await runWithToast(() => api.products.delete(id), {
+      success: "محصول حذف شد.",
+      error: "خطا در حذف محصول. دوباره تلاش کنید.",
+    });
+    await refetch();
   };
 
   const activeCount = products?.filter((item) => item.status === "active").length ?? 0;
@@ -133,7 +125,7 @@ function Products() {
             </Button>
 
             {canManage && (
-              <Button onClick={openCreateModal}>
+              <Button onClick={formModal.openCreate}>
                 <Plus size={18} />
                 افزودن محصول
               </Button>
@@ -174,62 +166,41 @@ function Products() {
           resultCount={filteredProducts.length}
         />
 
-        {loading && (
-          <div className="flex min-h-72 items-center justify-center p-12">
-            <div className="flex flex-col items-center gap-3">
-              <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-primary-100 border-t-primary-900" />
-              <p className="font-estedad text-sm text-text-secondary">در حال بارگذاری محصولات...</p>
-            </div>
-          </div>
-        )}
-
-        {!loading && error && (
-          <div className="flex min-h-72 flex-col items-center justify-center gap-3 p-12 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-danger/10 text-danger">
-              <AlertCircle size={24} />
-            </div>
-            <p className="font-estedad text-sm font-medium text-text-primary">خطا در دریافت اطلاعات</p>
-            <p className="font-estedad text-xs text-text-secondary">{error.message}</p>
-            <Button variant="outline" size="sm" onClick={() => refetch()} className="mt-1">
-              تلاش مجدد
-            </Button>
-          </div>
-        )}
-
-        {!loading && !error && products && products.length === 0 && (
-          <div className="flex min-h-72 flex-col items-center justify-center gap-3 p-12 text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-100 text-primary-900">
-              <Package size={24} />
-            </div>
-            <p className="font-estedad text-sm font-semibold text-text-primary">هنوز محصولی ثبت نشده است</p>
-            <p className="font-estedad text-xs text-text-secondary">برای شروع، اولین محصول فروشگاه را اضافه کنید.</p>
-            {canManage && (
-              <Button size="sm" onClick={openCreateModal} className="mt-1">
+        <ResourceState
+          loading={loading}
+          error={error}
+          onRetry={refetch}
+          loadingText="در حال بارگذاری محصولات..."
+          isEmpty={!!products && products.length === 0}
+          emptyIcon={Package}
+          emptyTitle="هنوز محصولی ثبت نشده است"
+          emptyDescription="برای شروع، اولین محصول فروشگاه را اضافه کنید."
+          emptyAction={
+            canManage && (
+              <Button size="sm" onClick={formModal.openCreate} className="mt-1">
                 <Plus size={16} />
                 افزودن اولین محصول
               </Button>
-            )}
-          </div>
-        )}
-
-        {!loading && !error && products && products.length > 0 && filteredProducts.length === 0 && (
-          <div className="flex min-h-56 flex-col items-center justify-center gap-2 p-10 text-center">
-            <p className="font-estedad text-sm font-medium text-text-primary">محصولی با این فیلتر پیدا نشد</p>
-            <p className="font-estedad text-xs text-text-secondary">جستجو، دسته‌بندی یا وضعیت انتخاب‌شده را تغییر دهید.</p>
-          </div>
-        )}
-
-        {!loading && !error && filteredProducts.length > 0 && (
-          <ProductTable products={filteredProducts} onEdit={openEditModal} onDelete={handleDelete} />
-        )}
+            )
+          }
+        >
+          {filteredProducts.length === 0 ? (
+            <div className="flex min-h-56 flex-col items-center justify-center gap-2 p-10 text-center">
+              <p className="font-estedad text-sm font-medium text-text-primary">محصولی با این فیلتر پیدا نشد</p>
+              <p className="font-estedad text-xs text-text-secondary">جستجو، دسته‌بندی یا وضعیت انتخاب‌شده را تغییر دهید.</p>
+            </div>
+          ) : (
+            <ProductTable products={filteredProducts} onEdit={formModal.openEdit} onDelete={handleDelete} />
+          )}
+        </ResourceState>
       </Card>
 
       <ProductFormModal
-        key={`${formModal.open}-${formModal.editingProduct?.id ?? "create"}`}
+        key={`${formModal.open}-${formModal.editingItem?.id ?? "create"}`}
         open={formModal.open}
-        onClose={closeFormModal}
+        onClose={formModal.close}
         onSubmit={handleFormSubmit}
-        initialProduct={formModal.editingProduct}
+        initialProduct={formModal.editingItem}
       />
     </div>
   );

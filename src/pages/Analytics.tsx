@@ -58,7 +58,7 @@ function Analytics() {
 
   if (error || !summary) {
     return (
-      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 rounded-(--radius-panel) border border-danger/20 bg-danger/5 p-8 text-center">
+      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 rounded-[var(--radius-panel)] border border-danger/20 bg-danger/5 p-8 text-center">
         <p className="font-estedad text-sm font-bold text-danger">
           خطا در دریافت گزارشات سیستم. لطفا دوباره تلاش کنید.
         </p>

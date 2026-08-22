@@ -6,22 +6,25 @@
 
 import { useMemo, useState } from "react";
 
-import { Download, Plus, Users as UsersIcon, AlertCircle } from "lucide-react";
+import { Download, Plus, Users as UsersIcon } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { Card } from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import PageHeader from "../components/ui/PageHeader";
+import ResourceState from "../components/ui/ResourceState";
 
 import UserTable from "../components/user/UserTable";
 import UserFilters from "../components/user/UserFilters";
 import UserFormModal from "../components/user/UserFormModal";
 
 import { useData } from "../hooks/useData";
+import { useEditModal } from "../hooks/useEditModal";
 import { api, type User } from "../services/api";
 import { useAuthStore } from "../store";
 import { permissions, roleLabels } from "../utils/permissions";
 import { exportToCsv, getFileDateStamp } from "../utils/exportToCsv";
+import { runWithToast } from "../utils/toastAction";
 
 function Users() {
   // ----------------------------------------------------------
@@ -67,51 +70,29 @@ function Users() {
   // ----------------------------------------------------------
   // User form modal
   // ----------------------------------------------------------
-  const [formModal, setFormModal] = useState<{
-    open: boolean;
-    editingUser: User | null;
-  }>({
-    open: false,
-    editingUser: null,
-  });
-
-  const openCreateModal = () => {
-    setFormModal({
-      open: true,
-      editingUser: null,
-    });
-  };
-
-  const openEditModal = (user: User) => {
-    setFormModal({
-      open: true,
-      editingUser: user,
-    });
-  };
-
-  const closeFormModal = () => {
-    setFormModal({
-      open: false,
-      editingUser: null,
-    });
-  };
+  const formModal = useEditModal<User>();
 
   // ----------------------------------------------------------
   // Create / Edit user
   // ----------------------------------------------------------
   const handleFormSubmit = async (data: Omit<User, "id" | "joinedAt">) => {
-    if (formModal.editingUser) {
-      await api.users.update(formModal.editingUser.id, data);
+    const editingUser = formModal.editingItem;
 
-      toast.success(`کاربر «${data.name}» ویرایش شد.`);
-    } else {
-      await api.users.create({
-        ...data,
-        joinedAt: new Date().toLocaleDateString("fa-IR"),
-      });
-
-      toast.success(`کاربر «${data.name}» با موفقیت اضافه شد.`);
-    }
+    await runWithToast(
+      () =>
+        editingUser
+          ? api.users.update(editingUser.id, data)
+          : api.users.create({
+              ...data,
+              joinedAt: new Date().toLocaleDateString("fa-IR"),
+            }),
+      {
+        success: editingUser
+          ? `کاربر «${data.name}» ویرایش شد.`
+          : `کاربر «${data.name}» با موفقیت اضافه شد.`,
+        error: "خطا در ذخیره‌سازی کاربر. دوباره تلاش کنید.",
+      },
+    );
 
     await refetch();
   };
@@ -120,9 +101,10 @@ function Users() {
   // Delete user
   // ----------------------------------------------------------
   const handleDelete = async (id: number) => {
-    await api.users.delete(id);
-
-    toast.success("کاربر حذف شد.");
+    await runWithToast(() => api.users.delete(id), {
+      success: "کاربر حذف شد.",
+      error: "خطا در حذف کاربر. دوباره تلاش کنید.",
+    });
 
     await refetch();
   };
@@ -134,7 +116,9 @@ function Users() {
     id: number,
     status: "active" | "inactive",
   ) => {
-    await api.users.update(id, { status });
+    await runWithToast(() => api.users.update(id, { status }), {
+      error: "خطا در تغییر وضعیت کاربر. دوباره تلاش کنید.",
+    });
 
     toast.info(status === "active" ? "کاربر فعال شد." : "کاربر غیرفعال شد.");
 
@@ -190,7 +174,7 @@ function Users() {
             </Button>
 
             {canCreate && (
-              <Button onClick={openCreateModal}>
+              <Button onClick={formModal.openCreate}>
                 <Plus size={18} />
                 افزودن کاربر
               </Button>
@@ -210,77 +194,41 @@ function Users() {
           resultCount={filteredUsers.length}
         />
 
-        {/* Loading State */}
-        {loading && (
-          <div className="flex flex-col items-center justify-center gap-3 p-16">
-            <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-primary-100 border-t-primary-900" />
-
-            <p className="font-estedad text-sm text-text-secondary">
-              در حال بارگذاری کاربران...
-            </p>
-          </div>
-        )}
-
-        {/* Error State */}
-        {!loading && error && (
-          <div className="flex flex-col items-center justify-center gap-3 p-16 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-danger/10 text-danger">
-              <AlertCircle size={24} />
-            </div>
-
-            <p className="font-estedad text-sm font-medium text-text-primary">
-              خطا در دریافت اطلاعات
-            </p>
-
-            <p className="font-estedad text-xs text-text-secondary">
-              {error.message}
-            </p>
-          </div>
-        )}
-
-        {/* Empty State */}
-        {!loading && !error && users && users.length === 0 && (
-          <div className="flex flex-col items-center justify-center gap-3 p-16 text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-100 text-primary-900">
-              <UsersIcon size={24} />
-            </div>
-
-            <p className="font-estedad text-sm font-bold text-text-primary">
-              هنوز هیچ کاربری ثبت نشده است
-            </p>
-
-            <p className="font-estedad text-xs text-text-secondary">
-              برای شروع، اولین کاربر خود را اضافه کنید.
-            </p>
-
-            {canCreate && (
-              <Button size="sm" onClick={openCreateModal} className="mt-2">
+        <ResourceState
+          loading={loading}
+          error={error}
+          onRetry={refetch}
+          loadingText="در حال بارگذاری کاربران..."
+          isEmpty={!!users && users.length === 0}
+          emptyIcon={UsersIcon}
+          emptyTitle="هنوز هیچ کاربری ثبت نشده است"
+          emptyDescription="برای شروع، اولین کاربر خود را اضافه کنید."
+          emptyAction={
+            canCreate && (
+              <Button size="sm" onClick={formModal.openCreate} className="mt-2">
                 <Plus size={16} />
                 افزودن اولین کاربر
               </Button>
-            )}
-          </div>
-        )}
-
-        {/* Users Table */}
-        {!loading && !error && users && users.length > 0 && (
+            )
+          }
+        >
           <UserTable
             users={filteredUsers}
-            onEdit={openEditModal}
+            onEdit={formModal.openEdit}
             onDelete={handleDelete}
             onToggleStatus={handleToggleStatus}
           />
-        )}
+        </ResourceState>
       </Card>
 
       {/* User Form Modal */}
       <UserFormModal
-        key={`${formModal.open}-${formModal.editingUser?.id ?? "create"}`}
+        key={`${formModal.open}-${formModal.editingItem?.id ?? "create"}`}
         open={formModal.open}
-        onClose={closeFormModal}
+        onClose={formModal.close}
         onSubmit={handleFormSubmit}
-        initialUser={formModal.editingUser}
-        readOnly={Boolean(formModal.editingUser) && !canEdit}
+        initialUser={formModal.editingItem}
+        readOnly={Boolean(formModal.editingItem) && !canEdit}
       />
     </div>
   );

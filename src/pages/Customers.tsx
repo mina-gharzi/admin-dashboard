@@ -13,12 +13,13 @@
 */
 
 import { useMemo, useState } from "react";
-import { AlertCircle, Download, Users as UsersIcon } from "lucide-react";
+import { Download, Users as UsersIcon } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { Card } from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import PageHeader from "../components/ui/PageHeader";
+import ResourceState from "../components/ui/ResourceState";
 
 import CustomerTable from "../components/customer/CustomerTable";
 import CustomerFilters from "../components/customer/CustomerFilters";
@@ -32,6 +33,7 @@ function Customers() {
     data: customers,
     loading,
     error,
+    refetch,
   } = useData(() => api.customers.getAll(), []);
 
   // ----------------------------------------------------------
@@ -112,46 +114,18 @@ function Customers() {
           resultCount={filteredCustomers.length}
         />
 
-        {loading && (
-          <div className="flex flex-col items-center justify-center gap-3 p-16">
-            <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-primary-100 border-t-primary-900" />
-            <p className="font-estedad text-sm text-text-secondary">
-              در حال بارگذاری مشتریان...
-            </p>
-          </div>
-        )}
-
-        {!loading && error && (
-          <div className="flex flex-col items-center justify-center gap-3 p-16 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-danger/10 text-danger">
-              <AlertCircle size={24} />
-            </div>
-            <p className="font-estedad text-sm font-medium text-text-primary">
-              خطا در دریافت اطلاعات
-            </p>
-            <p className="font-estedad text-xs text-text-secondary">
-              {error.message}
-            </p>
-          </div>
-        )}
-
-        {!loading && !error && customers && customers.length === 0 && (
-          <div className="flex flex-col items-center justify-center gap-3 p-16 text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-100 text-primary-900">
-              <UsersIcon size={24} />
-            </div>
-            <p className="font-estedad text-sm font-bold text-text-primary">
-              هنوز هیچ مشتری‌ای ثبت نشده است
-            </p>
-            <p className="font-estedad text-xs text-text-secondary">
-              با ثبت اولین سفارش، مشتری خودکار به این لیست اضافه می‌شود.
-            </p>
-          </div>
-        )}
-
-        {!loading && !error && customers && customers.length > 0 && (
+        <ResourceState
+          loading={loading}
+          error={error}
+          onRetry={refetch}
+          loadingText="در حال بارگذاری مشتریان..."
+          isEmpty={!!customers && customers.length === 0}
+          emptyIcon={UsersIcon}
+          emptyTitle="هنوز هیچ مشتری‌ای ثبت نشده است"
+          emptyDescription="با ثبت اولین سفارش، مشتری خودکار به این لیست اضافه می‌شود."
+        >
           <CustomerTable customers={filteredCustomers} />
-        )}
+        </ResourceState>
       </Card>
     </div>
   );

@@ -13,31 +13,31 @@
 
 import { useState } from "react";
 import { MoreHorizontal, Plus, UserRound, UsersRound } from "lucide-react";
-import { toast } from "react-toastify";
 
 import { Card } from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import PageHeader from "../components/ui/PageHeader";
+import ResourceState from "../components/ui/ResourceState";
 import { Modal } from "../components/ui/Modal";
 import { Badge } from "../components/ui/Badge";
 import { Dropdown } from "../components/ui/Dropdown";
 import TeamMemberFormModal from "../components/settings/TeamMemberFormModal";
 
 import { useData } from "../hooks/useData";
+import { useEditModal } from "../hooks/useEditModal";
 import { api, type User } from "../services/api";
 import { roleLabels, roleBadgeVariants } from "../utils/permissions";
+import { runWithToast } from "../utils/toastAction";
 
 function Team() {
   const {
     data: team,
     loading: teamLoading,
+    error: teamError,
     refetch: refetchTeam,
   } = useData(() => api.users.getAll(), []);
 
-  const [memberModal, setMemberModal] = useState<{
-    open: boolean;
-    editingMember: User | null;
-  }>({ open: false, editingMember: null });
+  const memberModal = useEditModal<User>();
 
   const [deleteMemberModal, setDeleteMemberModal] = useState<{
     open: boolean;
@@ -45,33 +45,36 @@ function Team() {
     memberName: string;
   }>({ open: false, memberId: null, memberName: "" });
 
-  const openCreateMember = () =>
-    setMemberModal({ open: true, editingMember: null });
-
-  const openEditMember = (member: User) =>
-    setMemberModal({ open: true, editingMember: member });
-
-  const closeMemberModal = () =>
-    setMemberModal({ open: false, editingMember: null });
-
   const handleMemberSubmit = async (data: Omit<User, "id" | "joinedAt">) => {
-    if (memberModal.editingMember) {
-      await api.users.update(memberModal.editingMember.id, data);
-      toast.success(`عضو تیم «${data.name}» ویرایش شد.`);
-    } else {
-      await api.users.create({
-        ...data,
-        joinedAt: new Date().toLocaleDateString("fa-IR"),
-      });
-      toast.success(`«${data.name}» به تیم اضافه شد.`);
-    }
+    const editingMember = memberModal.editingItem;
+
+    await runWithToast(
+      () =>
+        editingMember
+          ? api.users.update(editingMember.id, data)
+          : api.users.create({
+              ...data,
+              joinedAt: new Date().toLocaleDateString("fa-IR"),
+            }),
+      {
+        success: editingMember
+          ? `عضو تیم «${data.name}» ویرایش شد.`
+          : `«${data.name}» به تیم اضافه شد.`,
+        error: "خطا در ذخیره‌سازی عضو تیم. دوباره تلاش کنید.",
+      },
+    );
+
     await refetchTeam();
   };
 
   const handleMemberDelete = async () => {
     if (deleteMemberModal.memberId === null) return;
-    await api.users.delete(deleteMemberModal.memberId);
-    toast.success("عضو تیم حذف شد.");
+
+    await runWithToast(() => api.users.delete(deleteMemberModal.memberId!), {
+      success: "عضو تیم حذف شد.",
+      error: "خطا در حذف عضو تیم. دوباره تلاش کنید.",
+    });
+
     setDeleteMemberModal({ open: false, memberId: null, memberName: "" });
     await refetchTeam();
   };
@@ -83,7 +86,7 @@ function Team() {
         description="مدیریت اعضای تیم و دسترسی‌های آن‌ها"
         breadcrumbs={[{ label: "تیم" }]}
         actions={
-          <Button onClick={openCreateMember}>
+          <Button onClick={memberModal.openCreate}>
             <Plus size={18} />
             افزودن عضو
           </Button>
@@ -91,36 +94,24 @@ function Team() {
       />
 
       <Card className="overflow-hidden border border-primary-300/60 p-0 shadow-sm">
-        {teamLoading && (
-          <div className="flex flex-col items-center justify-center gap-3 p-16">
-            <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-primary-100 border-t-primary-900" />
-            <p className="font-estedad text-sm text-text-secondary">
-              در حال بارگذاری اعضای تیم...
-            </p>
-          </div>
-        )}
-
-        {!teamLoading && team && team.length === 0 && (
-          <div className="flex flex-col items-center justify-center gap-3 p-16 text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-100 text-primary-900">
-              <UsersRound size={24} />
-            </div>
-            <p className="font-estedad text-sm font-bold text-text-primary">
-              هنوز عضوی به تیم اضافه نشده است
-            </p>
-            <p className="font-estedad text-xs text-text-secondary">
-              برای شروع، اولین عضو تیم را اضافه کنید.
-            </p>
-            <Button size="sm" onClick={openCreateMember} className="mt-2">
+        <ResourceState
+          loading={teamLoading}
+          error={teamError}
+          onRetry={refetchTeam}
+          loadingText="در حال بارگذاری اعضای تیم..."
+          isEmpty={!!team && team.length === 0}
+          emptyIcon={UsersRound}
+          emptyTitle="هنوز عضوی به تیم اضافه نشده است"
+          emptyDescription="برای شروع، اولین عضو تیم را اضافه کنید."
+          emptyAction={
+            <Button size="sm" onClick={memberModal.openCreate} className="mt-2">
               <Plus size={16} />
               افزودن اولین عضو
             </Button>
-          </div>
-        )}
-
-        {!teamLoading && team && team.length > 0 && (
+          }
+        >
           <div className="divide-y divide-primary-100/60">
-            {team.map((member) => {
+            {(team ?? []).map((member) => {
               const initials = member.name
                 .trim()
                 .split(" ")
@@ -176,7 +167,7 @@ function Team() {
                       items={[
                         {
                           label: "ویرایش",
-                          onClick: () => openEditMember(member),
+                          onClick: () => memberModal.openEdit(member),
                         },
                         {
                           label: "حذف عضو",
@@ -195,16 +186,16 @@ function Team() {
               );
             })}
           </div>
-        )}
+        </ResourceState>
       </Card>
 
       {/* Team Member Form Modal */}
       <TeamMemberFormModal
-        key={`${memberModal.open}-${memberModal.editingMember?.id ?? "create"}`}
+        key={`${memberModal.open}-${memberModal.editingItem?.id ?? "create"}`}
         open={memberModal.open}
-        onClose={closeMemberModal}
+        onClose={memberModal.close}
         onSubmit={handleMemberSubmit}
-        initialMember={memberModal.editingMember}
+        initialMember={memberModal.editingItem}
       />
 
       {/* Delete Member Confirmation Modal */}

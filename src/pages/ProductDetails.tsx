@@ -16,7 +16,7 @@
 
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowRight, Edit, Package, RefreshCw, Trash2 } from "lucide-react";
+import { ArrowRight, Edit, Package, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { Card } from "../components/ui/Card";
@@ -24,6 +24,7 @@ import { Badge } from "../components/ui/Badge";
 import { Modal } from "../components/ui/Modal";
 import Button from "../components/ui/Button";
 import PageHeader from "../components/ui/PageHeader";
+import { DetailLoadingState, DetailMissingState } from "../components/ui/DetailState";
 import ProductFormModal from "../components/product/ProductFormModal";
 
 import { useData } from "../hooks/useData";
@@ -58,16 +59,7 @@ function ProductDetails() {
   */
 
   if (loading) {
-    return (
-      <div className="flex min-h-[50vh] items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-primary-100 border-t-primary-900" />
-          <p className="font-estedad text-sm text-text-secondary">
-            در حال بارگذاری محصول...
-          </p>
-        </div>
-      </div>
-    );
+    return <DetailLoadingState text="در حال بارگذاری محصول..." />;
   }
 
   /*
@@ -78,30 +70,15 @@ function ProductDetails() {
 
   if (error || !product) {
     return (
-      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-100 text-primary-900">
-          <Package size={25} />
-        </div>
-        <p className="font-estedad text-sm font-semibold text-text-primary">
-          محصول مورد نظر پیدا نشد
-        </p>
-        <p className="font-estedad text-xs text-text-secondary">
-          ممکن است محصول حذف شده یا شناسه واردشده اشتباه باشد.
-        </p>
-
-        <div className="mt-2 flex items-center gap-2">
-          {error && (
-            <Button variant="outline" onClick={() => refetch()}>
-              <RefreshCw size={16} />
-              تلاش مجدد
-            </Button>
-          )}
-          <Button onClick={() => navigate("/dashboard/products")}>
-            <ArrowRight size={17} />
-            بازگشت به محصولات
-          </Button>
-        </div>
-      </div>
+      <DetailMissingState
+        icon={Package}
+        title="محصول مورد نظر پیدا نشد"
+        description="ممکن است محصول حذف شده یا شناسه واردشده اشتباه باشد."
+        error={error}
+        onRetry={refetch}
+        backLabel="بازگشت به محصولات"
+        onBack={() => navigate("/dashboard/products")}
+      />
     );
   }
 

@@ -30,6 +30,7 @@ import { Card } from "../components/ui/Card";
 import { Badge } from "../components/ui/Badge";
 import Button from "../components/ui/Button";
 import PageHeader from "../components/ui/PageHeader";
+import { DetailLoadingState, DetailMissingState } from "../components/ui/DetailState";
 
 import { useData } from "../hooks/useData";
 import { api, type Order } from "../services/api";
@@ -86,44 +87,21 @@ function CustomerDetails() {
       : 0;
 
   if (customerLoading) {
-    return (
-      <div className="flex min-h-[50vh] items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-primary-100 border-t-primary-900" />
-          <p className="font-estedad text-sm text-text-secondary">
-            در حال بارگذاری اطلاعات مشتری...
-          </p>
-        </div>
-      </div>
-    );
+    return <DetailLoadingState text="در حال بارگذاری اطلاعات مشتری..." />;
   }
 
   if (customerError || !customer) {
     return (
-      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-100 text-primary-900">
-          <UserRound size={25} strokeWidth={1.5} />
-        </div>
-        <p className="font-estedad text-sm font-semibold text-text-primary">
-          مشتری مورد نظر پیدا نشد
-        </p>
-        <p className="max-w-md font-estedad text-xs leading-6 text-text-secondary">
-          ممکن است سفارش‌های این مشتری حذف شده باشند یا ایمیل واردشده معتبر
-          نباشد.
-        </p>
-        <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
-          {customerError && (
-            <Button variant="outline" onClick={() => refetchCustomer()}>
-              <RefreshCw size={16} />
-              تلاش مجدد
-            </Button>
-          )}
-          <Button onClick={() => navigate("/dashboard/customers")}>
-            <ArrowRight size={17} />
-            بازگشت به مشتریان
-          </Button>
-        </div>
-      </div>
+      <DetailMissingState
+        icon={UserRound}
+        iconStrokeWidth={1.5}
+        title="مشتری مورد نظر پیدا نشد"
+        description="ممکن است سفارش‌های این مشتری حذف شده باشند یا ایمیل واردشده معتبر نباشد."
+        error={customerError}
+        onRetry={refetchCustomer}
+        backLabel="بازگشت به مشتریان"
+        onBack={() => navigate("/dashboard/customers")}
+      />
     );
   }
 

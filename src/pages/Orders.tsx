@@ -7,20 +7,23 @@
 */
 
 import { useMemo, useState } from "react";
-import { AlertCircle, Clock3, Download, PackageCheck, ShoppingBag } from "lucide-react";
+import { Clock3, Download, PackageCheck, ShoppingBag } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { Card } from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import PageHeader from "../components/ui/PageHeader";
+import ResourceState from "../components/ui/ResourceState";
 import OrderTable from "../components/order/OrderTable";
 import OrderFilters from "../components/order/OrderFilters";
 import OrderFormModal from "../components/order/OrderFormModal";
 
 import { useData } from "../hooks/useData";
+import { useEditModal } from "../hooks/useEditModal";
 import { api, type Order } from "../services/api";
 import { formatPrice } from "../utils/format";
 import { exportToCsv, getFileDateStamp } from "../utils/exportToCsv";
+import { runWithToast } from "../utils/toastAction";
 
 const orderStatusLabels: Record<Order["status"], string> = {
   pending: "در انتظار",
@@ -40,10 +43,7 @@ function Orders() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("همه");
 
-  const [editModal, setEditModal] = useState<{
-    open: boolean;
-    order: Order | null;
-  }>({ open: false, order: null });
+  const editModal = useEditModal<Order>();
 
   const filteredOrders = useMemo(() => {
     if (!orders) return [];
@@ -62,38 +62,31 @@ function Orders() {
   }, [orders, search, status]);
 
   const handleEditSubmit = async (data: Partial<Order>) => {
-    if (!editModal.order) return;
+    const editingOrder = editModal.editingItem;
+    if (!editingOrder) return;
 
-    try {
-      await api.orders.update(editModal.order.id, data);
-      toast.success(`سفارش #${editModal.order.id} ویرایش شد.`);
-      await refetch();
-    } catch (err) {
-      toast.error("خطا در ذخیره‌سازی سفارش. دوباره تلاش کنید.");
-      throw err;
-    }
+    await runWithToast(() => api.orders.update(editingOrder.id, data), {
+      success: `سفارش #${editingOrder.id} ویرایش شد.`,
+      error: "خطا در ذخیره‌سازی سفارش. دوباره تلاش کنید.",
+    });
+    await refetch();
   };
 
   const handleCancel = async (id: string) => {
-    try {
-      await api.orders.update(id, { status: "cancelled" });
-      toast.info(`سفارش #${id} لغو شد.`);
-      await refetch();
-    } catch (err) {
-      toast.error("خطا در لغو سفارش. دوباره تلاش کنید.");
-      throw err;
-    }
+    await runWithToast(
+      () => api.orders.update(id, { status: "cancelled" }),
+      { error: "خطا در لغو سفارش. دوباره تلاش کنید." },
+    );
+    toast.info(`سفارش #${id} لغو شد.`);
+    await refetch();
   };
 
   const handleDelete = async (id: string) => {
-    try {
-      await api.orders.delete(id);
-      toast.success(`سفارش #${id} حذف شد.`);
-      await refetch();
-    } catch (err) {
-      toast.error("خطا در حذف سفارش. دوباره تلاش کنید.");
-      throw err;
-    }
+    await runWithToast(() => api.orders.delete(id), {
+      success: `سفارش #${id} حذف شد.`,
+      error: "خطا در حذف سفارش. دوباره تلاش کنید.",
+    });
+    await refetch();
   };
 
   const pending = orders?.filter((item) => item.status === "pending").length ?? 0;
@@ -189,72 +182,41 @@ function Orders() {
           resultCount={filteredOrders.length}
         />
 
-        {loading && (
-          <div className="flex min-h-72 items-center justify-center p-12">
-            <div className="flex flex-col items-center gap-3">
-              <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-primary-100 border-t-primary-900" />
-              <p className="font-estedad text-sm text-text-secondary">
-                در حال بارگذاری سفارش‌ها...
+        <ResourceState
+          loading={loading}
+          error={error}
+          onRetry={refetch}
+          loadingText="در حال بارگذاری سفارش‌ها..."
+          isEmpty={!!orders && orders.length === 0}
+          emptyTitle="هنوز سفارشی ثبت نشده است"
+          emptyDescription="با ثبت اولین سفارش، اطلاعات آن در این بخش نمایش داده می‌شود."
+        >
+          {filteredOrders.length === 0 ? (
+            <div className="flex min-h-56 flex-col items-center justify-center gap-2 p-10 text-center">
+              <p className="font-estedad text-sm font-medium text-text-primary">
+                سفارشی با این فیلتر پیدا نشد
+              </p>
+              <p className="font-estedad text-xs text-text-secondary">
+                عبارت جستجو یا وضعیت انتخاب‌شده را تغییر دهید.
               </p>
             </div>
-          </div>
-        )}
-
-        {!loading && error && (
-          <div className="flex min-h-72 flex-col items-center justify-center gap-3 p-12 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-danger/10 text-danger">
-              <AlertCircle size={24} />
-            </div>
-            <p className="font-estedad text-sm font-medium text-text-primary">
-              خطا در دریافت اطلاعات
-            </p>
-            <p className="font-estedad text-xs text-text-secondary">
-              {error.message}
-            </p>
-            <Button variant="outline" size="sm" onClick={() => refetch()} className="mt-1">
-              تلاش مجدد
-            </Button>
-          </div>
-        )}
-
-        {!loading && !error && orders && orders.length === 0 && (
-          <div className="flex min-h-72 flex-col items-center justify-center gap-2 p-12 text-center">
-            <p className="font-estedad text-sm font-semibold text-text-primary">
-              هنوز سفارشی ثبت نشده است
-            </p>
-            <p className="font-estedad text-xs text-text-secondary">
-              با ثبت اولین سفارش، اطلاعات آن در این بخش نمایش داده می‌شود.
-            </p>
-          </div>
-        )}
-
-        {!loading && !error && orders && orders.length > 0 && filteredOrders.length === 0 && (
-          <div className="flex min-h-56 flex-col items-center justify-center gap-2 p-10 text-center">
-            <p className="font-estedad text-sm font-medium text-text-primary">
-              سفارشی با این فیلتر پیدا نشد
-            </p>
-            <p className="font-estedad text-xs text-text-secondary">
-              عبارت جستجو یا وضعیت انتخاب‌شده را تغییر دهید.
-            </p>
-          </div>
-        )}
-
-        {!loading && !error && filteredOrders.length > 0 && (
-          <OrderTable
-            orders={filteredOrders}
-            onEdit={(order) => setEditModal({ open: true, order })}
-            onCancel={handleCancel}
-            onDelete={handleDelete}
-          />
-        )}
+          ) : (
+            <OrderTable
+              orders={filteredOrders}
+              onEdit={editModal.openEdit}
+              onCancel={handleCancel}
+              onDelete={handleDelete}
+            />
+          )}
+        </ResourceState>
       </Card>
 
       <OrderFormModal
-        key={`${editModal.open}-${editModal.order?.id ?? "none"}`}
+        key={`${editModal.open}-${editModal.editingItem?.id ?? "none"}`}
         open={editModal.open}
-        onClose={() => setEditModal({ open: false, order: null })}
+        onClose={editModal.close}
         onSubmit={handleEditSubmit}
-        order={editModal.order}
+        order={editModal.editingItem}
       />
     </div>
   );
