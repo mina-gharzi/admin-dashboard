@@ -20,69 +20,23 @@ import { loadFromStorage, saveToStorage } from "./storage";
   ----------------------------------------------------------
   Types
   ----------------------------------------------------------
-*/
-
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: "system_admin" | "admin" | "sales_manager" | "salesperson" | "analyst";
-  status: "active" | "inactive";
-  joinedAt: string;
-}
-
-export interface Product {
-  id: number;
-  name: string;
-  category: string;
-  price: number;
-  stock: number;
-  status: "active" | "inactive";
-  description?: string;
-}
-
-export interface Order {
-  id: string;
-  customer: string;
-  email: string;
-  phone?: string;
-  address?: string;
-  amount: number;
-  status: "pending" | "processing" | "completed" | "cancelled";
-  date: string;
-  items?: OrderItem[];
-}
-
-export interface OrderItem {
-  id: number;
-  name: string;
-  quantity: number;
-  price: number;
-}
-
-/*
-  ----------------------------------------------------------
-  Customer
-  ----------------------------------------------------------
-  برخلاف User (که کارکنانه)، Customer یه رکورد جدا و مستقل
-  نیست — از روی سفارش‌ها (mockOrders) به‌صورت خودکار محاسبه
-  میشه: هر ایمیل یکتا داخل سفارش‌ها = یک مشتری. یعنی این
-  پنل هیچ فرم «افزودن مشتری» نداره؛ مشتری با اولین سفارشش
-  به این لیست اضافه میشه — دقیقاً مثل یه فروشگاه واقعی.
+  تایپ‌ها به src/types منتقل شدن (هر Entity تو فایل خودش)
+  و اینجا فقط import/re-export میشن؛ خودِ تایپ‌ها هیچ
+  تغییری نکردن.
   ----------------------------------------------------------
 */
 
-export interface Customer {
-  email: string;
-  name: string;
-  phone?: string;
-  address?: string;
-  ordersCount: number;
-  totalSpent: number;
-  lastOrderDate: string;
-  /** «فعال» یعنی حداقل یک سفارش لغونشده داره */
-  status: "active" | "inactive";
-}
+export type { User } from "../types/user";
+export type { Product } from "../types/product";
+export type { Order } from "../types/order";
+export type { OrderItem } from "../types/orderItem";
+export type { Customer } from "../types/customer";
+
+import type { User } from "../types/user";
+import type { Product } from "../types/product";
+import type { Order } from "../types/order";
+import type { OrderItem } from "../types/orderItem";
+import type { Customer } from "../types/customer";
 
 /*
   ----------------------------------------------------------
