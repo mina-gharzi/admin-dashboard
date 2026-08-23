@@ -20,7 +20,6 @@ import {
   MapPin,
   Package,
   Phone,
-  RefreshCw,
   ShoppingBag,
   UserRound,
   WalletCards,
@@ -31,6 +30,7 @@ import { Badge } from "../components/ui/Badge";
 import Button from "../components/ui/Button";
 import PageHeader from "../components/ui/PageHeader";
 import { DetailLoadingState, DetailMissingState } from "../components/ui/DetailState";
+import ResourceState from "../components/ui/ResourceState";
 
 import { useData } from "../hooks/useData";
 import { api, type Order } from "../services/api";
@@ -67,6 +67,8 @@ function CustomerDetails() {
     () => api.customers.getOrdersByEmail(customerEmail),
     [customerEmail],
   );
+
+  const customerOrders = orders ?? [];
 
   const completedOrders = useMemo(
     () => orders?.filter((order) => order.status === "completed").length ?? 0,
@@ -234,45 +236,18 @@ function CustomerDetails() {
           )}
         </div>
 
-        {ordersLoading && (
-          <div className="flex flex-col items-center justify-center gap-3 p-14">
-            <div className="h-7 w-7 animate-spin rounded-full border-[3px] border-primary-100 border-t-primary-900" />
-            <p className="font-estedad text-xs text-text-secondary">
-              در حال بارگذاری سفارش‌ها...
-            </p>
-          </div>
-        )}
-
-        {!ordersLoading && ordersError && (
-          <div className="flex flex-col items-center justify-center gap-3 p-14 text-center">
-            <p className="font-estedad text-sm font-medium text-text-primary">
-              دریافت سفارش‌ها با مشکل مواجه شد.
-            </p>
-            <Button variant="outline" onClick={() => refetchOrders()}>
-              <RefreshCw size={15} />
-              تلاش مجدد
-            </Button>
-          </div>
-        )}
-
-        {!ordersLoading && !ordersError && orders && orders.length === 0 && (
-          <div className="flex flex-col items-center justify-center gap-3 p-14 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-primary-900">
-              <Package size={22} />
-            </div>
-            <p className="font-estedad text-sm font-bold text-text-primary">
-              هنوز سفارشی ثبت نشده است
-            </p>
-            <p className="font-estedad text-xs text-text-secondary">
-              با ثبت اولین سفارش، تاریخچه‌ی خرید این مشتری در اینجا نمایش داده
-              می‌شود.
-            </p>
-          </div>
-        )}
-
-        {!ordersLoading && !ordersError && orders && orders.length > 0 && (
+        <ResourceState
+          loading={ordersLoading}
+          error={ordersError}
+          onRetry={refetchOrders}
+          loadingText="در حال بارگذاری سفارش‌ها..."
+          isEmpty={customerOrders.length === 0}
+          emptyIcon={Package}
+          emptyTitle="هنوز سفارشی ثبت نشده است"
+          emptyDescription="با ثبت اولین سفارش، تاریخچه‌ی خرید این مشتری در اینجا نمایش داده می‌شود."
+        >
           <div className="divide-y divide-primary-100/70">
-            {orders.map((order) => {
+            {customerOrders.map((order) => {
               const status = orderStatusLabels[order.status];
               return (
                 <Link
@@ -304,7 +279,7 @@ function CustomerDetails() {
               );
             })}
           </div>
-        )}
+        </ResourceState>
 
         {orders && orders.length > 0 && (
           <div className="border-t border-primary-100/70 px-6 py-4">

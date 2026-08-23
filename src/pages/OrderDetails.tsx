@@ -40,6 +40,7 @@ import OrderFormModal from "../components/order/OrderFormModal";
 import { useData } from "../hooks/useData";
 import { api, type Order } from "../services/api";
 import { formatPrice } from "../utils/format";
+import { runWithToast } from "../utils/toastAction";
 import { useAuthStore } from "../store";
 import { permissions } from "../utils/permissions";
 
@@ -119,25 +120,25 @@ function OrderDetails() {
   */
 
   const handleEditSubmit = async (data: Partial<Order>) => {
-    try {
-      await api.orders.update(order.id, data);
-      toast.success(`سفارش #${order.id} ویرایش شد.`);
-      await refetch();
-    } catch (err) {
-      toast.error("خطا در ذخیره‌سازی سفارش. دوباره تلاش کنید.");
-      throw err;
-    }
+    await runWithToast(() => api.orders.update(order.id, data), {
+      success: `سفارش #${order.id} ویرایش شد.`,
+      error: "خطا در ذخیره‌سازی سفارش. دوباره تلاش کنید.",
+    });
+    await refetch();
   };
 
   const handleCancel = async () => {
     setCancelling(true);
     try {
-      await api.orders.update(order.id, { status: "cancelled" });
+      await runWithToast(
+        () => api.orders.update(order.id, { status: "cancelled" }),
+        { error: "خطا در لغو سفارش. دوباره تلاش کنید." },
+      );
       toast.info(`سفارش #${order.id} لغو شد.`);
       await refetch();
       setCancelOpen(false);
     } catch {
-      toast.error("خطا در لغو سفارش. دوباره تلاش کنید.");
+      // خطا از طریق toast.error داخل runWithToast قبلاً نمایش داده شده
     } finally {
       setCancelling(false);
     }
@@ -146,11 +147,12 @@ function OrderDetails() {
   const handleDelete = async () => {
     setDeleting(true);
     try {
-      await api.orders.delete(order.id);
-      toast.success(`سفارش #${order.id} حذف شد.`);
+      await runWithToast(() => api.orders.delete(order.id), {
+        success: `سفارش #${order.id} حذف شد.`,
+        error: "خطا در حذف سفارش. دوباره تلاش کنید.",
+      });
       navigate("/dashboard/orders");
     } catch {
-      toast.error("خطا در حذف سفارش. دوباره تلاش کنید.");
       setDeleting(false);
     }
   };

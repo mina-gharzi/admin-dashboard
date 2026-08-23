@@ -52,17 +52,3 @@ export function saveToStorage<T>(key: string, value: T): void {
     /* بی‌صدا رد میشیم؛ داده فقط تو همین session می‌مونه */
   }
 }
-
-/*
-  ----------------------------------------------------------
-  Clear
-  ----------------------------------------------------------
-*/
-
-export function clearStorage(key: string): void {
-  try {
-    localStorage.removeItem(STORAGE_PREFIX + key);
-  } catch {
-    /* ignore */
-  }
-}

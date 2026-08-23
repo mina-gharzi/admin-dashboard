@@ -26,7 +26,6 @@ import { toast } from "react-toastify";
 import { Input } from "../components/ui/Input";
 import Button from "../components/ui/Button";
 import { useAuthStore } from "../store";
-import { roleLabels } from "../utils/permissions";
 import { demoAccounts, findDemoAccountByEmail } from "../data/demoAccounts";
 
 interface FormState {
@@ -111,11 +110,6 @@ function Login() {
     setSubmitting(false);
 
     navigate(from, { replace: true });
-  };
-
-  const fillDemoAccount = (email: string) => {
-    setForm({ email, password: "demo1234" });
-    setErrors({});
   };
 
   return (

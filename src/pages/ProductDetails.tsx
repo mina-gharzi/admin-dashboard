@@ -17,7 +17,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowRight, Edit, Package, Trash2 } from "lucide-react";
-import { toast } from "react-toastify";
 
 import { Card } from "../components/ui/Card";
 import { Badge } from "../components/ui/Badge";
@@ -30,6 +29,7 @@ import ProductFormModal from "../components/product/ProductFormModal";
 import { useData } from "../hooks/useData";
 import { api, type Product } from "../services/api";
 import { formatPrice } from "../utils/format";
+import { runWithToast } from "../utils/toastAction";
 import { useAuthStore } from "../store";
 import { permissions } from "../utils/permissions";
 
@@ -89,24 +89,22 @@ function ProductDetails() {
   */
 
   const handleEditSubmit = async (data: Omit<Product, "id">) => {
-    try {
-      await api.products.update(product.id, data);
-      toast.success(`محصول «${data.name}» ویرایش شد.`);
-      await refetch();
-    } catch (err) {
-      toast.error("خطا در ذخیره‌سازی محصول. دوباره تلاش کنید.");
-      throw err;
-    }
+    await runWithToast(() => api.products.update(product.id, data), {
+      success: `محصول «${data.name}» ویرایش شد.`,
+      error: "خطا در ذخیره‌سازی محصول. دوباره تلاش کنید.",
+    });
+    await refetch();
   };
 
   const handleDelete = async () => {
     setDeleting(true);
     try {
-      await api.products.delete(product.id);
-      toast.success(`محصول «${product.name}» حذف شد.`);
+      await runWithToast(() => api.products.delete(product.id), {
+        success: `محصول «${product.name}» حذف شد.`,
+        error: "خطا در حذف محصول. دوباره تلاش کنید.",
+      });
       navigate("/dashboard/products");
     } catch {
-      toast.error("خطا در حذف محصول. دوباره تلاش کنید.");
       setDeleting(false);
     }
   };
