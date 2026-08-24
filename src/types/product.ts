@@ -14,3 +14,13 @@ export interface Product {
   status: ProductStatus;
   description?: string;
 }
+
+/*
+  ----------------------------------------------------------
+  Update Payload
+  ----------------------------------------------------------
+  برای api.products.update — همون منطق UpdateUser: id از
+  فیلدهای قابل‌تغییر حذف شده.
+  ----------------------------------------------------------
+*/
+export type UpdateProduct = Partial<Omit<Product, "id">>;

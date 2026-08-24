@@ -37,6 +37,7 @@ import type { Customer } from "../../types/customer";
 import type { Order } from "../../types/order";
 import { api } from "../../services/api";
 import { formatPrice } from "../../utils/format";
+import { statusMeta } from "../../utils/orderStatus";
 
 interface CustomerTableProps {
   customers: Customer[];
@@ -48,13 +49,6 @@ const statusConfig = {
   active: { label: "فعال", dot: "bg-success", text: "text-success", ring: "border-success/25 bg-success/5" },
   inactive: { label: "غیرفعال", dot: "bg-danger", text: "text-danger", ring: "border-danger/25 bg-danger/5" },
 } as const;
-
-const orderStatusLabels: Record<Order["status"], { label: string; variant: "success" | "info" | "warning" | "danger" }> = {
-  pending: { label: "در انتظار", variant: "warning" },
-  processing: { label: "در حال پردازش", variant: "info" },
-  completed: { label: "تکمیل شده", variant: "success" },
-  cancelled: { label: "لغو شده", variant: "danger" },
-};
 
 const columnHelper = createColumnHelper<Customer>();
 
@@ -387,7 +381,6 @@ function CustomerTable({ customers }: CustomerTableProps) {
         {!ordersModal.loading && ordersModal.orders.length > 0 && (
           <div className="max-h-100 space-y-2 overflow-y-auto">
             {ordersModal.orders.map((order) => {
-              const statusMeta = orderStatusLabels[order.status];
               return (
                 <div
                   key={order.id}
@@ -402,7 +395,9 @@ function CustomerTable({ customers }: CustomerTableProps) {
                     <span className="whitespace-nowrap font-estedad text-xs font-medium text-text-primary">
                       {formatPrice(order.amount)}
                     </span>
-                    <Badge variant={statusMeta.variant}>{statusMeta.label}</Badge>
+                    <Badge variant={statusMeta[order.status].badge}>
+                      {statusMeta[order.status].label}
+                    </Badge>
                   </div>
                 </div>
               );

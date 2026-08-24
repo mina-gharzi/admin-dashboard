@@ -9,7 +9,6 @@
   - Error handling
   - Retry logic
   - Refetch function
-  - Caching
   ==========================================================
 */
 
@@ -31,7 +30,6 @@ interface UseDataState<T> {
 interface UseDataOptions {
   retries?: number;
   retryDelay?: number;
-  cacheTime?: number;
   enabled?: boolean;
 }
 

@@ -39,17 +39,29 @@ import OrderFormModal from "../components/order/OrderFormModal";
 
 import { useData } from "../hooks/useData";
 import { api } from "../services/api";
-import type { Order } from "../types/order";
+import type { Order, UpdateOrder } from "../types/order";
 import { formatPrice } from "../utils/format";
+import { statusMeta } from "../utils/orderStatus";
 import { runWithToast } from "../utils/toastAction";
 import { useAuthStore } from "../store";
 import { permissions } from "../utils/permissions";
 
-const statusConfig = {
-  pending: { label: "در انتظار", variant: "warning" as const, icon: Clock3 },
-  processing: { label: "در حال پردازش", variant: "info" as const, icon: Truck },
-  completed: { label: "تکمیل شده", variant: "success" as const, icon: CheckCircle2 },
-  cancelled: { label: "لغو شده", variant: "danger" as const, icon: XCircle },
+/*
+  ----------------------------------------------------------
+  Status Icon
+  ----------------------------------------------------------
+  برچسب/رنگ وضعیت از statusMeta (utils/orderStatus.ts) میاد —
+  تک‌منبع مشترک با OrderTable، Dashboard و Analytics. آیکون
+  اختصاصی همین صفحه‌ست (جاهای دیگه‌ی برنامه که statusMeta رو
+  استفاده می‌کنن آیکون نشون نمی‌دن)، برای همین جدا نگه داشته
+  شده و به statusMeta اضافه نشده.
+  ----------------------------------------------------------
+*/
+const statusIcons: Record<Order["status"], typeof Clock3> = {
+  pending: Clock3,
+  processing: Truck,
+  completed: CheckCircle2,
+  cancelled: XCircle,
 };
 
 function OrderDetails() {
@@ -108,8 +120,8 @@ function OrderDetails() {
     --------------------------------------------------------
   */
 
-  const currentStatus = statusConfig[order.status];
-  const StatusIcon = currentStatus.icon;
+  const currentStatus = statusMeta[order.status];
+  const StatusIcon = statusIcons[order.status];
   const items = order.items ?? [];
   const canCancel = order.status !== "completed" && order.status !== "cancelled";
   const canDelete = order.status === "cancelled";
@@ -120,7 +132,7 @@ function OrderDetails() {
     --------------------------------------------------------
   */
 
-  const handleEditSubmit = async (data: Partial<Order>) => {
+  const handleEditSubmit = async (data: UpdateOrder) => {
     await runWithToast(() => api.orders.update(order.id, data), {
       success: `سفارش #${order.id} ویرایش شد.`,
       error: "خطا در ذخیره‌سازی سفارش. دوباره تلاش کنید.",
@@ -192,7 +204,7 @@ function OrderDetails() {
             </div>
           </div>
 
-          <Badge variant={currentStatus.variant}>{currentStatus.label}</Badge>
+          <Badge variant={currentStatus.badge}>{currentStatus.label}</Badge>
         </div>
       </Card>
 

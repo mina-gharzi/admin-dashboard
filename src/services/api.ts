@@ -29,11 +29,11 @@ import { loadFromStorage, saveToStorage } from "./storage";
   ----------------------------------------------------------
 */
 
-import type { User } from "../types/user";
+import type { User, UpdateUser } from "../types/user";
 import { ROLES, USER_STATUSES } from "../types/user";
-import type { Product } from "../types/product";
+import type { Product, UpdateProduct } from "../types/product";
 import { PRODUCT_STATUSES } from "../types/product";
-import type { Order } from "../types/order";
+import type { Order, UpdateOrder } from "../types/order";
 import { ORDER_STATUSES } from "../types/order";
 import type { OrderItem } from "../types/orderItem";
 import type { Customer } from "../types/customer";
@@ -285,7 +285,7 @@ export const api = {
       return newUser;
     },
 
-    async update(id: number, user: Partial<User>): Promise<User | null> {
+    async update(id: number, user: UpdateUser): Promise<User | null> {
       await delay();
       const index = mockUsers.findIndex((u) => u.id === id);
       if (index === -1) return null;
@@ -337,7 +337,7 @@ export const api = {
 
     async update(
       id: number,
-      product: Partial<Product>,
+      product: UpdateProduct,
     ): Promise<Product | null> {
       await delay();
       const index = mockProducts.findIndex((p) => p.id === id);
@@ -400,7 +400,7 @@ export const api = {
       return newOrder;
     },
 
-    async update(id: string, order: Partial<Order>): Promise<Order | null> {
+    async update(id: string, order: UpdateOrder): Promise<Order | null> {
       await delay();
       const index = mockOrders.findIndex((o) => o.id === id);
       if (index === -1) return null;

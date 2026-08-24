@@ -20,19 +20,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import type { Role } from "../types/user";
-
-/*
-  ----------------------------------------------------------
-  Auth User Type
-  ----------------------------------------------------------
-*/
-
-export interface AuthUser {
-  name: string;
-  email: string;
-  role: Role;
-}
+import type { AuthUser } from "../types/auth";
 
 /*
   ----------------------------------------------------------

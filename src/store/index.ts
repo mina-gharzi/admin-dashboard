@@ -13,7 +13,4 @@ export {
   useUIStore,
 } from "./uiStore";
 
-export {
-  useAuthStore,
-  type AuthUser,
-} from "./authStore";
+export { useAuthStore } from "./authStore";

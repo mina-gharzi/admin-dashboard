@@ -26,3 +26,13 @@ export interface Order {
   date: string;
   items?: OrderItem[];
 }
+
+/*
+  ----------------------------------------------------------
+  Update Payload
+  ----------------------------------------------------------
+  برای api.orders.update — همون منطق UpdateUser/UpdateProduct:
+  id از فیلدهای قابل‌تغییر حذف شده.
+  ----------------------------------------------------------
+*/
+export type UpdateOrder = Partial<Omit<Order, "id">>;

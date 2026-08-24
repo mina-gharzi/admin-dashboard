@@ -21,7 +21,7 @@ import OrderFormModal from "../components/order/OrderFormModal";
 import { useData } from "../hooks/useData";
 import { useEditModal } from "../hooks/useEditModal";
 import { api } from "../services/api";
-import type { Order } from "../types/order";
+import type { Order, UpdateOrder } from "../types/order";
 import { formatPrice } from "../utils/format";
 import { exportToCsv, getFileDateStamp } from "../utils/exportToCsv";
 import { runWithToast } from "../utils/toastAction";
@@ -62,7 +62,7 @@ function Orders() {
     });
   }, [orders, search, status]);
 
-  const handleEditSubmit = async (data: Partial<Order>) => {
+  const handleEditSubmit = async (data: UpdateOrder) => {
     const editingOrder = editModal.editingItem;
     if (!editingOrder) return;
 

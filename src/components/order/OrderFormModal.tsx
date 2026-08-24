@@ -21,7 +21,7 @@ import { Select } from "../ui/Select";
 import Button from "../ui/Button";
 import { parseEnumValue } from "../../utils/enumValue";
 
-import { ORDER_STATUSES, type Order } from "../../types/order";
+import { ORDER_STATUSES, type Order, type UpdateOrder } from "../../types/order";
 
 /*
   ----------------------------------------------------------
@@ -32,7 +32,7 @@ import { ORDER_STATUSES, type Order } from "../../types/order";
 interface OrderFormModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: Partial<Order>) => Promise<void>;
+  onSubmit: (data: UpdateOrder) => Promise<void>;
   order: Order | null;
 }
 
