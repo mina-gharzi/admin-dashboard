@@ -78,6 +78,18 @@ function Header() {
   const searchBoxRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
+  // تغییر مقدار جستجو؛ اگه متن کوتاه‌تر از ۲ کاراکتر شد، نتایج رو
+  // همین‌جا (نه داخل effect) ریست می‌کنیم. ریست کردن state در جواب
+  // مستقیم به یه event، برخلاف انجامش داخل بدنه‌ی effect، باعث
+  // cascading render نمیشه.
+  const updateSearch = (value: string) => {
+    setSearch(value);
+    if (value.trim().length < 2) {
+      setResults(emptyResults);
+      setSearching(false);
+    }
+  };
+
   // Shortcut برای سریع فوکوس کردن روی جستجو با Ctrl+K یا Cmd+K
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -93,11 +105,9 @@ function Header() {
   useEffect(() => {
     const query = search.trim();
 
-    if (query.length < 2) {
-      setResults(emptyResults);
-      setSearching(false);
-      return;
-    }
+    // ریست‌شدنِ حالت کوتاه (کمتر از ۲ کاراکتر) الان تو updateSearch
+    // انجام میشه، نه اینجا؛ effect فقط مسئول fetch دیبانس‌شده‌ست.
+    if (query.length < 2) return;
 
     let cancelled = false;
     setSearching(true);
@@ -149,7 +159,7 @@ function Header() {
   const goTo = (path: string) => {
     navigate(path);
     setShowResults(false);
-    setSearch("");
+    updateSearch("");
   };
 
   /*
@@ -222,7 +232,7 @@ function Header() {
               ref={searchInputRef}
               value={search}
               onChange={(event) => {
-                setSearch(event.target.value);
+                updateSearch(event.target.value);
                 setShowResults(true);
               }}
               onFocus={() => setShowResults(true)}

@@ -88,14 +88,16 @@
   --color-warning-soft: #fef3c7;
   --color-danger: #dc2626;
   --color-danger-soft: #fee2e2;
-  --color-info: #0284c7;
+  --color-info: #0369a1;
   --color-info-soft: #e0f2fe;
 
   /* --------------------------------------------------------
      Typography tokens
      -------------------------------------------------------- */
   --font-estedad: "Estedad", Tahoma, Arial, sans-serif;
-  --font-inter: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-inter:
+    "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
 
   --text-display: 2.25rem;
   --text-display--line-height: 1.15;
@@ -237,7 +239,6 @@
   --overlay-color: rgb(2 6 23 / 0.65);
 }
 
-
 /*
   ==========================================================
   Shared Design System Utilities
@@ -266,7 +267,8 @@
     border: var(--border-width-default) solid var(--color-border);
     background: var(--color-surface);
     color: var(--color-text-primary);
-    transition: border-color var(--transition-base) var(--transition-ease),
+    transition:
+      border-color var(--transition-base) var(--transition-ease),
       box-shadow var(--transition-base) var(--transition-ease),
       background-color var(--transition-base) var(--transition-ease);
   }
@@ -320,9 +322,10 @@
   .ds-skip-link:focus-visible {
     transform: translateY(0);
     outline: none;
-    box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color), var(--shadow-popover);
+    box-shadow:
+      0 0 0 var(--focus-ring-width) var(--focus-ring-color),
+      var(--shadow-popover);
   }
-
 }
 
 /*

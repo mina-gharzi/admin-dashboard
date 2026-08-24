@@ -199,6 +199,10 @@ function CustomerTable({ customers }: CustomerTableProps) {
     }),
   ];
 
+  // TanStack Table's useReactTable() returns functions that React
+  // Compiler can't safely memoize (this is a known, expected
+  // limitation of the library — not a bug here).
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: customers,
     columns,
