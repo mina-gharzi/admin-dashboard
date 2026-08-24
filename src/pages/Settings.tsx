@@ -29,11 +29,13 @@ import { Modal } from "../components/ui/Modal";
 import { useAuthStore, useUIStore } from "../store";
 import { api } from "../services/api";
 import { roleLabels, permissions } from "../utils/permissions";
+import { useLogout } from "../hooks/useLogout";
 
 function Settings() {
   const user = useAuthStore((state) => state.user);
   const { isDarkMode, toggleDarkMode } = useUIStore();
   const canManageSystemData = permissions.canManageSystemData(user?.role);
+  const { logout } = useLogout();
 
   const [resetOpen, setResetOpen] = useState(false);
   const [clearOpen, setClearOpen] = useState(false);
@@ -55,9 +57,11 @@ function Settings() {
     setClearing(true);
     try {
       await api.system.clearAllData();
-      toast.info("تمام داده‌ها پاک شد.");
-      setClearOpen(false);
-    } finally {
+      toast.info(
+        "تمام داده‌ها پاک شد. چون حساب شما هم بخشی از همین داده‌ها بود، برای ادامه دوباره وارد شوید.",
+      );
+      logout();
+    } catch {
       setClearing(false);
     }
   };

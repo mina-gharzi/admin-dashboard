@@ -38,7 +38,8 @@ import { DetailLoadingState, DetailMissingState } from "../components/ui/DetailS
 import OrderFormModal from "../components/order/OrderFormModal";
 
 import { useData } from "../hooks/useData";
-import { api, type Order } from "../services/api";
+import { api } from "../services/api";
+import type { Order } from "../types/order";
 import { formatPrice } from "../utils/format";
 import { runWithToast } from "../utils/toastAction";
 import { useAuthStore } from "../store";

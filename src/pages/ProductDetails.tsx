@@ -27,7 +27,8 @@ import { DetailLoadingState, DetailMissingState } from "../components/ui/DetailS
 import ProductFormModal from "../components/product/ProductFormModal";
 
 import { useData } from "../hooks/useData";
-import { api, type Product } from "../services/api";
+import { api } from "../services/api";
+import type { Product } from "../types/product";
 import { formatPrice } from "../utils/format";
 import { runWithToast } from "../utils/toastAction";
 import { useAuthStore } from "../store";

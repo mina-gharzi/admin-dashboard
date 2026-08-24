@@ -20,23 +20,24 @@ import { loadFromStorage, saveToStorage } from "./storage";
   ----------------------------------------------------------
   Types
   ----------------------------------------------------------
-  تایپ‌ها به src/types منتقل شدن (هر Entity تو فایل خودش)
-  و اینجا فقط import/re-export میشن؛ خودِ تایپ‌ها هیچ
-  تغییری نکردن.
+  Entityها (User/Product/Order/...) تو src/types تعریف شدن.
+  api.ts فقط برای استفاده‌ی داخلی خودش اینجا importشون
+  می‌کنه؛ دیگه از اینجا re-export نمیشن — هرجای پروژه که به
+  این typeها نیاز داره باید مستقیم از src/types بگیرتشون،
+  نه از لایه‌ی service. اینطوری services/ فقط «رفتار» (تابع‌های
+  API) رو expose می‌کنه، نه شکل داده رو.
   ----------------------------------------------------------
 */
 
-export type { User } from "../types/user";
-export type { Product } from "../types/product";
-export type { Order } from "../types/order";
-export type { OrderItem } from "../types/orderItem";
-export type { Customer } from "../types/customer";
-
 import type { User } from "../types/user";
+import { ROLES, USER_STATUSES } from "../types/user";
 import type { Product } from "../types/product";
+import { PRODUCT_STATUSES } from "../types/product";
 import type { Order } from "../types/order";
+import { ORDER_STATUSES } from "../types/order";
 import type { OrderItem } from "../types/orderItem";
 import type { Customer } from "../types/customer";
+import type { DashboardSummary } from "../types/dashboard";
 
 /*
   ----------------------------------------------------------
@@ -89,22 +90,11 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
-const VALID_USER_ROLES = [
-  "system_admin",
-  "admin",
-  "sales_manager",
-  "salesperson",
-  "analyst",
-] as const;
-const VALID_USER_STATUSES = ["active", "inactive"] as const;
-const VALID_PRODUCT_STATUSES = ["active", "inactive"] as const;
-
-const VALID_ORDER_STATUSES = [
-  "pending",
-  "processing",
-  "completed",
-  "cancelled",
-] as const;
+/*
+  آرایه‌های VALID_* قبلاً اینجا دوباره تعریف شده بودن، جدا از
+  Role/OrderStatus/ProductStatus تو src/types — یعنی دو منبع
+  حقیقت برای همون مقادیر. حالا مستقیماً از types می‌خونن.
+*/
 
 function sanitizeUsers(raw: unknown, fallback: User[]): User[] {
   if (!Array.isArray(raw)) return fallback;
@@ -114,8 +104,8 @@ function sanitizeUsers(raw: unknown, fallback: User[]): User[] {
       typeof u.id === "number" &&
       typeof u.name === "string" &&
       typeof u.email === "string" &&
-      (VALID_USER_ROLES as readonly unknown[]).includes(u.role) &&
-      (VALID_USER_STATUSES as readonly unknown[]).includes(u.status) &&
+      (ROLES as readonly unknown[]).includes(u.role) &&
+      (USER_STATUSES as readonly unknown[]).includes(u.status) &&
       typeof u.joinedAt === "string"
     );
   });
@@ -131,7 +121,7 @@ function sanitizeProducts(raw: unknown, fallback: Product[]): Product[] {
       typeof p.category === "string" &&
       typeof p.price === "number" &&
       typeof p.stock === "number" &&
-      (VALID_PRODUCT_STATUSES as readonly unknown[]).includes(p.status) &&
+      (PRODUCT_STATUSES as readonly unknown[]).includes(p.status) &&
       (p.description === undefined || typeof p.description === "string")
     );
   });
@@ -158,7 +148,7 @@ function sanitizeOrders(raw: unknown, fallback: Order[]): Order[] {
       (o.phone === undefined || typeof o.phone === "string") &&
       (o.address === undefined || typeof o.address === "string") &&
       typeof o.amount === "number" &&
-      (VALID_ORDER_STATUSES as readonly unknown[]).includes(o.status) &&
+      (ORDER_STATUSES as readonly unknown[]).includes(o.status) &&
       typeof o.date === "string" &&
       (o.items === undefined ||
         (Array.isArray(o.items) && o.items.every(isOrderItem)))
@@ -172,19 +162,18 @@ function sanitizeOrders(raw: unknown, fallback: Order[]): Order[] {
   ----------------------------------------------------------
 */
 
-const mockUsers: User[] = sanitizeUsers(
-  loadFromStorage("users", seedUsers),
-  seedUsers,
+const mockUsers: User[] = loadFromStorage("users", seedUsers, (raw) =>
+  sanitizeUsers(raw, seedUsers),
 );
 
-const mockProducts: Product[] = sanitizeProducts(
-  loadFromStorage("products", seedProducts),
+const mockProducts: Product[] = loadFromStorage(
+  "products",
   seedProducts,
+  (raw) => sanitizeProducts(raw, seedProducts),
 );
 
-const mockOrders: Order[] = sanitizeOrders(
-  loadFromStorage("orders", seedOrders),
-  seedOrders,
+const mockOrders: Order[] = loadFromStorage("orders", seedOrders, (raw) =>
+  sanitizeOrders(raw, seedOrders),
 );
 
 function persistUsers() {
@@ -238,6 +227,7 @@ function buildCustomersFromOrders(orders: Order[]): Customer[] {
         existing.status = "active";
       }
       // آخرین سفارش برنده‌ست (سفارش‌ها به ترتیب زمانی درج میشن)
+      existing.name = order.customer;
       existing.lastOrderDate = order.date;
       if (order.phone) existing.phone = order.phone;
       if (order.address) existing.address = order.address;
@@ -391,9 +381,18 @@ export const api = {
 
     async create(order: Omit<Order, "id" | "date">): Promise<Order> {
       await delay();
+      const nextNumber =
+        mockOrders.length > 0
+          ? Math.max(
+              ...mockOrders.map((o) => {
+                const match = /^ORD-(\d+)$/.exec(o.id);
+                return match ? Number(match[1]) : 0;
+              }),
+            ) + 1
+          : 1001;
       const newOrder: Order = {
         ...order,
-        id: `ORD-${Date.now()}`,
+        id: `ORD-${nextNumber}`,
         date: new Date().toLocaleDateString("fa-IR"),
       };
       mockOrders.push(newOrder);
@@ -460,23 +459,7 @@ export const api = {
   },
 
   analytics: {
-    async getSummary(): Promise<{
-      totalUsers: number;
-      totalProducts: number;
-      activeProducts: number;
-      totalOrders: number;
-      totalRevenue: number;
-      averageOrderValue: number;
-      ordersByStatus: Record<Order["status"], number>;
-      usersByRole: Record<User["role"], number>;
-      usersByStatus: Record<User["status"], number>;
-      totalCustomers: number;
-      activeCustomers: number;
-      productsByCategory: { category: string; count: number }[];
-      lowStockProducts: Product[];
-      topProducts: { name: string; quantity: number; revenue: number }[];
-      recentOrders: Order[];
-    }> {
+    async getSummary(): Promise<DashboardSummary> {
       await delay();
 
       const completedOrders = mockOrders.filter(

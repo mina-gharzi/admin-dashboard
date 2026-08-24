@@ -5,8 +5,9 @@
   نمودار دایره‌ای توزیع وضعیت سفارش‌ها. از Analytics.tsx
   استخراج شده؛ منطق و خروجی بدون تغییر.
 
-  statusMeta از همین‌جا export میشه چون RecentOrdersList.tsx
-  هم برای رنگ/برچسبِ Badge بهش نیاز داره.
+  statusMeta از utils/orderStatus.ts میاد (منبع واحد، مشترک
+  با OrdersOverview.tsx و RecentOrdersList.tsx) تا رنگ/برچسبِ
+  هر وضعیت سفارش تو کل برنامه یکسان بمونه.
 
   توجه: نمودار «توزیع نقش اعضای تیم» که قبلاً کنار این
   نمودار بود، عمداً حذف شده (طبق درخواست).
@@ -21,32 +22,17 @@ import {
   Pie,
   Cell,
   Tooltip,
+  type TooltipContentProps,
 } from "recharts";
+import type {
+  ValueType,
+  NameType,
+} from "recharts/types/component/DefaultTooltipContent";
 
 import { Card } from "../ui/Card";
+import { statusMeta } from "../../utils/orderStatus";
 
 import type { DashboardSummary } from "../../types/dashboard";
-
-/*
-  ==========================================================
-  Meta / Labels
-  ==========================================================
-*/
-
-export const statusMeta = {
-  pending: { label: "در انتظار", color: "var(--color-warning)", badge: "warning" as const },
-  processing: {
-    label: "در حال پردازش",
-    color: "var(--color-info)",
-    badge: "info" as const,
-  },
-  completed: {
-    label: "تکمیل شده",
-    color: "var(--color-success)",
-    badge: "success" as const,
-  },
-  cancelled: { label: "لغو شده", color: "var(--color-danger)", badge: "danger" as const },
-};
 
 /*
   ==========================================================
@@ -54,22 +40,34 @@ export const statusMeta = {
   ==========================================================
 */
 
-const CustomPieTooltip = ({ active, payload }: any) => {
+/** شکل واقعی هر برش نمودار دایره‌ای (Pie) */
+interface OrdersStatusPieDatum {
+  key: string;
+  name: string;
+  value: number;
+  color: string;
+}
+
+const CustomPieTooltip = ({
+  active,
+  payload,
+}: TooltipContentProps<ValueType, NameType>) => {
   if (active && payload && payload.length) {
     const data = payload[0];
+    const datum = data.payload as OrdersStatusPieDatum;
     return (
       <div className="rounded-xl border border-primary-300/70 bg-surface/95 p-3 shadow-[var(--shadow-card-hover)] backdrop-blur-md">
         <div className="flex items-center gap-2">
           <span
             className="h-2.5 w-2.5 rounded-full"
-            style={{ backgroundColor: data.payload.color }}
+            style={{ backgroundColor: datum.color }}
           />
           <span className="font-estedad text-xs font-bold text-text-primary">
-            {data.name}
+            {datum.name}
           </span>
         </div>
         <p className="mt-1 font-inter text-sm font-black text-text-primary">
-          {data.value.toLocaleString("fa-IR")}{" "}
+          {datum.value.toLocaleString("fa-IR")}{" "}
           <span className="font-estedad text-xs font-normal text-text-secondary">
             مورد
           </span>
@@ -150,7 +148,7 @@ function OrdersStatusChart({ summary }: OrdersStatusChartProps) {
                     />
                   ))}
                 </Pie>
-                <Tooltip content={<CustomPieTooltip />} />
+                <Tooltip content={CustomPieTooltip} />
               </PieChart>
             </ResponsiveContainer>
           </div>

@@ -20,6 +20,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+import type { Role } from "../types/user";
+
 /*
   ----------------------------------------------------------
   Auth User Type
@@ -29,7 +31,7 @@ import { persist } from "zustand/middleware";
 export interface AuthUser {
   name: string;
   email: string;
-  role: "system_admin" | "admin" | "sales_manager" | "salesperson" | "analyst";
+  role: Role;
 }
 
 /*

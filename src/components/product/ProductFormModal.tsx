@@ -19,8 +19,9 @@ import { Select } from "../ui/Select";
 import { Textarea } from "../ui/Textarea";
 import Button from "../ui/Button";
 
-import type { Product } from "../../services/api";
+import { PRODUCT_STATUSES, type Product } from "../../types/product";
 import { PRODUCT_CATEGORIES } from "../../data/productCategories";
+import { parseEnumValue } from "../../utils/enumValue";
 
 /*
   ----------------------------------------------------------
@@ -217,7 +218,7 @@ function ProductFormModal({
               onChange={(e) =>
                 setForm((f) => ({
                   ...f,
-                  status: e.target.value as Product["status"],
+                  status: parseEnumValue(e.target.value, PRODUCT_STATUSES, f.status),
                 }))
               }
             >

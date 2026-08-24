@@ -33,7 +33,8 @@ import {
 import { Badge } from "../ui/Badge";
 import { Modal } from "../ui/Modal";
 
-import type { Customer, Order } from "../../services/api";
+import type { Customer } from "../../types/customer";
+import type { Order } from "../../types/order";
 import { api } from "../../services/api";
 import { formatPrice } from "../../utils/format";
 

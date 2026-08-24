@@ -17,7 +17,12 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  type TooltipContentProps,
 } from "recharts";
+import type {
+  ValueType,
+  NameType,
+} from "recharts/types/component/DefaultTooltipContent";
 
 import { Card } from "../ui/Card";
 
@@ -29,16 +34,27 @@ import type { DashboardSummary } from "../../types/dashboard";
   ==========================================================
 */
 
-const CustomBarTooltip = ({ active, payload }: any) => {
+/** شکل واقعی هر ردیف نمودار (Bar) — recharts خودش `payload.payload`
+ *  رو به‌صورت `any` تایپ می‌کنه، این interface اون قسمت رو مشخص می‌کنه. */
+interface CategoryBarDatum {
+  category: string;
+  count: number;
+}
+
+const CustomBarTooltip = ({
+  active,
+  payload,
+}: TooltipContentProps<ValueType, NameType>) => {
   if (active && payload && payload.length) {
     const data = payload[0];
+    const datum = data.payload as CategoryBarDatum;
     return (
       <div className="rounded-xl border border-primary-300/70 bg-surface/95 p-3 shadow-[var(--shadow-card-hover)] backdrop-blur-md">
         <span className="font-estedad text-xs font-bold text-text-primary">
-          {data.payload.category}
+          {datum.category}
         </span>
         <p className="mt-1 font-inter text-sm font-black text-primary-900">
-          {data.value.toLocaleString("fa-IR")}{" "}
+          {datum.count.toLocaleString("fa-IR")}{" "}
           <span className="font-estedad text-xs font-normal text-text-secondary">
             محصول
           </span>
@@ -119,7 +135,7 @@ function CategoryChart({ summary }: CategoryChartProps) {
                 tick={{ fontSize: 10, fill: "var(--color-text-secondary)", fontFamily: "Inter" }}
               />
               <Tooltip
-                content={<CustomBarTooltip />}
+                content={CustomBarTooltip}
                 cursor={{ fill: "var(--color-primary-900)" }}
               />
               <Bar

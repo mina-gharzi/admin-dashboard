@@ -14,7 +14,7 @@ import { ChevronLeft } from "lucide-react";
 import { Card } from "../ui/Card";
 import { Badge } from "../ui/Badge";
 
-import { statusMeta } from "./OrdersOverview";
+import { statusMeta } from "../../utils/orderStatus";
 
 import type { DashboardSummary } from "../../types/dashboard";
 

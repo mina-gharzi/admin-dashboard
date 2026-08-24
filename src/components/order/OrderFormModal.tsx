@@ -19,8 +19,9 @@ import { Modal } from "../ui/Modal";
 import { Input } from "../ui/Input";
 import { Select } from "../ui/Select";
 import Button from "../ui/Button";
+import { parseEnumValue } from "../../utils/enumValue";
 
-import type { Order } from "../../services/api";
+import { ORDER_STATUSES, type Order } from "../../types/order";
 
 /*
   ----------------------------------------------------------
@@ -213,7 +214,7 @@ function OrderFormModal({
             onChange={(e) =>
               setForm((f) => ({
                 ...f,
-                status: e.target.value as Order["status"],
+                status: parseEnumValue(e.target.value, ORDER_STATUSES, f.status),
               }))
             }
           >

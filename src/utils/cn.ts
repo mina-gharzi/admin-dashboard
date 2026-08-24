@@ -3,33 +3,11 @@
   cn.ts
   ----------------------------------------------------------
   Utility function for combining Tailwind CSS classes.
-  ----------------------------------------------------------
-  چرا twMerge لازمه (نه فقط clsx):
-  تقریباً همه‌ی کامپوننت‌های ui/ (Button، Card، Input، Badge،
-  Modal...) یه سری کلاس پایه دارن و بعد یه className از بیرون
-  می‌گیرن که قراره بعضی از همون کلاس‌های پایه رو override کنه.
-  مثال واقعی که همین باگ رو داشت: Card.tsx به‌صورت پیش‌فرض
-  "border-border" داره، ولی همه‌جای پروژه صفحات با
-  className="... border-primary-300/60 ..." سعی می‌کردن
-  رنگ حاشیه رو عوض کنن.
-
-  با clsx خام، هر دو کلاس ("border-border" و
-  "border-primary-300/60") همزمان تو خروجی می‌مونن و این‌که
-  کدوم واقعاً رنگ نهایی رو تعیین می‌کنه به ترتیب تعریف اون
-  دو کلاس تو CSS کامپایل‌شده بستگی داره، نه به ترتیبی که تو
-  className نوشتیم — یعنی رفتار غیرقابل‌پیش‌بینی و شکننده
-  (ممکنه با هر تغییر/build جابه‌جا بشه).
-
-  twMerge دقیقاً همین تعارض‌ها رو تشخیص می‌ده و کلاس بعدی
-  (که معمولاً همون override موردنظر ماست) رو نگه می‌داره و
-  کلاس قبلی هم‌گروه رو حذف می‌کنه — یعنی override همیشه
-  واقعاً override می‌کنه.
   ==========================================================
 */
 
 import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  return clsx(inputs);
 }

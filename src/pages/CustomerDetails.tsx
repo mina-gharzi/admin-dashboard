@@ -33,8 +33,9 @@ import { DetailLoadingState, DetailMissingState } from "../components/ui/DetailS
 import ResourceState from "../components/ui/ResourceState";
 
 import { useData } from "../hooks/useData";
-import { api, type Order } from "../services/api";
-import { formatDate, formatPhone, formatPrice } from "../utils/format";
+import { api } from "../services/api";
+import type { Order } from "../types/order";
+import { formatPhone, formatPrice } from "../utils/format";
 
 const orderStatusLabels: Record<
   Order["status"],
@@ -167,7 +168,7 @@ function CustomerDetails() {
               آخرین سفارش
             </p>
             <p className="mt-1 font-inter text-sm font-bold text-text-primary">
-              {formatDate(customer.lastOrderDate)}
+              {customer.lastOrderDate}
             </p>
           </div>
         </div>
@@ -191,7 +192,7 @@ function CustomerDetails() {
           <StatCard
             icon={<CalendarDays size={18} />}
             label="آخرین سفارش"
-            value={formatDate(customer.lastOrderDate)}
+            value={customer.lastOrderDate}
           />
         </div>
 
@@ -264,7 +265,7 @@ function CustomerDetails() {
                         #{order.id}
                       </p>
                       <p className="mt-1 font-estedad text-[11px] text-text-secondary">
-                        {formatDate(order.date)}
+                        {order.date}
                       </p>
                     </div>
                   </div>

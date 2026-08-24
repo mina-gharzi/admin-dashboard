@@ -1,9 +1,16 @@
+/*
+  آرایه‌ی کانونیِ وضعیت‌های معتبر محصول — تنها منبع حقیقت.
+*/
+export const PRODUCT_STATUSES = ["active", "inactive"] as const;
+
+export type ProductStatus = (typeof PRODUCT_STATUSES)[number];
+
 export interface Product {
   id: number;
   name: string;
   category: string;
   price: number;
   stock: number;
-  status: "active" | "inactive";
+  status: ProductStatus;
   description?: string;
 }

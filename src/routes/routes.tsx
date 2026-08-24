@@ -10,6 +10,8 @@
 
 import { createBrowserRouter } from "react-router-dom";
 
+import { dashboardPath, DASHBOARD_SEGMENTS } from "./paths";
+
 import DashboardLayout from "../components/layout/DashboardLayout";
 import RequireAuth from "./RequireAuth";
 import RequireRole from "./RequireRole";
@@ -72,7 +74,7 @@ const router = createBrowserRouter([
 
     children: [
       {
-        path: "/dashboard",
+        path: dashboardPath.root,
         element: <DashboardLayout />,
 
         children: [
@@ -82,11 +84,11 @@ const router = createBrowserRouter([
           },
 
           {
-            path: "customers",
+            path: DASHBOARD_SEGMENTS.customers,
             element: <Customers />,
           },
           {
-            path: "customers/:email",
+            path: DASHBOARD_SEGMENTS.customerDetails,
             element: <CustomerDetails />,
           },
 
@@ -95,41 +97,41 @@ const router = createBrowserRouter([
 
             children: [
               {
-                path: "analytics",
+                path: DASHBOARD_SEGMENTS.analytics,
                 element: <Analytics />,
               },
               {
-                path: "team",
+                path: DASHBOARD_SEGMENTS.team,
                 element: <Team />,
               },
             ],
           },
 
           {
-            path: "products",
+            path: DASHBOARD_SEGMENTS.products,
             element: <Products />,
           },
           {
-            path: "products/:id",
+            path: DASHBOARD_SEGMENTS.productDetails,
             element: <ProductDetails />,
           },
 
           {
-            path: "orders",
+            path: DASHBOARD_SEGMENTS.orders,
             element: <Orders />,
           },
           {
-            path: "orders/:id",
+            path: DASHBOARD_SEGMENTS.orderDetails,
             element: <OrderDetails />,
           },
 
           {
-            path: "settings",
+            path: DASHBOARD_SEGMENTS.settings,
             element: <Settings />,
           },
 
           {
-            path: "forbidden",
+            path: DASHBOARD_SEGMENTS.forbidden,
             element: <Forbidden />,
           },
         ],

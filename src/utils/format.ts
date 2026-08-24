@@ -6,8 +6,16 @@
 
   استفاده:
   - formatPrice()
-  - formatDate()
   - formatPhone()
+
+  نکته: formatDate() قبلاً اینجا بود ولی حذف شد — چون تاریخ
+  تو کل پروژه (order.date، user.joinedAt، customer.lastOrderDate)
+  همون لحظه‌ی ساخت به‌صورت رشته‌ی فارسیِ آماده ذخیره میشه
+  (نه یه رشته‌ی قابل‌پارس مثل ISO)، formatDate هیچ‌وقت واقعاً
+  چیزی رو فرمت نمی‌کرد و فقط رشته‌ی ورودی رو بی‌تغییر پس
+  می‌داد. صفحاتی که این تاریخ‌ها رو نشون می‌دن (OrderTable،
+  CustomerTable، OrderDetails، CustomerDetails و ...) مستقیم
+  همون رشته رو رندر می‌کنن.
   ==========================================================
 */
 
@@ -19,25 +27,6 @@
 export function formatPrice(price: number, includeCurrency = false): string {
   const formatted = new Intl.NumberFormat("fa-IR").format(price);
   return includeCurrency ? `${formatted} تومان` : formatted;
-}
-
-/**
- * فرمت کردن تاریخ به فارسی
- * @example
- * formatDate("2024-01-15") // "۱۴۰۲/۱۰/۲۵"
- */
-export function formatDate(
-  dateString: string,
-  options?: Intl.DateTimeFormatOptions,
-): string {
-  const date = new Date(dateString);
-  if (Number.isNaN(date.getTime())) return dateString;
-  return new Intl.DateTimeFormat("fa-IR", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    ...options,
-  }).format(date);
 }
 
 /**

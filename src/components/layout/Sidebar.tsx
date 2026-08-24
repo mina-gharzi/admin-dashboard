@@ -35,6 +35,7 @@ import { cn } from "../../utils/cn";
 
 import { useUIStore, useAuthStore } from "../../store";
 import { canAccessPath } from "../../utils/permissions";
+import { dashboardPath } from "../../routes/paths";
 
 import { useMobileSidebar } from "../../hooks/useMobileSidebar";
 import { useLogout } from "../../hooks/useLogout";
@@ -48,27 +49,27 @@ import { useLogout } from "../../hooks/useLogout";
 const navigationItems = [
   {
     label: "داشبورد",
-    path: "/dashboard",
+    path: dashboardPath.root,
     icon: LayoutDashboard,
   },
   {
     label: "مشتریان",
-    path: "/dashboard/customers",
+    path: dashboardPath.customers,
     icon: Users,
   },
   {
     label: "سفارش‌ها",
-    path: "/dashboard/orders",
+    path: dashboardPath.orders,
     icon: ShoppingCart,
   },
   {
     label: "محصولات",
-    path: "/dashboard/products",
+    path: dashboardPath.products,
     icon: Package,
   },
   {
     label: "گزارش‌ها",
-    path: "/dashboard/analytics",
+    path: dashboardPath.analytics,
     icon: BarChart3,
   },
 ];
@@ -123,7 +124,7 @@ function Sidebar() {
   );
 
   // «تیم» فقط برای مدیر کل سیستم قابل مشاهده‌ست
-  const canSeeTeam = canAccessPath(role, "/dashboard/team");
+  const canSeeTeam = canAccessPath(role, dashboardPath.team);
 
   return (
     <>
@@ -321,7 +322,7 @@ function Sidebar() {
                 <NavLink
                   key={item.path}
                   to={item.path}
-                  end={item.path === "/dashboard"}
+                  end={item.path === dashboardPath.root}
                   onClick={closeMobileSidebar}
                   aria-label={isSidebarCollapsed ? item.label : undefined}
                   className={({ isActive }) =>
@@ -385,7 +386,7 @@ function Sidebar() {
 
           {canSeeTeam && (
             <NavLink
-              to="/dashboard/team"
+              to={dashboardPath.team}
               onClick={closeMobileSidebar}
               aria-label={isSidebarCollapsed ? "تیم" : undefined}
               className={({ isActive }) =>
@@ -418,7 +419,7 @@ function Sidebar() {
               ================================================== */}
 
           <NavLink
-            to="/dashboard/settings"
+            to={dashboardPath.settings}
             onClick={closeMobileSidebar}
             aria-label={isSidebarCollapsed ? "تنظیمات" : undefined}
             className={({ isActive }) =>

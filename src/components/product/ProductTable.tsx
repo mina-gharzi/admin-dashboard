@@ -40,7 +40,7 @@ import { Dropdown } from "../ui/Dropdown";
 import { Modal } from "../ui/Modal";
 import Button from "../ui/Button";
 
-import type { Product } from "../../services/api";
+import type { Product } from "../../types/product";
 import { formatPrice } from "../../utils/format";
 import { useAuthStore } from "../../store";
 import { permissions } from "../../utils/permissions";

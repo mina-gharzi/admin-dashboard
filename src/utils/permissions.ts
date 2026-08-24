@@ -35,9 +35,11 @@
   ==========================================================
 */
 
-import type { AuthUser } from "../store/authStore";
+import { ROLES } from "../types/user";
+import type { Role } from "../types/user";
+import { dashboardPath, type DashboardPath } from "../routes/paths";
 
-export type Role = AuthUser["role"];
+export type { Role };
 
 /*
   ----------------------------------------------------------
@@ -69,41 +71,45 @@ export const roleBadgeVariants: Record<
   ----------------------------------------------------------
   دسترسی به صفحات
   ----------------------------------------------------------
-  کلید = مسیر (همون path که تو routes.tsx و Sidebar استفاده
-  میشه)، مقدار = نقش‌هایی که اجازه‌ی ورود دارن.
+  کلید = مسیر (از routes/paths.ts، همون منبعی که routes.tsx و
+  Sidebar هم ازش می‌خونن)، مقدار = نقش‌هایی که اجازه‌ی ورود
+  دارن.
 
   مسیرهایی که اینجا تعریف نشدن (مثل صفحات جزئیات) پیش‌فرض
   برای همه‌ی کاربرهای لاگین‌شده باز هستن.
   ----------------------------------------------------------
 */
 
-const ALL_ROLES: Role[] = [
-  "system_admin",
-  "admin",
-  "sales_manager",
-  "salesperson",
-  "analyst",
-];
+const ALL_ROLES: Role[] = [...ROLES];
 
-const PAGE_ACCESS: Record<string, Role[]> = {
-  "/dashboard": ALL_ROLES,
-  "/dashboard/customers": ALL_ROLES,
-  "/dashboard/products": ALL_ROLES,
-  "/dashboard/orders": ALL_ROLES,
-  "/dashboard/team": ["system_admin"],
-  "/dashboard/analytics": [
+const PAGE_ACCESS: Partial<Record<DashboardPath, Role[]>> = {
+  [dashboardPath.root]: ALL_ROLES,
+  [dashboardPath.customers]: ALL_ROLES,
+  [dashboardPath.products]: ALL_ROLES,
+  [dashboardPath.orders]: ALL_ROLES,
+  [dashboardPath.team]: ["system_admin"],
+  [dashboardPath.analytics]: [
     "system_admin",
     "admin",
     "sales_manager",
     "analyst",
   ],
-  "/dashboard/settings": ALL_ROLES,
+  [dashboardPath.settings]: ALL_ROLES,
 };
 
 export function canAccessPath(role: Role | undefined, path: string): boolean {
   if (!role) return false;
 
-  const allowedRoles = PAGE_ACCESS[path];
+  /*
+    location.pathname یه string خام از react-router هست، نه
+    خودِ union `DashboardPath` — پس نمی‌تونیم مستقیم باهاش
+    PAGE_ACCESS رو index کنیم. این cast فقط برای رد کردن ایندکس
+    از سد type-checker هست، نه یه ادعای «این مسیر معتبره»؛
+    اگه path جزو کلیدهای PAGE_ACCESS نباشه، allowedRoles همینجا
+    undefined میشه و خط بعدی (مسیرهای تعریف‌نشده پیش‌فرض باز
+    هستن) درست همون رو مدیریت می‌کنه.
+  */
+  const allowedRoles = PAGE_ACCESS[path as DashboardPath];
 
   // مسیرهای تعریف‌نشده (مثل /dashboard/products/:id) پیش‌فرض باز هستن
   if (!allowedRoles) return true;
@@ -125,9 +131,9 @@ export const permissions = {
   canManageSystemData: (role?: Role) => role === "system_admin",
 
   /** افزودن/ویرایش/حذف محصول — تحلیل‌گر فقط مشاهده‌گره */
-  canManageProducts: (role?: Role) => role !== "analyst",
+  canManageProducts: (role?: Role) => !!role && role !== "analyst",
 
   /** ویرایش/لغو سفارش — تحلیل‌گر فقط مشاهده‌گره */
-  canManageOrders: (role?: Role) => role !== "analyst",
+  canManageOrders: (role?: Role) => !!role && role !== "analyst",
 } as const;
 

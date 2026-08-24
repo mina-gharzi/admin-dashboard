@@ -5,8 +5,9 @@
   نمودار توزیع وضعیت سفارش‌ها (Bar Chart). از Dashboard.tsx
   استخراج شده؛ منطق و خروجی بدون تغییر.
 
-  statusMeta از همین‌جا export میشه چون RecentOrders.tsx هم
-  برای رنگ/برچسبِ Badge بهش نیاز داره.
+  statusMeta از utils/orderStatus.ts میاد (منبع واحد، مشترک
+  با OrdersStatusChart.tsx و RecentOrders.tsx) تا رنگ/برچسبِ
+  هر وضعیت سفارش تو کل برنامه یکسان بمونه.
   ==========================================================
 */
 
@@ -23,43 +24,17 @@ import {
   CartesianGrid,
   Tooltip,
   Cell,
+  type TooltipContentProps,
 } from "recharts";
+import type {
+  ValueType,
+  NameType,
+} from "recharts/types/component/DefaultTooltipContent";
 
 import { Card } from "../ui/Card";
+import { statusMeta } from "../../utils/orderStatus";
 
 import type { DashboardSummary } from "../../types/dashboard";
-
-/*
-  ==========================================================
-  Order Status
-  ==========================================================
-*/
-
-export const statusMeta = {
-  pending: {
-    label: "در انتظار",
-    color: "var(--color-primary-200)",
-    badge: "warning" as const,
-  },
-
-  processing: {
-    label: "در حال پردازش",
-    color: "var(--color-primary-300)",
-    badge: "info" as const,
-  },
-
-  completed: {
-    label: "تکمیل شده",
-    color: "var(--color-primary-700)",
-    badge: "success" as const,
-  },
-
-  cancelled: {
-    label: "لغو شده",
-    color: "var(--color-primary-900)",
-    badge: "danger" as const,
-  },
-};
 
 /*
   ==========================================================
@@ -67,12 +42,23 @@ export const statusMeta = {
   ==========================================================
 */
 
-const CustomTooltip = ({ active, payload }: any) => {
+/** شکل واقعی هر ستون نمودار (Bar) */
+interface OrdersStatusBarDatum {
+  key: string;
+  label: string;
+  count: number;
+  color: string;
+}
+
+const CustomTooltip = ({
+  active,
+  payload,
+}: TooltipContentProps<ValueType, NameType>) => {
   if (!active || !payload || !payload.length) {
     return null;
   }
 
-  const data = payload[0].payload;
+  const data = payload[0].payload as OrdersStatusBarDatum;
 
   return (
     <div className="rounded-2xl border border-primary-300/30 bg-primary-900 px-4 py-2.5 text-white shadow-lg">
@@ -203,7 +189,7 @@ function OrdersOverview({ summary }: OrdersOverviewProps) {
               />
 
               <Tooltip
-                content={<CustomTooltip />}
+                content={CustomTooltip}
                 cursor={{
                   fill: "var(--color-primary-900)",
                 }}

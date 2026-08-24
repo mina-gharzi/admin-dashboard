@@ -16,8 +16,9 @@ import { Input } from "../ui/Input";
 import { Select } from "../ui/Select";
 import Button from "../ui/Button";
 
-import type { User } from "../../services/api";
+import { ROLES, USER_STATUSES, type User } from "../../types/user";
 import { roleLabels } from "../../utils/permissions";
+import { parseEnumValue } from "../../utils/enumValue";
 
 interface TeamMemberFormModalProps {
   open: boolean;
@@ -160,7 +161,7 @@ function TeamMemberFormModal({
               onChange={(e) =>
                 setForm((f) => ({
                   ...f,
-                  role: e.target.value as User["role"],
+                  role: parseEnumValue(e.target.value, ROLES, f.role),
                 }))
               }
             >
@@ -182,7 +183,7 @@ function TeamMemberFormModal({
               onChange={(e) =>
                 setForm((f) => ({
                   ...f,
-                  status: e.target.value as User["status"],
+                  status: parseEnumValue(e.target.value, USER_STATUSES, f.status),
                 }))
               }
             >

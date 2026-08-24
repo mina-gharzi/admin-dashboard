@@ -25,7 +25,8 @@ import TeamMemberFormModal from "../components/settings/TeamMemberFormModal";
 
 import { useData } from "../hooks/useData";
 import { useEditModal } from "../hooks/useEditModal";
-import { api, type User } from "../services/api";
+import { api } from "../services/api";
+import type { User } from "../types/user";
 import { roleLabels, roleBadgeVariants } from "../utils/permissions";
 import { runWithToast } from "../utils/toastAction";
 

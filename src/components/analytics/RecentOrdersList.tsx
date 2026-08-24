@@ -14,7 +14,7 @@ import { ShoppingBag, ArrowUpLeft } from "lucide-react";
 import { Card } from "../ui/Card";
 import { Badge } from "../ui/Badge";
 
-import { statusMeta } from "./OrdersStatusChart";
+import { statusMeta } from "../../utils/orderStatus";
 
 import { formatPrice } from "../../utils/format";
 import type { DashboardSummary } from "../../types/dashboard";

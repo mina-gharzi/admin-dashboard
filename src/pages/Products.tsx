@@ -20,7 +20,8 @@ import ProductFormModal from "../components/product/ProductFormModal";
 
 import { useData } from "../hooks/useData";
 import { useEditModal } from "../hooks/useEditModal";
-import { api, type Product } from "../services/api";
+import { api } from "../services/api";
+import type { Product } from "../types/product";
 import { formatPrice } from "../utils/format";
 import { exportToCsv, getFileDateStamp } from "../utils/exportToCsv";
 import { runWithToast } from "../utils/toastAction";

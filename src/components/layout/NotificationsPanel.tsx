@@ -22,7 +22,7 @@ import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { AlertTriangle, Clock3, PackageX } from "lucide-react";
 
-import type { api } from "../../services/api";
+import type { DashboardSummary } from "../../types/dashboard";
 import { cn } from "../../utils/cn";
 
 /*
@@ -31,10 +31,8 @@ import { cn } from "../../utils/cn";
   ----------------------------------------------------------
 */
 
-type AnalyticsSummary = Awaited<ReturnType<typeof api.analytics.getSummary>>;
-
 interface NotificationsPanelProps {
-  summary: AnalyticsSummary | null | undefined;
+  summary: DashboardSummary | null | undefined;
   loading: boolean;
   onClose: () => void;
 }

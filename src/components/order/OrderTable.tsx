@@ -46,7 +46,7 @@ import { Dropdown } from "../ui/Dropdown";
 import { Modal } from "../ui/Modal";
 import Button from "../ui/Button";
 
-import type { Order } from "../../services/api";
+import type { Order } from "../../types/order";
 import { formatPrice } from "../../utils/format";
 import { useAuthStore } from "../../store";
 import { permissions } from "../../utils/permissions";

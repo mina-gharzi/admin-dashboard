@@ -16,13 +16,14 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 import { useAuthStore } from "../store";
 import { canAccessPath } from "../utils/permissions";
+import { dashboardPath } from "./paths";
 
 function RequireRole() {
   const user = useAuthStore((state) => state.user);
   const location = useLocation();
 
   if (!canAccessPath(user?.role, location.pathname)) {
-    return <Navigate to="/dashboard/forbidden" replace />;
+    return <Navigate to={dashboardPath.forbidden} replace />;
   }
 
   return <Outlet />;

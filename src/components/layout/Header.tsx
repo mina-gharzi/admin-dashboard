@@ -31,12 +31,10 @@ import { roleLabels } from "../../utils/permissions";
 import { useUIStore, useAuthStore } from "../../store";
 import { useLogout } from "../../hooks/useLogout";
 import { useData } from "../../hooks/useData";
-import {
-  api,
-  type Customer,
-  type Order,
-  type Product,
-} from "../../services/api";
+import { api } from "../../services/api";
+import type { Customer } from "../../types/customer";
+import type { Order } from "../../types/order";
+import type { Product } from "../../types/product";
 
 /*
   ----------------------------------------------------------

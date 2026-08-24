@@ -13,6 +13,16 @@
   بعضی مرورگرها یا وقتی پر باشه ممکنه throw کنه، همه‌ی
   عملیات‌ها تو try/catch هستن — اگه ذخیره نشه، برنامه crash
   نمی‌کنه، فقط اون تغییر بین رفرش‌ها نگه داشته نمیشه.
+
+  نکته‌ی مهم درباره‌ی Validation:
+  خروجی JSON.parse نوعش `any` هست، پس `JSON.parse(raw) as T`
+  فقط یه ادعای type-level بود که هیچ تضمینی نمی‌داد — چیزی
+  که تو localStorage (یا حتی دستی توسط کاربر تو DevTools)
+  ذخیره شده لزوماً با شکل T یکی نیست. برای همین loadFromStorage
+  دیگه خودش cast نمی‌کنه؛ به‌جاش یه تابع validate می‌گیره که
+  خروجی JSON.parse رو (به‌عنوان unknown) بررسی و به T واقعی
+  تبدیل می‌کنه. اگه فرمت داده خراب/ناسازگار بود، validate
+  خودش مسئولیت برگردوندن fallback رو داره.
   ==========================================================
 */
 
@@ -24,16 +34,20 @@ const STORAGE_PREFIX = "admin-dashboard:";
   ----------------------------------------------------------
 */
 
-export function loadFromStorage<T>(key: string, fallback: T): T {
+export function loadFromStorage<T>(
+  key: string,
+  fallback: T,
+  validate: (raw: unknown) => T,
+): T {
   try {
     const raw = localStorage.getItem(STORAGE_PREFIX + key);
     if (raw === null) return fallback;
-    return JSON.parse(raw) as T;
+    return validate(JSON.parse(raw));
   } catch {
     /*
-      یا localStorage در دسترس نیست، یا داده‌ی ذخیره‌شده خراب/
-      ناسازگار با فرمت فعلیه. تو هر دو حالت امن‌ترین کار
-      برگشتن به fallback (دیتای نمونه) هست.
+      یا localStorage در دسترس نیست، یا JSON.parse رو محتوای
+      خراب throw کرده. تو هر دو حالت امن‌ترین کار برگشتن به
+      fallback (دیتای نمونه) هست.
     */
     return fallback;
   }

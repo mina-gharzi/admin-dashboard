@@ -20,7 +20,6 @@ import {
   cloneElement,
   isValidElement,
   type KeyboardEvent as ReactKeyboardEvent,
-  type ReactElement,
   type ReactNode,
 } from "react";
 
@@ -47,6 +46,25 @@ interface MenuPosition {
   top: number;
   left: number;
   placement: "top" | "bottom";
+}
+
+/*
+  Dropdown نمی‌دونه trigger چه کامپوننتی‌ـه (button، div سفارشی،
+  یا هرچیز دیگه)، پس نمی‌تونه پراپ‌های واقعی‌ش رو تایپ کنه —
+  ولی به‌جای تسلیم شدن به `any` (که کل type-safety رو از بین
+  می‌بره)، فقط همون چند پراپی که خودش می‌خونه/override می‌کنه
+  رو تعریف می‌کنیم. هر trigger معتبری این‌ها رو (اختیاری) داره.
+*/
+interface DropdownTriggerProps {
+  ref?: React.Ref<HTMLElement>;
+  onClick?: (event: React.MouseEvent) => void;
+  onKeyDown?: (event: React.KeyboardEvent) => void;
+  className?: string;
+  role?: string;
+  tabIndex?: number;
+  "aria-haspopup"?: React.AriaAttributes["aria-haspopup"];
+  "aria-expanded"?: boolean;
+  "aria-controls"?: string;
 }
 
 function Dropdown({
@@ -337,7 +355,9 @@ function Dropdown({
     ==========================================================
   */
 
-  const triggerElement = isValidElement(trigger) ? (trigger as ReactElement<any>) : null;
+  const triggerElement = isValidElement<DropdownTriggerProps>(trigger)
+    ? trigger
+    : null;
 
   return (
     <div ref={triggerRef} className={cn("relative inline-block", className)}>
@@ -390,14 +410,16 @@ function Dropdown({
           )}
         >
           <span>گزینه‌ها</span>
-          <ChevronDown
-            size={15}
-            aria-hidden="true"
-            className={cn(
-              "transition-transform ds-transition",
-              open && "rotate-180",
-            )}
-          />
+          {showChevron && (
+            <ChevronDown
+              size={15}
+              aria-hidden="true"
+              className={cn(
+                "transition-transform ds-transition",
+                open && "rotate-180",
+              )}
+            />
+          )}
         </button>
       )}
       {/* ====================================================
