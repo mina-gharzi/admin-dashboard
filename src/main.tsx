@@ -6,10 +6,13 @@
   ==========================================================
 */
 
-import { StrictMode } from "react";
+import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
+import { RouterProvider } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
-import App from "./App";
+import router from "./routes/routes";
+import { useUIStore } from "./store";
 
 import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
@@ -26,6 +29,28 @@ try {
   document.documentElement.classList.remove("dark");
 }
 
+function AppRoot() {
+  const isDarkMode = useUIStore((state) => state.isDarkMode);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", isDarkMode);
+  }, [isDarkMode]);
+
+  return (
+    <>
+      <RouterProvider router={router} />
+
+      <ToastContainer
+        position="top-left"
+        rtl
+        autoClose={3000}
+        theme={isDarkMode ? "dark" : "light"}
+        toastClassName="font-estedad text-sm"
+      />
+    </>
+  );
+}
+
 const rootElement = document.getElementById("root");
 
 if (!rootElement) {
@@ -34,6 +59,6 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <App />
+    <AppRoot />
   </StrictMode>,
 );

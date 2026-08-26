@@ -25,10 +25,16 @@ import CustomerTable from "../components/customer/CustomerTable";
 import CustomerFilters from "../components/customer/CustomerFilters";
 
 import { useData } from "../hooks/useData";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { api } from "../services/api";
+import type { Customer } from "../types/customer";
+import { activeStatusLabels } from "../utils/activeStatus";
+import type { StatusFilter } from "../utils/filters";
 import { exportToCsv, getFileDateStamp } from "../utils/exportToCsv";
 
 function Customers() {
+  useDocumentTitle("مشتریان");
+
   const {
     data: customers,
     loading,
@@ -40,7 +46,7 @@ function Customers() {
   // Filters
   // ----------------------------------------------------------
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState("همه");
+  const [status, setStatus] = useState<StatusFilter<Customer["status"]>>("همه");
 
   const filteredCustomers = useMemo(() => {
     if (!customers) return [];
@@ -78,7 +84,7 @@ function Customers() {
         { header: "آخرین سفارش", accessor: (c) => c.lastOrderDate },
         {
           header: "وضعیت",
-          accessor: (c) => (c.status === "active" ? "فعال" : "غیرفعال"),
+          accessor: (c) => activeStatusLabels[c.status],
         },
       ],
       `مشتریان-${getFileDateStamp()}`,

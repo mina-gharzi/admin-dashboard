@@ -12,7 +12,6 @@
 */
 
 import {
-  useCallback,
   useEffect,
   useId,
   useLayoutEffect,
@@ -95,7 +94,7 @@ function Dropdown({
     ==========================================================
   */
 
-  const updatePosition = useCallback(() => {
+  const updatePosition = () => {
     const triggerElement = triggerRef.current;
     const menuElement = menuRef.current;
 
@@ -172,7 +171,7 @@ function Dropdown({
       left,
       placement,
     });
-  }, [align]);
+  };
 
   /*
     ==========================================================
@@ -190,7 +189,7 @@ function Dropdown({
     requestAnimationFrame(() => {
       updatePosition();
     });
-  }, [open, items.length, updatePosition]);
+  }, [open, items.length]);
 
   /*
     ==========================================================
@@ -219,7 +218,7 @@ function Dropdown({
 
       window.removeEventListener("scroll", handlePositionUpdate, true);
     };
-  }, [open, updatePosition]);
+  }, [open]);
 
   /*
     ==========================================================
@@ -367,13 +366,6 @@ function Dropdown({
           ==================================================== */}
 
       {triggerElement ? (
-        // این cloneElement فقط triggerButtonRef رو به‌عنوان prop به
-        // trigger سفارشی پاس می‌ده تا خودش موقع render به عنصر DOM
-        // وصلش کنه؛ هیچ‌جا ref.current اینجا خونده نمیشه. قانون
-        // react-hooks/refs نمی‌تونه cloneElement رو از یه فراخوانی
-        // واقعی که ref رو در حین render می‌خونه تشخیص بده، برای
-        // همین این مورد false positive هست.
-        // eslint-disable-next-line react-hooks/refs
         cloneElement(triggerElement, {
           ref: triggerButtonRef,
           onClick: (event: React.MouseEvent) => {

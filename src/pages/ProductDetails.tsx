@@ -27,9 +27,11 @@ import { DetailLoadingState, DetailMissingState } from "../components/ui/DetailS
 import ProductFormModal from "../components/product/ProductFormModal";
 
 import { useData } from "../hooks/useData";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { api } from "../services/api";
 import type { Product } from "../types/product";
 import { formatPrice } from "../utils/format";
+import { activeStatusLabels } from "../utils/activeStatus";
 import { runWithToast } from "../utils/toastAction";
 import { useAuthStore } from "../store";
 import { permissions } from "../utils/permissions";
@@ -48,6 +50,8 @@ function ProductDetails() {
     error,
     refetch,
   } = useData(() => api.products.getById(productId), [productId]);
+
+  useDocumentTitle(product ? product.name : "جزئیات محصول");
 
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -159,7 +163,7 @@ function ProductDetails() {
           </div>
 
           <Badge variant={product.status === "active" ? "success" : "danger"}>
-            {product.status === "active" ? "فعال" : "غیرفعال"}
+            {activeStatusLabels[product.status]}
           </Badge>
         </div>
 

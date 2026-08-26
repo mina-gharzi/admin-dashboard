@@ -38,6 +38,7 @@ import { DetailLoadingState, DetailMissingState } from "../components/ui/DetailS
 import OrderFormModal from "../components/order/OrderFormModal";
 
 import { useData } from "../hooks/useData";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { api } from "../services/api";
 import type { Order, UpdateOrder } from "../types/order";
 import { formatPrice } from "../utils/format";
@@ -77,6 +78,8 @@ function OrderDetails() {
     error,
     refetch,
   } = useData(() => api.orders.getById(id ?? ""), [id]);
+
+  useDocumentTitle(order ? `سفارش #${order.id}` : "جزئیات سفارش");
 
   const [editOpen, setEditOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);

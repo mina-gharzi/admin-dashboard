@@ -10,20 +10,24 @@
 import { Search, X } from "lucide-react";
 import { Input } from "../ui/Input";
 
+import { ORDER_STATUSES, type OrderStatus } from "../../types/order";
+import { statusMeta } from "../../utils/orderStatus";
+import type { StatusFilter } from "../../utils/filters";
+
 interface OrderFiltersProps {
   search: string;
-  status: string;
+  status: StatusFilter<OrderStatus>;
   onSearchChange: (value: string) => void;
-  onStatusChange: (value: string) => void;
+  onStatusChange: (value: StatusFilter<OrderStatus>) => void;
   resultCount: number;
 }
 
-const statuses = [
+const statuses: { value: StatusFilter<OrderStatus>; label: string }[] = [
   { value: "همه", label: "همه" },
-  { value: "pending", label: "در انتظار" },
-  { value: "processing", label: "در حال پردازش" },
-  { value: "completed", label: "تکمیل شده" },
-  { value: "cancelled", label: "لغو شده" },
+  ...ORDER_STATUSES.map((value) => ({
+    value,
+    label: statusMeta[value].label,
+  })),
 ];
 
 function OrderFilters({

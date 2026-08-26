@@ -108,12 +108,10 @@ function Sidebar() {
     --------------------------------------------------------
   */
 
-  const {
-    isSidebarCollapsed,
-    isMobileSidebarOpen,
-    closeMobileSidebar,
-    toggleSidebar,
-  } = useUIStore();
+  const isSidebarCollapsed = useUIStore((state) => state.isSidebarCollapsed);
+  const isMobileSidebarOpen = useUIStore((state) => state.isMobileSidebarOpen);
+  const closeMobileSidebar = useUIStore((state) => state.closeMobileSidebar);
+  const toggleSidebar = useUIStore((state) => state.toggleSidebar);
 
   const { logout } = useLogout();
   const role = useAuthStore((state) => state.user?.role);

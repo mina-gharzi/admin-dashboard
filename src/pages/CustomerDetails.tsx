@@ -59,6 +59,8 @@ function CustomerDetails() {
     refetch: refetchCustomer,
   } = useData(() => api.customers.getByEmail(customerEmail), [customerEmail]);
 
+  useDocumentTitle(customer ? customer.name : "جزئیات مشتری");
+
   const {
     data: orders,
     loading: ordersLoading,

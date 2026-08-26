@@ -4,3 +4,10 @@ dist/
 .env
 .env.local
 "@ | Out-File -Encoding utf8 .gitignore
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

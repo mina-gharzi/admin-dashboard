@@ -25,12 +25,16 @@ import TeamMemberFormModal from "../components/settings/TeamMemberFormModal";
 
 import { useData } from "../hooks/useData";
 import { useEditModal } from "../hooks/useEditModal";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { api } from "../services/api";
 import type { User } from "../types/user";
 import { roleLabels, roleBadgeVariants } from "../utils/permissions";
+import { activeStatusLabels } from "../utils/activeStatus";
 import { runWithToast } from "../utils/toastAction";
 
 function Team() {
+  useDocumentTitle("تیم");
+
   const {
     data: team,
     loading: teamLoading,
@@ -69,9 +73,10 @@ function Team() {
   };
 
   const handleMemberDelete = async () => {
-    if (deleteMemberModal.memberId === null) return;
+    const memberId = deleteMemberModal.memberId;
+    if (memberId === null) return;
 
-    await runWithToast(() => api.users.delete(deleteMemberModal.memberId!), {
+    await runWithToast(() => api.users.delete(memberId), {
       success: "عضو تیم حذف شد.",
       error: "خطا در حذف عضو تیم. دوباره تلاش کنید.",
     });
@@ -152,7 +157,7 @@ function Team() {
                       className={`hidden h-1.5 w-1.5 rounded-full tablet:inline-block ${
                         member.status === "active" ? "bg-success" : "bg-danger"
                       }`}
-                      title={member.status === "active" ? "فعال" : "غیرفعال"}
+                      title={activeStatusLabels[member.status]}
                     />
 
                     <Dropdown

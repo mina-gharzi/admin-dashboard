@@ -11,18 +11,22 @@
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { Input } from "../ui/Input";
 
+import type { Customer } from "../../types/customer";
+import { activeStatusLabels } from "../../utils/activeStatus";
+import type { StatusFilter } from "../../utils/filters";
+
 interface CustomerFiltersProps {
   search: string;
-  status: string;
+  status: StatusFilter<Customer["status"]>;
   onSearchChange: (value: string) => void;
-  onStatusChange: (value: string) => void;
+  onStatusChange: (value: StatusFilter<Customer["status"]>) => void;
   resultCount: number;
 }
 
-const statuses = [
+const statuses: { value: StatusFilter<Customer["status"]>; label: string }[] = [
   { value: "همه", label: "همه وضعیت‌ها" },
-  { value: "active", label: "فعال" },
-  { value: "inactive", label: "غیرفعال" },
+  { value: "active", label: activeStatusLabels.active },
+  { value: "inactive", label: activeStatusLabels.inactive },
 ];
 
 function CustomerFilters({

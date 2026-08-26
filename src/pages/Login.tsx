@@ -27,6 +27,7 @@ import { Input } from "../components/ui/Input";
 import Button from "../components/ui/Button";
 import { useAuthStore } from "../store";
 import { demoAccounts, findDemoAccountByEmail } from "../data/demoAccounts";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 interface FormState {
   email: string;
@@ -39,6 +40,8 @@ const emptyForm: FormState = {
 };
 
 function Login() {
+  useDocumentTitle("ورود");
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -46,7 +49,8 @@ function Login() {
     (location.state as { from?: { pathname: string } } | null)?.from
       ?.pathname ?? "/dashboard";
 
-  const { isAuthenticated, login } = useAuthStore();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const login = useAuthStore((state) => state.login);
 
   const [form, setForm] = useState<FormState>(emptyForm);
 

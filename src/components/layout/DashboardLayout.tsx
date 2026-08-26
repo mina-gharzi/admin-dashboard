@@ -7,7 +7,8 @@ import { cn } from "../../utils/cn";
 import { useUIStore } from "../../store";
 
 function DashboardLayout() {
-  const { isSidebarCollapsed, isDarkMode } = useUIStore();
+  const isSidebarCollapsed = useUIStore((state) => state.isSidebarCollapsed);
+  const isDarkMode = useUIStore((state) => state.isDarkMode);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", isDarkMode);

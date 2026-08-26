@@ -21,10 +21,8 @@ import { useUIStore } from "../store";
 */
 
 export function useMobileSidebar() {
-  const {
-    isMobileSidebarOpen,
-    closeMobileSidebar,
-  } = useUIStore();
+  const isMobileSidebarOpen = useUIStore((state) => state.isMobileSidebarOpen);
+  const closeMobileSidebar = useUIStore((state) => state.closeMobileSidebar);
 
   useEffect(() => {
     /*

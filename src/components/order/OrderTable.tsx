@@ -267,10 +267,6 @@ function OrderTable({ orders, onEdit, onCancel, onDelete }: OrderTableProps) {
     }),
   ];
 
-  // TanStack Table's useReactTable() returns functions that React
-  // Compiler can't safely memoize (this is a known, expected
-  // limitation of the library — not a bug here).
-  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: orders,
     columns,
@@ -347,6 +343,7 @@ function OrderTable({ orders, onEdit, onCancel, onDelete }: OrderTableProps) {
                     return (
                       <th
                         key={header.id}
+                        scope="col"
                         aria-sort={sorted === "asc" ? "ascending" : sorted === "desc" ? "descending" : "none"}
                         className="px-5 py-3 text-right first:pr-6 last:pl-6"
                       >

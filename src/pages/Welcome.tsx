@@ -23,8 +23,11 @@ import {
 } from "lucide-react";
 
 import { useAuthStore } from "../store";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 function Welcome() {
+  useDocumentTitle();
+
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   if (isAuthenticated) {

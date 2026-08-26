@@ -20,20 +20,18 @@ import OrderFormModal from "../components/order/OrderFormModal";
 
 import { useData } from "../hooks/useData";
 import { useEditModal } from "../hooks/useEditModal";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { api } from "../services/api";
-import type { Order, UpdateOrder } from "../types/order";
+import type { Order, OrderStatus, UpdateOrder } from "../types/order";
+import { statusMeta } from "../utils/orderStatus";
+import type { StatusFilter } from "../utils/filters";
 import { formatPrice } from "../utils/format";
 import { exportToCsv, getFileDateStamp } from "../utils/exportToCsv";
 import { runWithToast } from "../utils/toastAction";
 
-const orderStatusLabels: Record<Order["status"], string> = {
-  pending: "در انتظار",
-  processing: "در حال پردازش",
-  completed: "تکمیل شده",
-  cancelled: "لغو شده",
-};
-
 function Orders() {
+  useDocumentTitle("سفارش‌ها");
+
   const {
     data: orders,
     loading,
@@ -42,7 +40,7 @@ function Orders() {
   } = useData(() => api.orders.getAll(), []);
 
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState("همه");
+  const [status, setStatus] = useState<StatusFilter<OrderStatus>>("همه");
 
   const editModal = useEditModal<Order>();
 
@@ -108,7 +106,7 @@ function Orders() {
         { header: "مشتری", accessor: (order) => order.customer },
         { header: "ایمیل", accessor: (order) => order.email },
         { header: "مبلغ (تومان)", accessor: (order) => formatPrice(order.amount) },
-        { header: "وضعیت", accessor: (order) => orderStatusLabels[order.status] },
+        { header: "وضعیت", accessor: (order) => statusMeta[order.status].label },
         { header: "تاریخ", accessor: (order) => order.date },
       ],
       `سفارش‌ها-${getFileDateStamp()}`,

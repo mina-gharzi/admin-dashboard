@@ -17,6 +17,7 @@
 import PageHeader from "../components/ui/PageHeader";
 
 import { useData } from "../hooks/useData";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { api } from "../services/api";
 
 import AnalyticsStats from "../components/analytics/AnalyticsStats";
@@ -32,6 +33,8 @@ import RecentOrdersList from "../components/analytics/RecentOrdersList";
   ----------------------------------------------------------
 */
 function Analytics() {
+  useDocumentTitle("گزارش‌ها و تحلیل‌ها");
+
   const {
     data: summary,
     loading,

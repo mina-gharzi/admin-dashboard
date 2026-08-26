@@ -19,6 +19,7 @@ import { useAuthStore } from "../store";
 import { CalendarDays, RefreshCw, AlertCircle } from "lucide-react";
 
 import { useData } from "../hooks/useData";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { api } from "../services/api";
 
 import DashboardStats from "../components/dashboard/DashboardStats";
@@ -35,6 +36,8 @@ import RevenueChart from "../components/dashboard/RevenueChart";
 */
 
 function Dashboard() {
+  useDocumentTitle("داشبورد");
+
   const user = useAuthStore((state) => state.user);
 
   const {

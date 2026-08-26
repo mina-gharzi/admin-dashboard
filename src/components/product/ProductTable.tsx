@@ -42,6 +42,7 @@ import Button from "../ui/Button";
 
 import type { Product } from "../../types/product";
 import { formatPrice } from "../../utils/format";
+import { activeStatusLabels } from "../../utils/activeStatus";
 import { useAuthStore } from "../../store";
 import { permissions } from "../../utils/permissions";
 
@@ -113,7 +114,7 @@ function StatusBadge({ active }: { active: boolean }) {
       }`}
     >
       <span className={`h-1.5 w-1.5 rounded-full ${active ? "bg-success" : "bg-danger"}`} />
-      {active ? "فعال" : "غیرفعال"}
+      {activeStatusLabels[active ? "active" : "inactive"]}
     </span>
   );
 }
@@ -264,10 +265,6 @@ function ProductTable({ products, onEdit, onDelete }: ProductTableProps) {
     }),
   ];
 
-  // TanStack Table's useReactTable() returns functions that React
-  // Compiler can't safely memoize (this is a known, expected
-  // limitation of the library — not a bug here).
-  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: products,
     columns,
@@ -330,6 +327,7 @@ function ProductTable({ products, onEdit, onDelete }: ProductTableProps) {
                     return (
                       <th
                         key={header.id}
+                        scope="col"
                         aria-sort={sorted === "asc" ? "ascending" : sorted === "desc" ? "descending" : "none"}
                         className="px-5 py-3 text-right first:pr-6 last:pl-6"
                       >

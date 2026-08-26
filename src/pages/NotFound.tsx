@@ -13,8 +13,11 @@ import { useNavigate } from "react-router-dom";
 import { ArrowRight, Home } from "lucide-react";
 
 import Button from "../components/ui/Button";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 function NotFound() {
+  useDocumentTitle("صفحه پیدا نشد");
+
   const navigate = useNavigate();
 
   return (

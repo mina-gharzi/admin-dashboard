@@ -58,12 +58,10 @@ function Header() {
   const navigate = useNavigate();
   const { logout } = useLogout();
 
-  const {
-    isMobileSidebarOpen,
-    toggleMobileSidebar,
-    isDarkMode,
-    toggleDarkMode,
-  } = useUIStore();
+  const isMobileSidebarOpen = useUIStore((state) => state.isMobileSidebarOpen);
+  const toggleMobileSidebar = useUIStore((state) => state.toggleMobileSidebar);
+  const isDarkMode = useUIStore((state) => state.isDarkMode);
+  const toggleDarkMode = useUIStore((state) => state.toggleDarkMode);
   const user = useAuthStore((state) => state.user);
 
   /*
@@ -75,20 +73,9 @@ function Header() {
   const [results, setResults] = useState<SearchResults>(emptyResults);
   const [searching, setSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const searchBoxRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
-
-  // تغییر مقدار جستجو؛ اگه متن کوتاه‌تر از ۲ کاراکتر شد، نتایج رو
-  // همین‌جا (نه داخل effect) ریست می‌کنیم. ریست کردن state در جواب
-  // مستقیم به یه event، برخلاف انجامش داخل بدنه‌ی effect، باعث
-  // cascading render نمیشه.
-  const updateSearch = (value: string) => {
-    setSearch(value);
-    if (value.trim().length < 2) {
-      setResults(emptyResults);
-      setSearching(false);
-    }
-  };
 
   // Shortcut برای سریع فوکوس کردن روی جستجو با Ctrl+K یا Cmd+K
   useEffect(() => {
@@ -105,9 +92,11 @@ function Header() {
   useEffect(() => {
     const query = search.trim();
 
-    // ریست‌شدنِ حالت کوتاه (کمتر از ۲ کاراکتر) الان تو updateSearch
-    // انجام میشه، نه اینجا؛ effect فقط مسئول fetch دیبانس‌شده‌ست.
-    if (query.length < 2) return;
+    if (query.length < 2) {
+      setResults(emptyResults);
+      setSearching(false);
+      return;
+    }
 
     let cancelled = false;
     setSearching(true);
@@ -134,6 +123,28 @@ function Header() {
       clearTimeout(timeoutId);
     };
   }, [search]);
+  // وقتی جستجوی موبایل باز میشه، فوکوس بره رو اینپوت
+  useEffect(() => {
+    if (mobileSearchOpen) {
+      searchInputRef.current?.focus();
+    }
+  }, [mobileSearchOpen]);
+
+  // بستن جستجوی موبایل با Escape
+  useEffect(() => {
+    if (!mobileSearchOpen) return;
+
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setMobileSearchOpen(false);
+        setShowResults(false);
+      }
+    }
+
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [mobileSearchOpen]);
+
   /*
     بستن نتایج جستجو با کلیک بیرون
   */
@@ -144,6 +155,7 @@ function Header() {
         !searchBoxRef.current.contains(event.target as Node)
       ) {
         setShowResults(false);
+        setMobileSearchOpen(false);
       }
     }
 
@@ -159,7 +171,8 @@ function Header() {
   const goTo = (path: string) => {
     navigate(path);
     setShowResults(false);
-    updateSearch("");
+    setMobileSearchOpen(false);
+    setSearch("");
   };
 
   /*
@@ -218,10 +231,36 @@ function Header() {
             {isMobileSidebarOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
 
+          {/* Mobile Search Toggle — جستجو زیر تبلت مخفی بود بدون
+              هیچ جایگزینی؛ این دکمه همون جستجو رو به‌شکل یه
+              پنل‌کشویی زیر هدر باز می‌کنه */}
+          <button
+            type="button"
+            onClick={() => setMobileSearchOpen((current) => !current)}
+            className={cn(
+              "flex tablet:hidden",
+              "h-10 w-10",
+              "items-center justify-center",
+              "rounded-xl border border-primary-300/60",
+              "bg-background/80 text-text-secondary",
+              "transition-all ds-transition",
+              "hover:bg-primary-100 hover:text-primary-900 hover:shadow-sm",
+              "active:scale-95",
+            )}
+            aria-label={mobileSearchOpen ? "بستن جستجو" : "جستجو"}
+            aria-expanded={mobileSearchOpen}
+          >
+            {mobileSearchOpen ? <X size={19} /> : <Search size={19} />}
+          </button>
+
           {/* Search Box */}
           <div
             ref={searchBoxRef}
-            className="relative hidden tablet:block tablet:w-80 desktop:w-96"
+            className={cn(
+              "z-40",
+              mobileSearchOpen ? "absolute inset-x-3 top-full mt-2" : "hidden",
+              "tablet:relative tablet:block tablet:inset-auto tablet:mt-0 tablet:w-80 desktop:w-96",
+            )}
           >
             <Search
               size={17}
@@ -232,7 +271,7 @@ function Header() {
               ref={searchInputRef}
               value={search}
               onChange={(event) => {
-                updateSearch(event.target.value);
+                setSearch(event.target.value);
                 setShowResults(true);
               }}
               onFocus={() => setShowResults(true)}
@@ -469,7 +508,7 @@ function Header() {
                     {user?.name ?? "کاربر سیستم"}
                   </p>
                   <p className="mt-0.5 font-estedad text-[10px] font-medium text-text-secondary">
-                    {roleLabels[user?.role ?? "admin"]}
+                    {user ? roleLabels[user.role] : "—"}
                   </p>
                 </div>
               </div>

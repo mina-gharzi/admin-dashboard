@@ -10,23 +10,30 @@ import { Search, SlidersHorizontal, X } from "lucide-react";
 
 import { Input } from "../ui/Input";
 import { PRODUCT_CATEGORIES } from "../../data/productCategories";
+import { PRODUCT_STATUSES, type ProductStatus } from "../../types/product";
+import { activeStatusLabels } from "../../utils/activeStatus";
+import type { StatusFilter } from "../../utils/filters";
+
+type ProductCategory = (typeof PRODUCT_CATEGORIES)[number];
 
 interface ProductFiltersProps {
   search: string;
-  category: string;
-  status: string;
+  category: StatusFilter<ProductCategory>;
+  status: StatusFilter<ProductStatus>;
   onSearchChange: (value: string) => void;
-  onCategoryChange: (value: string) => void;
-  onStatusChange: (value: string) => void;
+  onCategoryChange: (value: StatusFilter<ProductCategory>) => void;
+  onStatusChange: (value: StatusFilter<ProductStatus>) => void;
   resultCount: number;
 }
 
-const categories = ["همه", ...PRODUCT_CATEGORIES];
+const categories: StatusFilter<ProductCategory>[] = ["همه", ...PRODUCT_CATEGORIES];
 
-const statuses = [
+const statuses: { value: StatusFilter<ProductStatus>; label: string }[] = [
   { value: "همه", label: "همه وضعیت‌ها" },
-  { value: "active", label: "فعال" },
-  { value: "inactive", label: "غیرفعال" },
+  ...PRODUCT_STATUSES.map((value) => ({
+    value,
+    label: activeStatusLabels[value],
+  })),
 ];
 
 function ProductFilters({

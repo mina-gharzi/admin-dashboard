@@ -30,10 +30,14 @@ import { useAuthStore, useUIStore } from "../store";
 import { api } from "../services/api";
 import { roleLabels, permissions } from "../utils/permissions";
 import { useLogout } from "../hooks/useLogout";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 function Settings() {
+  useDocumentTitle("تنظیمات");
+
   const user = useAuthStore((state) => state.user);
-  const { isDarkMode, toggleDarkMode } = useUIStore();
+  const isDarkMode = useUIStore((state) => state.isDarkMode);
+  const toggleDarkMode = useUIStore((state) => state.toggleDarkMode);
   const canManageSystemData = permissions.canManageSystemData(user?.role);
   const { logout } = useLogout();
 
@@ -46,8 +50,16 @@ function Settings() {
     setResetting(true);
     try {
       await api.system.resetToSampleData();
-      toast.success("داده‌ها با موفقیت بازنشانی شد.");
-      setResetOpen(false);
+      /*
+        برخلاف پاک‌سازی کامل (که با logout باعث unmount کامل
+        DashboardLayout/Header میشه)، اینجا کاربر همچنان تو
+        همین صفحه می‌مونه — یعنی داده‌ی از قبل fetch‌شده تو
+        بقیه‌ی برنامه (مخصوصاً badge اعلان‌های Header که فقط
+        یک‌بار موقع mount شدن layout گرفته میشه) بدون این
+        reload تا رفرش بعدی مرورگر یا logout/login، منسوخ
+        (stale) باقی می‌موند.
+      */
+      window.location.reload();
     } finally {
       setResetting(false);
     }
@@ -93,7 +105,7 @@ function Settings() {
                   {user?.name ?? "کاربر سیستم"}
                 </p>
                 <p className="mt-0.5 font-inter text-sm text-text-secondary">
-                  {user?.email ?? "admin@example.com"}
+                  {user?.email ?? "—"}
                 </p>
               </div>
             </div>
@@ -116,7 +128,7 @@ function Settings() {
               <div>
                 <p className="font-estedad text-xs text-text-secondary">نقش</p>
                 <p className="mt-1.5 font-estedad text-sm font-medium text-text-primary">
-                  {roleLabels[user?.role ?? "admin"]}
+                  {user ? roleLabels[user.role] : "—"}
                 </p>
               </div>
               <div>

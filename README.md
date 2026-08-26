@@ -1,75 +1,115 @@
-# React + TypeScript + Vite
+# پنل مدیریت فروشگاه (Shopino Admin)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+یه پنل مدیریت فروشگاهی کامل، ساخته‌شده با React و TypeScript — با پشتیبانی کامل از راست‌به‌چپ (RTL) و فارسی، شامل مدیریت سفارش‌ها، محصولات، مشتریان، تیم، و گزارش‌های تحلیلی؛ با سیستم نقش‌محور (RBAC) واقعی برای ۵ سطح دسترسی مختلف.
 
-Currently, two official plugins are available:
+> این پروژه با یه بک‌اند mock (داده‌ها در `localStorage`) کار می‌کنه — طراحی و معماریش طوریه که جایگزینی با یه API واقعی فقط نیاز به تغییر لایه‌ی `services/api.ts` داره، بدون دست زدن به بقیه‌ی برنامه.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## امکانات
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **داشبورد** — خلاصه‌ی وضعیت فروش، سفارش‌های اخیر، و نمودار توزیع وضعیت سفارش‌ها
+- **مدیریت سفارش‌ها** — فیلتر بر اساس وضعیت/جستجو، مرتب‌سازی، تغییر وضعیت، ویرایش، حذف، خروجی CSV
+- **مدیریت محصولات** — دسته‌بندی، وضعیت فعال/غیرفعال، هشدار موجودی کم، CRUD کامل
+- **مشتریان** — به‌صورت خودکار از روی سفارش‌ها ساخته میشن (بدون فرم «افزودن مشتری» — دقیقاً مثل یه فروشگاه واقعی)
+- **مدیریت تیم** — فقط برای مدیر کل سیستم؛ افزودن/ویرایش/حذف اعضا با نقش‌های مختلف
+- **گزارش‌ها و تحلیل‌ها** — نمودار دسته‌بندی محصولات، توزیع وضعیت سفارش‌ها، پرفروش‌ترین‌ها
+- **جستجوی سراسری** — جستجوی همزمان بین مشتری/محصول/سفارش از هر جای برنامه (دسکتاپ و موبایل)
+- **حالت تیره/روشن**، **قابل‌جمع‌شدن بودن ساید‌بار** — و هر دو بین رفرش‌ها persist میشن
 
-## Expanding the ESLint configuration
+### سطوح دسترسی (RBAC)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+| نقش | دسترسی |
+|---|---|
+| مدیر کل سیستم (`system_admin`) | همه‌چیز، از جمله مدیریت تیم و بازنشانی/پاک‌سازی داده‌ها |
+| مدیر (`admin`) | همه‌چیز به‌جز مدیریت تیم |
+| مدیر فروش (`sales_manager`) | سفارش‌ها، محصولات، گزارش‌ها |
+| فروشنده (`salesperson`) | سفارش‌ها، محصولات (بدون گزارش‌ها) |
+| تحلیل‌گر (`analyst`) | فقط مشاهده — بدون امکان ویرایش سفارش/محصول |
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+دسترسی هم تو رابط کاربری (مخفی‌شدن دکمه‌ها) و هم تو سطح مسیر (`RequireRole` — مسدود کردن ورود مستقیم با URL) اعمال میشه.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## پشته‌ی فنی
 
+- **React + TypeScript** (استریکت، بدون `any`)
+- **Tailwind CSS v4** (پیکربندی CSS-first، بدون `tailwind.config.js`)
+- **React Router** — nested routing با layout route ها و role guard (`createBrowserRouter`)
+- **Zustand** — مدیریت state سبک (`authStore` برای session، `uiStore` برای تنظیمات رابط کاربری با `persist`)
+- **TanStack Table v8** — جدول‌های قابل‌مرتب‌سازی با صفحه‌بندی
+- **Recharts** — نمودارهای داشبورد و تحلیل‌ها
+- **react-toastify** — اعلان‌های موفقیت/خطا
+- **Lucide React** — آیکون‌ها
+- فونت **استعداد (Estedad)** برای تایپوگرافی فارسی
+
+---
+
+## شروع به کار
+
+> دستورهای زیر مطابق قراردادهای استاندارد Vite هستن؛ اگه اسکریپت‌های `package.json` پروژه فرق داره، همون‌ها رو جایگزین کنید.
+
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+سپس روی آدرسی که Vite نشون میده (پیش‌فرض `http://localhost:5173`) باز کنید.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### ورود به دمو
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+صفحه‌ی ورود شامل ۵ حساب نمونه (یکی برای هر نقش) هست که می‌تونید مستقیم با کلیک روش‌ها وارد بشید — رمز عبور واقعی بررسی نمیشه (چون بک‌اند واقعی نیست)، فقط کافیه خالی نباشه:
+
+| نقش | ایمیل |
+|---|---|
+| مدیر کل سیستم | `admin@shopino.ir` |
+| مدیر | `ali.rezaei@shopino.ir` |
+| مدیر فروش | `negar.karimi@shopino.ir` |
+| فروشنده | `reza.kazemi@shopino.ir` |
+| تحلیل‌گر | `sara.mohammadi@shopino.ir` |
+
+---
+
+## ساختار پروژه
 
 ```
+src/
+├── components/
+│   ├── ui/          # کامپوننت‌های پایه‌ی مشترک (Modal, Dropdown, Button, Input, ...)
+│   ├── layout/       # Header, Sidebar, DashboardLayout, NotificationsPanel
+│   ├── order/        # جدول، فیلتر، و فرم سفارش‌ها
+│   ├── product/       # جدول، فیلتر، و فرم محصولات
+│   ├── customer/      # جدول و فیلتر مشتریان
+│   ├── dashboard/      # ویجت‌های صفحه‌ی داشبورد
+│   ├── analytics/       # نمودارها و لیست‌های صفحه‌ی گزارش‌ها
+│   └── settings/        # فرم عضو تیم
+├── pages/             # یک کامپوننت به‌ازای هر route
+├── routes/             # تعریف route ها + RequireAuth/RequireRole + مسیرهای کانونی
+├── hooks/              # useData (fetch عمومی)، useEditModal، useDocumentTitle، ...
+├── services/           # لایه‌ی api.ts (mock، آماده برای جایگزینی با API واقعی)
+├── store/              # authStore و uiStore (Zustand)
+├── types/              # تعریف Entity ها — تنها منبع حقیقت برای شکل داده
+├── utils/               # permissions، status meta ها، format، validation، ...
+└── data/                 # داده‌ی seed و حساب‌های دمو
+```
+
+---
+
+## نکات مهندسی
+
+این پروژه، فراتر از پیاده‌سازی فیچرها، از یه ممیزی چندمرحله‌ای عبور کرده:
+
+- **صفر `any`** — تمام typeها (از جمله CRUD ورودی/خروجی، فیلترها، وضعیت‌ها) به‌جای literal های پراکنده، از یه منبع کانونی مشتق میشن (`ORDER_STATUSES`, `PRODUCT_STATUSES`, `ROLES`, و غیره) تا امکان drift بین جاهای مختلف کد از بین بره
+- **جهت وابستگی درست** — `types/` مستقل از `services/`، نه برعکس؛ کامپوننت‌ها مستقیم از `types/` می‌خونن نه از لایه‌ی service
+- **دسترس‌پذیری (a11y)** — focus trap کامل تو مودال‌ها، الگوی استاندارد WAI-ARIA برای منوها، `scope="col"` رو جدول‌ها، `document.title` پویا برای هر صفحه (برای اعلام تغییر مسیر به screen reader)، skip-link
+- **واکنش‌گرا (Responsive)** — تمام صفحات لیست یه نمای کارتی جدا برای موبایل دارن (نه فقط جدول با اسکرول افقی)؛ جستجوی سراسری هم رو موبایل در دسترسه
+- **مدیریت خطا** — الگوی یکدست toast + rethrow برای هر mutation، با retry خودکار و محافظت در برابر race condition تو لایه‌ی fetch
+- **بهینه‌سازی re-render** — subscription های Zustand با selector تک‌فیلدی (نه کل store)، مخصوصاً تو `DashboardLayout` که دور کل محتوای صفحات رو گرفته
+
+---
+
+## محدودیت‌های شناخته‌شده (نسخه‌ی دمو)
+
+- بک‌اند واقعی نداره — داده‌ها تو `localStorage` نگه داشته میشن، نه یه دیتابیس واقعی
+- رمز عبور بررسی نمیشه (فقط باید خالی نباشه)
+- بدون تست خودکار (unit/integration/e2e)

@@ -20,15 +20,23 @@ import ProductFormModal from "../components/product/ProductFormModal";
 
 import { useData } from "../hooks/useData";
 import { useEditModal } from "../hooks/useEditModal";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { api } from "../services/api";
-import type { Product } from "../types/product";
+import type { Product, ProductStatus } from "../types/product";
+import { PRODUCT_CATEGORIES } from "../data/productCategories";
+import { activeStatusLabels } from "../utils/activeStatus";
+import type { StatusFilter } from "../utils/filters";
 import { formatPrice } from "../utils/format";
 import { exportToCsv, getFileDateStamp } from "../utils/exportToCsv";
 import { runWithToast } from "../utils/toastAction";
 import { useAuthStore } from "../store";
 import { permissions } from "../utils/permissions";
 
+type ProductCategory = (typeof PRODUCT_CATEGORIES)[number];
+
 function Products() {
+  useDocumentTitle("محصولات");
+
   const role = useAuthStore((state) => state.user?.role);
   const canManage = permissions.canManageProducts(role);
 
@@ -38,8 +46,8 @@ function Products() {
   );
 
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("همه");
-  const [status, setStatus] = useState("همه");
+  const [category, setCategory] = useState<StatusFilter<ProductCategory>>("همه");
+  const [status, setStatus] = useState<StatusFilter<ProductStatus>>("همه");
 
   const formModal = useEditModal<Product>();
 
@@ -98,8 +106,7 @@ function Products() {
         { header: "موجودی", accessor: (product) => product.stock },
         {
           header: "وضعیت",
-          accessor: (product) =>
-            product.status === "active" ? "فعال" : "غیرفعال",
+          accessor: (product) => activeStatusLabels[product.status],
         },
       ],
       `محصولات-${getFileDateStamp()}`,

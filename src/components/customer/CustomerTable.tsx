@@ -38,6 +38,7 @@ import type { Order } from "../../types/order";
 import { api } from "../../services/api";
 import { formatPrice } from "../../utils/format";
 import { statusMeta } from "../../utils/orderStatus";
+import { activeStatusLabels } from "../../utils/activeStatus";
 
 interface CustomerTableProps {
   customers: Customer[];
@@ -46,8 +47,8 @@ interface CustomerTableProps {
 const PAGE_SIZE = 8;
 
 const statusConfig = {
-  active: { label: "فعال", dot: "bg-success", text: "text-success", ring: "border-success/25 bg-success/5" },
-  inactive: { label: "غیرفعال", dot: "bg-danger", text: "text-danger", ring: "border-danger/25 bg-danger/5" },
+  active: { label: activeStatusLabels.active, dot: "bg-success", text: "text-success", ring: "border-success/25 bg-success/5" },
+  inactive: { label: activeStatusLabels.inactive, dot: "bg-danger", text: "text-danger", ring: "border-danger/25 bg-danger/5" },
 } as const;
 
 const columnHelper = createColumnHelper<Customer>();
@@ -199,10 +200,6 @@ function CustomerTable({ customers }: CustomerTableProps) {
     }),
   ];
 
-  // TanStack Table's useReactTable() returns functions that React
-  // Compiler can't safely memoize (this is a known, expected
-  // limitation of the library — not a bug here).
-  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: customers,
     columns,
@@ -220,8 +217,9 @@ function CustomerTable({ customers }: CustomerTableProps) {
 
   return (
     <>
-      <div className="overflow-x-auto">
-        <table aria-label="جدول مشتریان" className="w-full min-w-175">
+      <div className="hidden tablet:block">
+        <div className="overflow-x-auto">
+          <table aria-label="جدول مشتریان" className="w-full min-w-175">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr
@@ -235,6 +233,7 @@ function CustomerTable({ customers }: CustomerTableProps) {
                   return (
                     <th
                       key={header.id}
+                      scope="col"
                       aria-sort={sorted === "asc" ? "ascending" : sorted === "desc" ? "descending" : "none"}
                       className="px-6 py-3 text-right"
                     >
@@ -279,6 +278,82 @@ function CustomerTable({ customers }: CustomerTableProps) {
             ))}
           </tbody>
         </table>
+        </div>
+      </div>
+
+      {/* ==================================================
+          Mobile Card List
+          ----------------------------------------------------------
+          زیر تبلت، به‌جای جدول با اسکرول افقی (که روی موبایل
+          قابل‌استفاده نبود)، یه لیست کارتی نمایش داده میشه —
+          دقیقاً همون الگوی OrderTable/ProductTable.
+          ================================================== */}
+
+      <div className="divide-y divide-primary-100/60 tablet:hidden">
+        {rows.map((row) => {
+          const customer = row.original;
+          const initials = customer.name
+            .trim()
+            .split(" ")
+            .slice(0, 2)
+            .map((part) => part.charAt(0))
+            .join("")
+            .toUpperCase();
+          const config = statusConfig[customer.status];
+
+          return (
+            <div key={row.id} className="flex flex-col gap-3 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <Link
+                  to={`/dashboard/customers/${encodeURIComponent(customer.email)}`}
+                  className="flex min-w-0 items-center gap-3 text-right"
+                >
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-tr from-primary-900 to-primary-700 font-inter text-xs font-bold text-white shadow-sm ring-2 ring-primary-100/60">
+                    {initials || <UserRound size={16} strokeWidth={1.8} />}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate font-estedad text-sm font-bold text-text-primary">
+                      {customer.name}
+                    </p>
+                    <span dir="ltr" className="block truncate text-right font-inter text-[10px] text-text-secondary">
+                      {customer.email}
+                    </span>
+                  </div>
+                </Link>
+
+                <button
+                  type="button"
+                  onClick={() => openOrdersModal(customer)}
+                  aria-label={`سفارش‌های ${customer.name}`}
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-text-secondary transition hover:bg-primary-100 hover:text-primary-900"
+                >
+                  <Eye size={16} />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="font-inter text-xs font-bold text-text-primary">
+                  {customer.ordersCount.toLocaleString("fa-IR")} سفارش
+                </span>
+                <span className="font-estedad text-xs font-medium text-text-primary">
+                  {formatPrice(customer.totalSpent)}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className={`inline-flex items-center gap-2 rounded-lg border px-2.5 py-1 ${config.ring}`}>
+                  <span className={`h-1.5 w-1.5 rounded-full ${config.dot}`} />
+                  <span className={`font-estedad text-[11px] font-medium ${config.text}`}>
+                    {config.label}
+                  </span>
+                </span>
+                <span className="font-estedad text-[10px] text-text-secondary">
+                  {customer.lastOrderDate}
+                </span>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Empty State */}

@@ -17,8 +17,11 @@ import { ShieldAlert, Home } from "lucide-react";
 import Button from "../components/ui/Button";
 import { useAuthStore } from "../store";
 import { roleLabels } from "../utils/permissions";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 function Forbidden() {
+  useDocumentTitle("دسترسی غیرمجاز");
+
   const navigate = useNavigate();
   const role = useAuthStore((state) => state.user?.role);
 
