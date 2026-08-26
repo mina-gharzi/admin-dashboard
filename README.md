@@ -1,115 +1,133 @@
-# پنل مدیریت فروشگاه (Shopino Admin)
+# Shopino Admin — Store Management Dashboard
 
-یه پنل مدیریت فروشگاهی کامل، ساخته‌شده با React و TypeScript — با پشتیبانی کامل از راست‌به‌چپ (RTL) و فارسی، شامل مدیریت سفارش‌ها، محصولات، مشتریان، تیم، و گزارش‌های تحلیلی؛ با سیستم نقش‌محور (RBAC) واقعی برای ۵ سطح دسترسی مختلف.
+A full-featured e-commerce admin dashboard built with **React and TypeScript**, with full **RTL and Persian language support**. The dashboard includes order, product, customer, and team management, analytics and reporting, and a real **Role-Based Access Control (RBAC)** system with five different access levels.
 
-> این پروژه با یه بک‌اند mock (داده‌ها در `localStorage`) کار می‌کنه — طراحی و معماریش طوریه که جایگزینی با یه API واقعی فقط نیاز به تغییر لایه‌ی `services/api.ts` داره، بدون دست زدن به بقیه‌ی برنامه.
-
----
-
-## امکانات
-
-- **داشبورد** — خلاصه‌ی وضعیت فروش، سفارش‌های اخیر، و نمودار توزیع وضعیت سفارش‌ها
-- **مدیریت سفارش‌ها** — فیلتر بر اساس وضعیت/جستجو، مرتب‌سازی، تغییر وضعیت، ویرایش، حذف، خروجی CSV
-- **مدیریت محصولات** — دسته‌بندی، وضعیت فعال/غیرفعال، هشدار موجودی کم، CRUD کامل
-- **مشتریان** — به‌صورت خودکار از روی سفارش‌ها ساخته میشن (بدون فرم «افزودن مشتری» — دقیقاً مثل یه فروشگاه واقعی)
-- **مدیریت تیم** — فقط برای مدیر کل سیستم؛ افزودن/ویرایش/حذف اعضا با نقش‌های مختلف
-- **گزارش‌ها و تحلیل‌ها** — نمودار دسته‌بندی محصولات، توزیع وضعیت سفارش‌ها، پرفروش‌ترین‌ها
-- **جستجوی سراسری** — جستجوی همزمان بین مشتری/محصول/سفارش از هر جای برنامه (دسکتاپ و موبایل)
-- **حالت تیره/روشن**، **قابل‌جمع‌شدن بودن ساید‌بار** — و هر دو بین رفرش‌ها persist میشن
-
-### سطوح دسترسی (RBAC)
-
-| نقش | دسترسی |
-|---|---|
-| مدیر کل سیستم (`system_admin`) | همه‌چیز، از جمله مدیریت تیم و بازنشانی/پاک‌سازی داده‌ها |
-| مدیر (`admin`) | همه‌چیز به‌جز مدیریت تیم |
-| مدیر فروش (`sales_manager`) | سفارش‌ها، محصولات، گزارش‌ها |
-| فروشنده (`salesperson`) | سفارش‌ها، محصولات (بدون گزارش‌ها) |
-| تحلیل‌گر (`analyst`) | فقط مشاهده — بدون امکان ویرایش سفارش/محصول |
-
-دسترسی هم تو رابط کاربری (مخفی‌شدن دکمه‌ها) و هم تو سطح مسیر (`RequireRole` — مسدود کردن ورود مستقیم با URL) اعمال میشه.
+> This project uses a **mock backend** with data persisted in `localStorage`. The architecture is designed so that replacing it with a real API only requires changes to the `services/api.ts` layer, without modifying the rest of the application.
 
 ---
 
-## پشته‌ی فنی
+## Features
 
-- **React + TypeScript** (استریکت، بدون `any`)
-- **Tailwind CSS v4** (پیکربندی CSS-first، بدون `tailwind.config.js`)
-- **React Router** — nested routing با layout route ها و role guard (`createBrowserRouter`)
-- **Zustand** — مدیریت state سبک (`authStore` برای session، `uiStore` برای تنظیمات رابط کاربری با `persist`)
-- **TanStack Table v8** — جدول‌های قابل‌مرتب‌سازی با صفحه‌بندی
-- **Recharts** — نمودارهای داشبورد و تحلیل‌ها
-- **react-toastify** — اعلان‌های موفقیت/خطا
-- **Lucide React** — آیکون‌ها
-- فونت **استعداد (Estedad)** برای تایپوگرافی فارسی
+- **Dashboard** — Overview of sales performance, recent orders, and order status distribution charts.
+
+- **Order Management** — Filter by status and search, sorting, status updates, editing, deletion, and CSV export.
+
+- **Product Management** — Categories, active/inactive status, low-stock alerts, and full CRUD operations.
+
+- **Customer Management** — Customers are automatically derived from orders, with no manual "Add Customer" form — similar to how a real e-commerce system works.
+
+- **Team Management** — Available only to the system administrator; supports adding, editing, and removing team members with different roles.
+
+- **Analytics & Reports** — Product category charts, order status distribution, and top-selling products.
+
+- **Global Search** — Search across customers, products, and orders from anywhere in the application, on both desktop and mobile.
+
+- **Dark / Light Mode** and **Collapsible Sidebar** — Both preferences persist across page refreshes.
+
+### Role-Based Access Control (RBAC)
+
+| Role                            | Access                                                        |
+| ------------------------------- | ------------------------------------------------------------- |
+| System Admin (`system_admin`)   | Full access, including team management and data reset/cleanup |
+| Admin (`admin`)                 | Full access except team management                            |
+| Sales Manager (`sales_manager`) | Orders, products, and analytics                               |
+| Salesperson (`salesperson`)     | Orders and products, without analytics                        |
+| Analyst (`analyst`)             | Read-only access — cannot edit orders or products             |
+
+Access control is enforced at both the **UI level** (hiding unauthorized actions) and the **route level** through `RequireRole`, preventing unauthorized users from accessing restricted pages directly via URL.
 
 ---
 
-## شروع به کار
+## Tech Stack
 
-> دستورهای زیر مطابق قراردادهای استاندارد Vite هستن؛ اگه اسکریپت‌های `package.json` پروژه فرق داره، همون‌ها رو جایگزین کنید.
+- **React + TypeScript** — Strict TypeScript configuration with no `any`
+- **Tailwind CSS v4** — CSS-first configuration without `tailwind.config.js`
+- **React Router** — Nested routing with layout routes and role-based route guards using `createBrowserRouter`
+- **Zustand** — Lightweight state management with `authStore` for sessions and `uiStore` for UI preferences with `persist`
+- **TanStack Table v8** — Sortable and paginated data tables
+- **Recharts** — Dashboard and analytics charts
+- **React Toastify** — Success and error notifications
+- **Lucide React** — Icon library
+- **Estedad** — Persian typography
+
+---
+
+## Getting Started
+
+> The following commands follow standard Vite conventions. If the project's `package.json` uses different scripts, use the corresponding scripts defined there.
 
 ```bash
 npm install
 npm run dev
 ```
 
-سپس روی آدرسی که Vite نشون میده (پیش‌فرض `http://localhost:5173`) باز کنید.
+Then open the URL provided by Vite. By default:
 
-### ورود به دمو
+```text
+http://localhost:5173
+```
 
-صفحه‌ی ورود شامل ۵ حساب نمونه (یکی برای هر نقش) هست که می‌تونید مستقیم با کلیک روش‌ها وارد بشید — رمز عبور واقعی بررسی نمیشه (چون بک‌اند واقعی نیست)، فقط کافیه خالی نباشه:
+### Demo Login
 
-| نقش | ایمیل |
-|---|---|
-| مدیر کل سیستم | `admin@shopino.ir` |
-| مدیر | `ali.rezaei@shopino.ir` |
-| مدیر فروش | `negar.karimi@shopino.ir` |
-| فروشنده | `reza.kazemi@shopino.ir` |
-| تحلیل‌گر | `sara.mohammadi@shopino.ir` |
+The login page provides **five demo accounts**, one for each role. You can log in directly by selecting an account.
+
+Since this project does not use a real backend, the actual password is not validated — it only needs to be non-empty.
+
+| Role          | Email                       |
+| ------------- | --------------------------- |
+| System Admin  | `admin@shopino.ir`          |
+| Admin         | `ali.rezaei@shopino.ir`     |
+| Sales Manager | `negar.karimi@shopino.ir`   |
+| Salesperson   | `reza.kazemi@shopino.ir`    |
+| Analyst       | `sara.mohammadi@shopino.ir` |
 
 ---
 
-## ساختار پروژه
+## Project Structure
 
-```
+```text
 src/
 ├── components/
-│   ├── ui/          # کامپوننت‌های پایه‌ی مشترک (Modal, Dropdown, Button, Input, ...)
-│   ├── layout/       # Header, Sidebar, DashboardLayout, NotificationsPanel
-│   ├── order/        # جدول، فیلتر، و فرم سفارش‌ها
-│   ├── product/       # جدول، فیلتر، و فرم محصولات
-│   ├── customer/      # جدول و فیلتر مشتریان
-│   ├── dashboard/      # ویجت‌های صفحه‌ی داشبورد
-│   ├── analytics/       # نمودارها و لیست‌های صفحه‌ی گزارش‌ها
-│   └── settings/        # فرم عضو تیم
-├── pages/             # یک کامپوننت به‌ازای هر route
-├── routes/             # تعریف route ها + RequireAuth/RequireRole + مسیرهای کانونی
-├── hooks/              # useData (fetch عمومی)، useEditModal، useDocumentTitle، ...
-├── services/           # لایه‌ی api.ts (mock، آماده برای جایگزینی با API واقعی)
-├── store/              # authStore و uiStore (Zustand)
-├── types/              # تعریف Entity ها — تنها منبع حقیقت برای شکل داده
-├── utils/               # permissions، status meta ها، format، validation، ...
-└── data/                 # داده‌ی seed و حساب‌های دمو
+│   ├── ui/             # Shared base components (Modal, Dropdown, Button, Input, ...)
+│   ├── layout/         # Header, Sidebar, DashboardLayout, NotificationsPanel
+│   ├── order/          # Order tables, filters, and forms
+│   ├── product/        # Product tables, filters, and forms
+│   ├── customer/       # Customer tables and filters
+│   ├── dashboard/      # Dashboard widgets
+│   ├── analytics/      # Analytics charts and lists
+│   └── settings/       # Team member form
+├── pages/              # One component per route
+├── routes/             # Route definitions + RequireAuth/RequireRole + canonical paths
+├── hooks/              # useData, useEditModal, useDocumentTitle, ...
+├── services/           # api.ts layer (mock backend, ready for a real API)
+├── store/              # authStore and uiStore (Zustand)
+├── types/              # Entity definitions — single source of truth for data shapes
+├── utils/              # Permissions, status metadata, formatting, validation, ...
+└── data/               # Seed data and demo accounts
 ```
 
 ---
 
-## نکات مهندسی
+## Engineering Highlights
 
-این پروژه، فراتر از پیاده‌سازی فیچرها، از یه ممیزی چندمرحله‌ای عبور کرده:
+Beyond implementing the core features, the project has gone through several engineering and quality passes:
 
-- **صفر `any`** — تمام typeها (از جمله CRUD ورودی/خروجی، فیلترها، وضعیت‌ها) به‌جای literal های پراکنده، از یه منبع کانونی مشتق میشن (`ORDER_STATUSES`, `PRODUCT_STATUSES`, `ROLES`, و غیره) تا امکان drift بین جاهای مختلف کد از بین بره
-- **جهت وابستگی درست** — `types/` مستقل از `services/`، نه برعکس؛ کامپوننت‌ها مستقیم از `types/` می‌خونن نه از لایه‌ی service
-- **دسترس‌پذیری (a11y)** — focus trap کامل تو مودال‌ها، الگوی استاندارد WAI-ARIA برای منوها، `scope="col"` رو جدول‌ها، `document.title` پویا برای هر صفحه (برای اعلام تغییر مسیر به screen reader)، skip-link
-- **واکنش‌گرا (Responsive)** — تمام صفحات لیست یه نمای کارتی جدا برای موبایل دارن (نه فقط جدول با اسکرول افقی)؛ جستجوی سراسری هم رو موبایل در دسترسه
-- **مدیریت خطا** — الگوی یکدست toast + rethrow برای هر mutation، با retry خودکار و محافظت در برابر race condition تو لایه‌ی fetch
-- **بهینه‌سازی re-render** — subscription های Zustand با selector تک‌فیلدی (نه کل store)، مخصوصاً تو `DashboardLayout` که دور کل محتوای صفحات رو گرفته
+- **Zero `any`** — All types, including CRUD inputs/outputs, filters, and statuses, are derived from centralized sources such as `ORDER_STATUSES`, `PRODUCT_STATUSES`, and `ROLES`, preventing inconsistencies and type drift across the codebase.
+
+- **Correct Dependency Direction** — The `types/` layer is independent of `services/`, not the other way around. Components consume types directly from `types/` instead of depending on the service layer for type definitions.
+
+- **Accessibility (a11y)** — Includes focus trapping in modals, standard WAI-ARIA menu patterns, `scope="col"` for table headers, dynamic `document.title` updates for each page to communicate route changes to screen readers, and a skip link.
+
+- **Responsive Design** — All list pages provide dedicated card-based mobile layouts rather than relying solely on horizontally scrollable tables. Global search is also fully accessible on mobile.
+
+- **Error Handling** — Consistent toast + rethrow patterns for mutations, automatic retry behavior, and race-condition protection in the data-fetching layer.
+
+- **Optimized Re-renders** — Zustand subscriptions use single-field selectors instead of subscribing to the entire store, especially in `DashboardLayout`, which wraps the application's page content.
 
 ---
 
-## محدودیت‌های شناخته‌شده (نسخه‌ی دمو)
+## Known Limitations — Demo Version
 
-- بک‌اند واقعی نداره — داده‌ها تو `localStorage` نگه داشته میشن، نه یه دیتابیس واقعی
-- رمز عبور بررسی نمیشه (فقط باید خالی نباشه)
-- بدون تست خودکار (unit/integration/e2e)
+- **No real backend** — Data is persisted in `localStorage` instead of a real database.
+- **Password validation is not implemented** — The password only needs to be non-empty.
+- **No automated tests** — Unit, integration, and end-to-end tests are not currently included.
