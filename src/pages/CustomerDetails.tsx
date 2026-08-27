@@ -13,6 +13,7 @@
 
 import { useMemo, type ReactNode } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import {
   ArrowRight,
   CalendarDays,
@@ -29,7 +30,10 @@ import { Card } from "../components/ui/Card";
 import { Badge } from "../components/ui/Badge";
 import Button from "../components/ui/Button";
 import PageHeader from "../components/ui/PageHeader";
-import { DetailLoadingState, DetailMissingState } from "../components/ui/DetailState";
+import {
+  DetailLoadingState,
+  DetailMissingState,
+} from "../components/ui/DetailState";
 import ResourceState from "../components/ui/ResourceState";
 
 import { useData } from "../hooks/useData";

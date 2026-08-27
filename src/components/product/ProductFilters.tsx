@@ -26,7 +26,10 @@ interface ProductFiltersProps {
   resultCount: number;
 }
 
-const categories: StatusFilter<ProductCategory>[] = ["همه", ...PRODUCT_CATEGORIES];
+const categories: StatusFilter<ProductCategory>[] = [
+  "همه",
+  ...PRODUCT_CATEGORIES,
+];
 
 const statuses: { value: StatusFilter<ProductStatus>; label: string }[] = [
   { value: "همه", label: "همه وضعیت‌ها" },
@@ -88,7 +91,11 @@ function ProductFilters({
             <select
               aria-label="فیلتر وضعیت محصول"
               value={status}
-              onChange={(event) => onStatusChange(event.target.value)}
+              onChange={(event) =>
+                onStatusChange(
+                  event.target.value as StatusFilter<ProductStatus>,
+                )
+              }
               className="h-full cursor-pointer bg-transparent font-estedad text-xs text-text-primary outline-none"
             >
               {statuses.map((item) => (
@@ -116,7 +123,11 @@ function ProductFilters({
         </div>
 
         {/* Category Chips */}
-        <div role="group" aria-label="فیلتر دسته‌بندی محصولات" className="flex flex-wrap items-center gap-1.5">
+        <div
+          role="group"
+          aria-label="فیلتر دسته‌بندی محصولات"
+          className="flex flex-wrap items-center gap-1.5"
+        >
           {categories.map((item) => {
             const active = category === item;
             return (

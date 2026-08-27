@@ -195,10 +195,10 @@ function Modal({
         className={cn(
           "relative z-10 w-full max-w-lg",
           "overflow-hidden",
-          "rounded-[var(--radius-panel)]",
+          "rounded-(--radius-panel)",
           "border border-border",
           "bg-surface",
-          "shadow-[var(--shadow-modal)]",
+          "shadow-(--shadow-modal)",
           "outline-none",
           className,
         )}

@@ -78,7 +78,11 @@ function CustomerFilters({
             <select
               aria-label="فیلتر وضعیت مشتری"
               value={status}
-              onChange={(event) => onStatusChange(event.target.value)}
+              onChange={(event) =>
+                onStatusChange(
+                  event.target.value as StatusFilter<Customer["status"]>,
+                )
+              }
               className="h-full cursor-pointer bg-transparent font-estedad text-xs text-text-primary outline-none"
             >
               {statuses.map((item) => (
