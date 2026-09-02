@@ -128,6 +128,16 @@ Beyond implementing the core features, the project has gone through several engi
 
 ## Known Limitations — Demo Version
 
-- **No real backend** — Data is persisted in `localStorage` instead of a real database.
-- **Password validation is not implemented** — The password only needs to be non-empty.
-- **No automated tests** — Unit, integration, and end-to-end tests are not currently included.
+- **No real backend** — Data is persisted in `localStorage` instead of a real database or API.
+- **Password validation is not implemented** — Since authentication is mocked, the password only needs to be non-empty.
+- **Mock data and authentication** — The project uses seeded demo data and local client-side persistence instead of a production backend.
+
+### Testing
+
+The project includes **Playwright end-to-end tests** covering the main application flows and role-based access behavior.
+
+- **6 E2E tests**
+- **6/6 passing**
+- Covers core navigation, authentication, and protected application flows.
+
+Unit and integration test coverage is not currently included.
