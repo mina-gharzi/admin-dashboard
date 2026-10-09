@@ -2,17 +2,17 @@
 
 An e-commerce admin dashboard with orders, products, customers, analytics and team management, built around a **single shared permission system with five roles**. Persian-first (RTL) interface.
 
-**[Live demo](https://admindashboardstate.netlify.app/)**
+**[Live demo](https://admindashboardstate.netlify.app/)** · Demo login: `admin@shopino.ir` with any password of 4+ characters
 
 ![Shopino Admin screenshot](docs/screenshot.png)
 
-> **This is a front-end project with a simulated backend.** There is no server or database: a mock API layer keeps data in `localStorage`, login only checks that the email belongs to a demo account, and the password is **not** verified. Role-based access is enforced in the UI to demonstrate the architecture; a real system must enforce the same rules on the server.
+> **This is a front-end project with a simulated backend.** There is no server or database: a mock API layer keeps data in `localStorage`, login only checks that the email belongs to a demo account, and the password is **not** verified (it only has to be at least 4 characters). Role-based access is enforced in the UI to demonstrate the architecture; a real system must enforce the same rules on the server.
 
 **Built with:** React · TypeScript · Vite · React Router · Zustand · TanStack Table · Recharts · Tailwind CSS · Vitest
 
 ## Try it
 
-Log in with any of these emails and **any non-empty password**:
+The login page lists the demo accounts: click one to fill the form, then press **Login**. You can also type any of these emails with **any password of at least 4 characters** (the password is not checked):
 
 | Email | Role | What the role can do |
 | --- | --- | --- |
@@ -21,6 +21,8 @@ Log in with any of these emails and **any non-empty password**:
 | `negar.karimi@shopino.ir` | Sales manager | Products, orders, analytics |
 | `reza.kazemi@shopino.ir` | Salesperson | Products and orders, no analytics |
 | `sara.mohammadi@shopino.ir` | Analyst | Read-only everywhere, including analytics |
+
+There is no sign-up: only these emails can log in, and each one's role comes from the account list, not from the user.
 
 Log in as different roles to see pages disappear from the sidebar, routes redirect to a "forbidden" page, and action buttons become disabled.
 

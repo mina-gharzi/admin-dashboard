@@ -27,12 +27,16 @@ import { Input } from "../components/ui/Input";
 import Button from "../components/ui/Button";
 import { useAuthStore } from "../store";
 import { demoAccounts, findDemoAccountByEmail } from "../data/demoAccounts";
+import { roleLabels } from "../utils/permissions";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 interface FormState {
   email: string;
   password: string;
 }
+
+// رمز عبور بررسی نمی‌شه، فقط باید حداقل ۴ کاراکتر باشه (همون قانون فرم)
+const DEMO_PASSWORD = "demo1234";
 
 const emptyForm: FormState = {
   email: "",
@@ -90,6 +94,12 @@ function Login() {
     setErrors(nextErrors);
 
     return { valid: Object.keys(nextErrors).length === 0, account };
+  };
+
+  // پر کردن فرم با یکی از حساب‌های نمونه، تا بازدیدکننده بدون حدس زدن ایمیل وارد بشه
+  const fillDemoAccount = (email: string) => {
+    setForm({ email, password: DEMO_PASSWORD });
+    setErrors({});
   };
 
   const handleSubmit = async (event: FormEvent) => {
@@ -241,6 +251,30 @@ function Login() {
               ورود
             </Button>
           </form>
+
+          {/* Demo accounts */}
+          <div className="mt-6 border-t border-border pt-5">
+            <p className="mb-3 text-center font-estedad text-xs text-text-secondary">
+              ورود سریع با حساب‌های نمونه (رمز عبور بررسی نمی‌شود)
+            </p>
+
+            <ul className="flex flex-col gap-2">
+              {demoAccounts.map((account) => (
+                <li key={account.email}>
+                  <button
+                    type="button"
+                    onClick={() => fillDemoAccount(account.email)}
+                    className="flex w-full items-center justify-between gap-3 rounded-lg border border-border px-3 py-2 text-start font-estedad text-xs text-text-primary transition-colors hover:border-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700"
+                  >
+                    <span>{account.name}</span>
+                    <span className="text-text-secondary">
+                      {roleLabels[account.role]}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </main>
