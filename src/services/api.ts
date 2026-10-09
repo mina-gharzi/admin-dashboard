@@ -252,7 +252,8 @@ export const api = {
   users: {
     async getAll(): Promise<User[]> {
       await delay();
-      return mockUsers;
+      // کپی برمی‌گردونیم تا state مصرف‌کننده با آرایه‌ی داخلیِ قابل‌تغییر یکی نباشه
+      return [...mockUsers];
     },
 
     async getById(id: number): Promise<User | null> {
@@ -307,7 +308,8 @@ export const api = {
   products: {
     async getAll(): Promise<Product[]> {
       await delay();
-      return mockProducts;
+      // کپی برمی‌گردونیم تا state مصرف‌کننده با آرایه‌ی داخلیِ قابل‌تغییر یکی نباشه
+      return [...mockProducts];
     },
 
     async getById(id: number): Promise<Product | null> {
@@ -360,7 +362,8 @@ export const api = {
   orders: {
     async getAll(): Promise<Order[]> {
       await delay();
-      return mockOrders;
+      // کپی برمی‌گردونیم تا state مصرف‌کننده با آرایه‌ی داخلیِ قابل‌تغییر یکی نباشه
+      return [...mockOrders];
     },
 
     async getById(id: string): Promise<Order | null> {

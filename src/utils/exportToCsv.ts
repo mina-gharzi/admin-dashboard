@@ -21,18 +21,50 @@ export interface CsvColumn<T> {
 }
 
 /**
- * یک مقدار رو برای قرارگیری امن داخل یک سلول CSV آماده می‌کنه:
- * اگه شامل کاما، دابل‌کوت یا خط جدید باشه، داخل دابل‌کوت
- * می‌ذارتش و دابل‌کوت‌های داخلش رو escape می‌کنه.
+ * جلوگیری از «تزریق فرمول» (CSV injection): اگر متنی که کاربر وارد کرده با
+ * = + - @ (یا tab / CR) شروع بشه، Excel و Google Sheets اون رو فرمول اجرا
+ * می‌کنن. پیشوند ' باعث می‌شه به‌عنوان متن ساده باز بشه.
+ * عددهای واقعی (و شماره‌های مثل +98912…) و خط تیره‌ی تنها (جای خالی) دست
+ * نمی‌خورن.
  */
-function escapeCsvCell(value: string | number | null | undefined): string {
-  const stringValue = value === null || value === undefined ? "" : String(value);
+const FORMULA_START = /^[=+\-@\t\r]/;
+const PLAIN_NUMBER_OR_DASH = /^([+-]?\d[\d.,]*|-)$/;
+
+function neutralizeFormula(value: string): string {
+  if (FORMULA_START.test(value) && !PLAIN_NUMBER_OR_DASH.test(value)) {
+    return `'${value}`;
+  }
+  return value;
+}
+
+/**
+ * یک مقدار رو برای قرارگیری امن داخل یک سلول CSV آماده می‌کنه:
+ * فرمول‌ها خنثی می‌شن، و اگه شامل کاما، دابل‌کوت یا خط جدید باشه، داخل
+ * دابل‌کوت می‌ره و دابل‌کوت‌های داخلش escape می‌شن.
+ */
+export function escapeCsvCell(
+  value: string | number | null | undefined,
+): string {
+  const raw = value === null || value === undefined ? "" : String(value);
+  // فقط متن‌ها بررسی می‌شن؛ مقدار number (مثل -5) فرمول نیست
+  const stringValue = typeof value === "string" ? neutralizeFormula(raw) : raw;
 
   if (/[",\n\r]/.test(stringValue)) {
     return `"${stringValue.replace(/"/g, '""')}"`;
   }
 
   return stringValue;
+}
+
+/** متن CSV (بدون BOM) برای داده‌ها و ستون‌های داده‌شده. تابع خالص و قابل‌تست. */
+export function buildCsv<T>(data: T[], columns: CsvColumn<T>[]): string {
+  const headerRow = columns.map((column) => escapeCsvCell(column.header));
+
+  const dataRows = data.map((row) =>
+    columns.map((column) => escapeCsvCell(column.accessor(row))),
+  );
+
+  return [headerRow, ...dataRows].map((row) => row.join(",")).join("\r\n");
 }
 
 /**
@@ -44,15 +76,7 @@ export function exportToCsv<T>(
   columns: CsvColumn<T>[],
   filename: string,
 ): void {
-  const headerRow = columns.map((column) => escapeCsvCell(column.header));
-
-  const dataRows = data.map((row) =>
-    columns.map((column) => escapeCsvCell(column.accessor(row))),
-  );
-
-  const csvContent = [headerRow, ...dataRows]
-    .map((row) => row.join(","))
-    .join("\r\n");
+  const csvContent = buildCsv(data, columns);
 
   // \uFEFF = UTF-8 BOM، برای نمایش درست فارسی در Excel
   const blob = new Blob(["\uFEFF" + csvContent], {

@@ -104,6 +104,8 @@ export function useData<T>(
           return;
         } catch (err) {
           if (attempt < retries) {
+            // اگر کامپوننت unmount شده یا dependencyها عوض شدن، retry بی‌فایده است
+            if (!isActive()) return;
             attempt += 1;
             await new Promise((resolve) => setTimeout(resolve, retryDelay));
             continue;
